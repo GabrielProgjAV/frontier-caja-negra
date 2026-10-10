@@ -38,7 +38,7 @@ const nextId = (prefix: string, o: object) => prefix + String(Object.keys(o).len
 // Max 10 digits: 9999999999 accepted (771, 815), 10000000000 and 99999999999 -> E303 (769, 814).
 const monto = (s: string) => (/^[1-9][0-9]{0,9}$/.test(s) ? Number(s) : null);
 
-// Suggestion = first known command within Levenshtein 2 (47, 48, 539-604: all 80 E301 lines fit).
+// T1: suggestion = closest known command within Levenshtein 2; ties -> first in alphabetical order (3592-3606, s38-s39).
 const SUGERIBLES = Object.keys(ARITY);
 function suggest(cmd: string) {
   const dist = (a: string, b: string) => {
@@ -50,8 +50,14 @@ function suggest(cmd: string) {
     }
     return row[b.length];
   };
-  return SUGERIBLES.find((k) => dist(cmd, k) <= 2);
+  let best: string | undefined, bd = 3;
+  for (const k of [...SUGERIBLES].sort()) { const d = dist(cmd, k); if (d < bd) { bd = d; best = k; } }
+  return best;
 }
+
+// B1: own keys only, so 'constructor', 'toString', '__proto__' are not accounts/operations
+// (Object.create(null) would not survive structuredClone).
+const has = (o: object, k: string) => Object.hasOwn(o, k);
 
 export function handle(prev: State, raw: string): Result {
   if (Buffer.byteLength(raw) > MAX_BODY) return fail(prev, 'E101'); // 702-726, 728: before JSON parse
@@ -68,7 +74,7 @@ export function handle(prev: State, raw: string): Result {
     if (!/^\d+$/.test(c)) return fail(prev, 'E201');
     if (String(control(m.slice(0, m.lastIndexOf(';')))) !== c) return fail(prev, 'E202');
   }
-  if (!(cmd in ARITY)) { const s = suggest(cmd); return fail(prev, 'E301', s ? { sugerencia: s } : undefined); }
+  if (!has(ARITY, cmd)) { const s = suggest(cmd); return fail(prev, 'E301', s ? { sugerencia: s } : undefined); }
   const args = seg.slice(1, -1);
   if (args.length !== ARITY[cmd]) return fail(prev, 'E302');
 
@@ -89,14 +95,14 @@ export function handle(prev: State, raw: string): Result {
     }
     case 'CONSULTA': {
       const [c] = args;
-      if (!(c in cuentas)) return fail(prev, 'E401');
+      if (!has(cuentas, c)) return fail(prev, 'E401');
       return ok(200, { cuenta_id: c, saldo: cuentas[c] });
     }
     case 'DEPOSITO': {
       const [to, s] = args;
       const n = monto(s);
       if (n === null) return fail(prev, 'E303');
-      if (!(to in cuentas)) return fail(prev, 'E401');
+      if (!has(cuentas, to)) return fail(prev, 'E401');
       const id = nextId('OP-', ops);
       cuentas[to] += n;
       ops[id] = { to, monto: n, anulada: false };
@@ -107,7 +113,7 @@ export function handle(prev: State, raw: string): Result {
       const n = monto(s);
       if (n === null) return fail(prev, 'E303');
       if (from === to) return fail(prev, 'E304');
-      if (!(from in cuentas) || !(to in cuentas)) return fail(prev, 'E401');
+      if (!has(cuentas, from) || !has(cuentas, to)) return fail(prev, 'E401');
       if (n > LIMITE_TRANSFER && nombres[from] !== nombres[to]) return fail(prev, 'E506'); // TRA-7: same holder (exact name) has no limit
       if (n > cuentas[from]) return fail(prev, 'E507'); // ponytail: n == saldo assumed allowed, not probed
       const id = nextId('OP-', ops);
@@ -117,7 +123,7 @@ export function handle(prev: State, raw: string): Result {
       return ok(200, { status: 'recieved', operacionId: id });
     }
     case 'ANULA': {
-      const op = ops[args[0]];
+      const op = has(ops, args[0]) ? ops[args[0]] : undefined;
       if (!op) return fail(prev, 'E402');
       if (op.anulada) return ok(200, { ok: false, motivo: 'ya anulada' });
       op.anulada = true;

@@ -4,6 +4,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { handle } from './handle.ts';
 import { initialState } from './state.ts';
+import { control } from './checksum.ts';
 
 test('ejemplos 20/20', () => {
   let state = initialState();
@@ -12,4 +13,21 @@ test('ejemplos 20/20', () => {
     state = r.state;
     assert.deepEqual([r.status, r.body], [l.status, l.response], l.request.m);
   }
+});
+
+// B1: Object.prototype keys are not accounts or operations.
+test('prototype keys -> E401/E402, state untouched', () => {
+  const send = (state: ReturnType<typeof initialState>, p: string) => handle(state, JSON.stringify({ m: `${p};${control(p)}` }));
+  let state = initialState();
+  for (const p of ['ALTA;Ana', 'DEPOSITO;AC-0001;50']) state = send(state, p).state;
+  const E401 = { error: 'E401', mensaje: 'cuenta inexistente' }, E402 = { error: 'E402', mensaje: 'operación inexistente' };
+  for (const k of ['constructor', 'toString', '__proto__', 'hasOwnProperty', 'valueOf']) {
+    for (const p of [`CONSULTA;${k}`, `DEPOSITO;${k};5`, `TRANSFER;AC-0001;${k};5`, `TRANSFER;${k};AC-0001;5`]) {
+      const r = send(state, p);
+      assert.deepEqual([r.status, r.body], [404, E401], p);
+    }
+    const r = send(state, `ANULA;${k}`);
+    assert.deepEqual([r.status, r.body], [404, E402], `ANULA;${k}`);
+  }
+  assert.deepEqual(send(state, 'CONSULTA;AC-0001').body, { cuenta_id: 'AC-0001', saldo: 50 });
 });
