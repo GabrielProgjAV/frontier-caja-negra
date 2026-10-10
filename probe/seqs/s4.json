@@ -1,0 +1,26 @@
+[
+ {
+  "hipotesis": "exp1: SALDOS;AC-0001;38 (control del ejemplo) vuelve a dar E301 -> 38 es control valido",
+  "body": {
+   "m": "SALDOS;AC-0001;38"
+  }
+ },
+ {
+  "hipotesis": "exp1: SALDOS;AC-0001;39 -> E202 si el control se valida antes que el comando, E301 si el comando va primero",
+  "body": {
+   "m": "SALDOS;AC-0001;39"
+  }
+ },
+ {
+  "hipotesis": "exp4: X-Req no se reinicia con /__reset (primer PING tras reset)",
+  "body": {
+   "m": "PING;64"
+  }
+ },
+ {
+  "hipotesis": "exp4: X-Req incrementa en 1 por cada POST /msg autenticado",
+  "body": {
+   "m": "PING;64"
+  }
+ }
+]

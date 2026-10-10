@@ -1,0 +1,102 @@
+[
+ {
+  "hipotesis": "orden: ruta inexistente sin token -> gana 404 o 401?",
+  "method": "GET",
+  "path": "/no-existe",
+  "auth": "none"
+ },
+ {
+  "hipotesis": "orden: POST ruta inexistente sin token -> 404 o 401?",
+  "method": "POST",
+  "path": "/no-existe",
+  "auth": "none",
+  "body": {
+   "m": "PING;64"
+  }
+ },
+ {
+  "hipotesis": "orden: JSON invalido sin token -> 401 o E100?",
+  "auth": "none",
+  "raw": "{\"m\":"
+ },
+ {
+  "hipotesis": "m numerico -> E101 (m no es string)?",
+  "body": {
+   "m": 123
+  }
+ },
+ {
+  "hipotesis": "m null -> E101 o E102?",
+  "body": {
+   "m": null
+  }
+ },
+ {
+  "hipotesis": "m array -> E101?",
+  "body": {
+   "m": [
+    "x"
+   ]
+  }
+ },
+ {
+  "hipotesis": "sin separador de control -> E103 falta control?",
+  "body": {
+   "m": "PING"
+  }
+ },
+ {
+  "hipotesis": "control vacio -> E103 o E201?",
+  "body": {
+   "m": "PING;"
+  }
+ },
+ {
+  "hipotesis": "orden: comando desconocido + control incorrecto -> E301 o E202?",
+  "body": {
+   "m": "SALDOS;AC-0001;0"
+  }
+ },
+ {
+  "hipotesis": "orden: aridad invalida + control incorrecto -> E302 o E202?",
+  "body": {
+   "m": "ALTA;Lucia;Gomez;0"
+  }
+ },
+ {
+  "hipotesis": "control con cero a la izquierda 03 equivale a 3?",
+  "body": {
+   "m": "ALTA;Mateo;03"
+  }
+ },
+ {
+  "hipotesis": "control sin padding 3 valido (control de referencia)",
+  "body": {
+   "m": "ALTA;Mateo;3"
+  }
+ },
+ {
+  "hipotesis": "comando en minusculas con control valido -> aceptado?",
+  "body": {
+   "m": "ping;64"
+  }
+ },
+ {
+  "hipotesis": "comando en mixed case con control valido -> aceptado?",
+  "body": {
+   "m": "Ping;64"
+  }
+ },
+ {
+  "hipotesis": "espacio antes del separador -> trim o error?",
+  "body": {
+   "m": "PING ;64"
+  }
+ },
+ {
+  "hipotesis": "espacio al inicio -> trim o error?",
+  "body": {
+   "m": " PING;64"
+  }
+ }
+]
