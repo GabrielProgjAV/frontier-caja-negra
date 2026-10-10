@@ -1,17 +1,17 @@
 # VIDEO SCRIPT · Black Box Replacement (max 2:00)
 
-Plain English, short sentences. About 240 words in total, so it fits in 2 minutes at a slow, clear pace.
+Plain English, short sentences. About 200 spoken words (plus the two fill-in slots, about 25 words), so it fits in 2 minutes at a slow, clear pace.
 Every number comes from README.md, SPEC.md or PLAN.md (state at 13:24, UTC-5). Update them if they change before you record.
 Spanish translation is under each part.
 
 | Part | Time | Words |
 |---|---|---|
-| 1. Problem | 0:00–0:15 | ~30 |
-| 2. Method: "original as oracle" | 0:15–0:40 | ~50 |
-| 3. Discoveries | 0:40–1:15 | ~75 |
-| 4. Measurable results | 1:15–1:40 | ~50 |
-| 5. Incident v2 response | 1:40–1:55 | ~30 |
-| 6. Close | 1:55–2:00 | ~10 |
+| 1. Problem | 0:00–0:15 | ~20 |
+| 2. Method: "original as oracle" | 0:15–0:40 | ~35 |
+| 3. Discoveries | 0:40–1:15 | ~65 |
+| 4. Measurable results | 1:15–1:40 | ~55 |
+| 5. Incident v2 response | 1:40–1:55 | ~25 incl. fill-in |
+| 6. Close | 1:55–2:00 | ~9 |
 
 ---
 
@@ -21,7 +21,6 @@ Spanish translation is under each part.
 
 **Say:**
 > A service ran for ten years. Nobody knows what it does.
-> It gets messages over HTTP and it answers.
 > Our job: build a copy that answers exactly the same. Even the errors.
 
 **Español:**
@@ -37,11 +36,9 @@ Spanish translation is under each part.
 
 **Say:**
 > We did not guess. We asked the original.
-> Every test starts with a hypothesis.
-> Our script sends one request, and saves it in a log.
-> We keep five requests per second at most.
-> Then we write the spec, and we cite the log lines.
-> No line in the spec without proof.
+> Each test starts with a hypothesis.
+> Our script sends one request and saves it in a log.
+> Then we write the spec and cite the log lines.
 
 **Español:**
 > No adivinamos. Le preguntamos al original.
@@ -62,10 +59,9 @@ Spanish translation is under each part.
 4. `HALT;x;42` → `409 E520`, plus the hint that showed it (`HELP` → `"sugerencia":"HALT"`).
 
 **Say:**
-> One. The last number is a check digit. It is the same math as an IBAN: mod 97.
-> We predicted ten new messages. All ten were accepted.
-> Two. Errors have an order. Wrong route comes first. Then login. Then the body. Then the check digit. Then the command. Then the money rules.
-> Three. A hidden trap. The limit of 100000 does not apply between two accounts with the same owner name.
+> One. The last number is a check digit. It is IBAN math: mod 97.
+> Two. Errors have an order. Route first. Then login. Then the check digit. Then the command. Then the money rules.
+> Three. A trap. The 100000 limit does not apply between two accounts with the same owner name.
 > Four. A secret command: HALT. It asks for confirmation. We did not confirm it.
 
 **Español:**
@@ -92,12 +88,11 @@ Spanish translation is under each part.
 
 **Say:**
 > Now the numbers.
-> Our twenty examples pass: twenty out of twenty.
-> We replay the whole log: 3577 out of 3577.
-> The live copy passes the same examples.
-> Its 95th percentile response time is 243 milliseconds.
-> Random tests against the original found zero differences, in 90 sequences.
-> Our first business tests found one trap. We fixed it. The next 80 sequences found none.
+> Twenty examples: twenty pass.
+> The whole log: 3577 out of 3577.
+> The live copy also passes. Its 95th percentile time is 243 milliseconds.
+> Random tests against the original: zero differences in 90 sequences.
+> Business tests found one trap. We fixed it. The next 80 sequences found none.
 
 **Español:**
 > Ahora los números.
@@ -117,10 +112,8 @@ Spanish translation is under each part.
 **On screen:** `probe/drift.ts` output, 20 of 20 identical, then the filled-in details below.
 
 **Say:**
-> The service can change during the day.
-> So we check it again and again.
-> At 13:21 our drift check said: no change.
-> Then came the v2 incident. **[FILL IN: what changed, when you saw it, how you found it.]**
+> The service can change during the day. So we check again and again.
+> At 13:21: no change. Then came the v2 incident. **[FILL IN: what changed, when you saw it, how you found it.]**
 > **[FILL IN: what you changed in the replacement, and the result.]**
 
 **Español:**
@@ -139,8 +132,7 @@ Spanish translation is under each part.
 **On screen:** repo name `GabrielProgjAV/frontier-caja-negra` and the words SPEC.md · experimentos.jsonl.
 
 **Say:**
-> Every claim has proof in the log.
-> Thank you.
+> Every claim has proof in the log. Thank you.
 
 **Español:**
 > Cada afirmación tiene su prueba en el log.
