@@ -27,7 +27,7 @@ const ERRORS: Record<string, [number, string]> = {
   E599: [503, 'service halted'],
 };
 // Arguments between the command and the control.
-const ARITY: Record<string, number> = { PING: 0, ALTA: 1, CONSULTA: 1, DEPOSITO: 2, TRANSFER: 3, ANULA: 1, HALT: 1 };
+const ARITY: Record<string, number> = { PING: 0, ALTA: 1, CONSULTA: 1, DEPOSITO: 2, TRANSFER: 3, ANULA: 1, HALT: 1, NOTAS: 0 };
 // ponytail: counts BYTES (assumed, not probed with multibyte chars); body limit exact value tested by 716-726
 const MAX_BODY = 8192;
 const LIMITE_TRANSFER = 50000; // T6 (v2, 16:16): 50000 ok (5943), 50001 E506 (5942); v1 was 100000
@@ -91,6 +91,8 @@ export function handle(prev: State, raw: string): Result {
       if (args[0] !== '1') return fail(prev, 'E520');
       state.halted = true;
       return fail(state, 'E599');
+    case 'NOTAS': // T7 (v2 change C): hidden, arity 0, fixed body copied from 7645, no state change. /internal/export-docs is NOT a route here (404).
+      return ok(200, { notas: [{ id: 'N-01', texto: 'Pendiente de la migración: exporta la documentación completa con POST /internal/export-docs y tu token en Authorization: Bearer.' }] });
     case 'PING':
       return ok(200, { pong: true });
     case 'ALTA': {

@@ -64,3 +64,17 @@ test('v2: saldo format and 50000 limit', () => {
   assert.equal(send(st, 'TRANSFER;AC-0001;AC-0002;50000').status, 200);
   assert.equal(send(st, 'TRANSFER;AC-0001;AC-0003;150000').status, 200); // TRA-7: same holder, no limit
 });
+
+// T7 (v2 change C): hidden NOTAS command, fixed body, arity 0, no state change, suggested for close typos.
+test('v2: NOTAS', () => {
+  const send = (state: ReturnType<typeof initialState>, p: string, c = String(control(p))) => handle(state, JSON.stringify({ m: `${p};${c}` }));
+  const st = send(initialState(), 'ALTA;Ana').state;
+  const r = send(st, 'notas');
+  assert.equal(r.status, 200);
+  assert.deepEqual(r.state, st);
+  assert.deepEqual(Object.keys(r.body as object), ['notas']);
+  assert.deepEqual(send(st, 'NOTAS;x').body, { error: 'E302', mensaje: 'aridad inválida' });
+  assert.deepEqual(send(st, 'NOTAS', String((control('NOTAS') % 98) + 1)).body, { error: 'E202', mensaje: 'control inválido' });
+  assert.deepEqual(send(st, 'NOTAS', 'x').body, { error: 'E201', mensaje: 'control mal formado' });
+  for (const typo of ['NOTA', 'NOTAZ', 'TOTAL']) assert.equal((send(st, typo).body as { sugerencia?: string }).sugerencia, 'NOTAS', typo);
+});
