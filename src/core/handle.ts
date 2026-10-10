@@ -73,7 +73,7 @@ export function handle(prev: State, raw: string): Result {
   if (args.length !== ARITY[cmd]) return fail(prev, 'E302');
 
   const state = structuredClone(prev);
-  const { cuentas, ops } = state;
+  const { cuentas, nombres, ops } = state;
   const ok = (status: number, body: unknown): Result => ({ state, status, body });
 
   switch (cmd) {
@@ -84,6 +84,7 @@ export function handle(prev: State, raw: string): Result {
     case 'ALTA': {
       const id = nextId('AC-', cuentas);
       cuentas[id] = 0;
+      nombres[id] = args[0];
       return ok(201, { cuentaId: id });
     }
     case 'CONSULTA': {
@@ -107,7 +108,7 @@ export function handle(prev: State, raw: string): Result {
       if (n === null) return fail(prev, 'E303');
       if (from === to) return fail(prev, 'E304');
       if (!(from in cuentas) || !(to in cuentas)) return fail(prev, 'E401');
-      if (n > LIMITE_TRANSFER) return fail(prev, 'E506');
+      if (n > LIMITE_TRANSFER && nombres[from] !== nombres[to]) return fail(prev, 'E506'); // TRA-7: same holder (exact name) has no limit
       if (n > cuentas[from]) return fail(prev, 'E507'); // ponytail: n == saldo assumed allowed, not probed
       const id = nextId('OP-', ops);
       cuentas[from] -= n;
