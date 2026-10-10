@@ -7,6 +7,10 @@
 
 **Sonda activa:** SONDEADOR (sesión 1) desde 15:30: canario cada 30 min hasta 19:45 + supuestos B3, INT-4b, CMD-0b, ENT-14, B9
 
+**FRONTERA v1/v2 (ticket de los organizadores, 15:30): primer id enviado después de las 15:30 = 4623.** Los ids ≤ 4552 son v1.
+Los ids 4553–4622 (canario) se mandaron entre ~15:29:40 y 15:30:17 (commit ff5f0c0): ventana ambigua, pero coinciden 70/70 con v1.
+Desde 4623 todo es v2. Ojo: s43/s44 (4623–4689) son v2; las diferencias de CMD-0b (mayúsculas Unicode) no tienen evidencia v1 para comparar.
+
 ## Entregables para las 20:00
 | Entregable | Formato exacto | Fuente |
 |---|---|---|
