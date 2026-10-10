@@ -169,6 +169,7 @@ Con `m` no string se responde E102, no E101. E101 es el error de tamaño del cue
 | ID | Comportamiento | Evidencia | Confianza |
 |---|---|---|---|
 | CAM-1 | A las ~10:30 (UTC-5), la repetición de los 20 ejemplos de la mañana dio respuestas idénticas. | 2–21 | confirmado |
+| CAM-4 | A las 12:52 (UTC-5), la cuarta repetición de los 20 ejemplos dio respuestas idénticas. Entre medias, 90 secuencias aleatorias de fuzz (3 semillas) coincidieron por completo con este SPEC implementado. | 816–1500, 1502–1521 | confirmado |
 | CAM-3 | A las 12:26 (UTC-5), la tercera repetición de los 20 ejemplos dio respuestas idénticas. | 744–763 | confirmado |
 | CAM-2 | A las 12:20 (UTC-5), la segunda repetición de los 20 ejemplos también dio respuestas idénticas: sin cambios de versión hasta esa hora. | 652–671 | confirmado |
 
