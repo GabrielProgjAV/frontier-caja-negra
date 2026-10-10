@@ -24,6 +24,7 @@ const ERRORS: Record<string, [number, string]> = {
   E506: [422, 'límite excedido'],
   E507: [422, 'saldo insuficiente'],
   E520: [409, 'operación destructiva: detiene el servicio; reenvía con confirmación'],
+  E599: [503, 'service halted'],
 };
 // Arguments between the command and the control.
 const ARITY: Record<string, number> = { PING: 0, ALTA: 1, CONSULTA: 1, DEPOSITO: 2, TRANSFER: 3, ANULA: 1, HALT: 1 };
@@ -83,8 +84,10 @@ export function handle(prev: State, raw: string): Result {
   const ok = (status: number, body: unknown): Result => ({ state, status, body });
 
   switch (cmd) {
-    case 'HALT': // hidden command (540, 612, 613, 617): any single argument asks for confirmation, never executes
-      return fail(prev, 'E520');
+    case 'HALT': // hidden command (540, 612, 613, 617). T2: exactly '1' halts the token (3980, 3991); any other arg -> E520, no change (3994-4023)
+      if (args[0] !== '1') return fail(prev, 'E520');
+      state.halted = true;
+      return fail(state, 'E599');
     case 'PING':
       return ok(200, { pong: true });
     case 'ALTA': {

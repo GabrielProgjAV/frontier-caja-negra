@@ -31,3 +31,14 @@ test('prototype keys -> E401/E402, state untouched', () => {
   }
   assert.deepEqual(send(state, 'CONSULTA;AC-0001').body, { cuenta_id: 'AC-0001', saldo: 50 });
 });
+
+// T2: only HALT;1 halts (503 E599); any other argument -> 409 E520 without halting.
+test('HALT;1 sets halted, other args do not', () => {
+  const send = (state: ReturnType<typeof initialState>, p: string) => handle(state, JSON.stringify({ m: `${p};${control(p)}` }));
+  for (const arg of ['0', '2', '01', 'true', 'si', 'confirmar', 'ok', 'yes']) {
+    const r = send(initialState(), `HALT;${arg}`);
+    assert.deepEqual([r.status, r.body, r.state.halted], [409, { error: 'E520', mensaje: 'operación destructiva: detiene el servicio; reenvía con confirmación' }, false], arg);
+  }
+  const r = send(initialState(), 'halt;1');
+  assert.deepEqual([r.status, r.body, r.state.halted], [503, { error: 'E599', mensaje: 'service halted' }, true]);
+});

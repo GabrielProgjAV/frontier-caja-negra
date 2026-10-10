@@ -16,7 +16,9 @@ export const server = createServer(async (req, res) => {
   const token = process.env.TEAM_TOKEN;
   if (!token || req.headers.authorization !== `Bearer ${token}`) return reply(res, 401, { error: 'E001', mensaje: 'no autorizado' });
   if (route === 'GET /health') return reply(res, 200, { ok: true }); // needs token too (648)
-  if (route === 'POST /__reset') { state = initialState(); return reply(res, 200, { ok: true }); }
+  if (route === 'POST /__reset') { state = initialState(); return reply(res, 200, { ok: true }); } // also clears halted (4039-4042)
+  // T2: halted -> 503 E599 for any body; after route and auth (4032, 4033), before size/JSON (4029)
+  if (state.halted) return reply(res, 503, { error: 'E599', mensaje: 'service halted' });
   req.setEncoding('utf8');
   let raw = '';
   for await (const chunk of req) raw += chunk;
