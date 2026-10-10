@@ -64,9 +64,9 @@ Los cuerpos se escriben exactos. Todos los textos van en español y con tildes.
 | ID | Comportamiento | Evidencia | Confianza |
 |---|---|---|---|
 | ALTA-1 | Crea una cuenta con saldo 0 → `201 {"cuentaId":"AC-NNNN"}`: secuencial, empieza en 0001 tras el reset, 4 dígitos con ceros a la izquierda. | 4, 5, 6, 44, 461, 462, 472, 473 | confirmado |
-| ALTA-2 | Acepta nombres con espacios internos, al principio o al final, solo espacios, tabuladores, números, 200 caracteres y caracteres no ASCII. Si el nombre se recorta no es observable: ningún comando devuelve el nombre. | 469, 506, 507, 508, 804–807, 810, 811 | confirmado |
+| ALTA-2 | Acepta nombres con espacios internos, al principio o al final, solo espacios, tabuladores, números, 200 caracteres y caracteres no ASCII. El nombre se guarda tal cual, sin recortar: `"Zoe "` y `"Zoe"` son titulares distintos para TRA-7 (1990). Ningún comando devuelve el nombre. | 469, 506, 507, 508, 804–807, 810, 811, 1990 | confirmado |
 | ALTA-3 | Nombre literalmente vacío (`ALTA;;c`) → E104. Un nombre de solo espacios no cuenta como vacío y crea la cuenta. Dos argumentos → E302. | 21, 505, 621, 622, 810, 812 | confirmado |
-| ALTA-4 | Los nombres pueden repetirse: un `ALTA;Ana` duplicado crea otra cuenta. | 619, 620 | confirmado |
+| ALTA-4 | Los nombres pueden repetirse: un `ALTA;Ana` duplicado crea otra cuenta. Dos cuentas con el mismo nombre se tratan como del mismo titular (TRA-7). | 619, 620, 1976, 1977 | confirmado |
 
 ### CONSULTA;cuenta (1 argumento)
 | ID | Comportamiento | Evidencia | Confianza |
@@ -92,8 +92,9 @@ Los cuerpos se escriben exactos. Todos los textos van en español y con tildes.
 | TRA-2 | Monto inválido → E303, con las mismas reglas que DEP-2, incluido el tope de 10 dígitos. Ese tope va antes que el límite: 11 dígitos dan E303 y 10 dígitos dan E506. | 492, 493, 517, 519, 814, 815 | confirmado |
 | TRA-3 | Origen igual a destino → `400 {"error":"E304","mensaje":"origen y destino iguales"}` | 487, 516, 518 | confirmado |
 | TRA-4 | Origen o destino inexistente → `404 E401` | 488, 489, 490 | confirmado |
-| TRA-5 | Límite por operación de 100000, inclusivo. Más → `422 {"error":"E506","mensaje":"límite excedido"}`. No es acumulado. | 10, 11, 485, 486 | confirmado |
+| TRA-5 | Límite por operación de 100000, inclusivo, **solo entre titulares distintos** (ver TRA-7). Más → `422 {"error":"E506","mensaje":"límite excedido"}`. No es acumulado. Entre titulares distintos, E506 gana a E507 con cualquier saldo (0, 1, negativo o casi suficiente). | 10, 11, 485, 486, 1917, 1918, 1921, 1926, 1931, 1983, 1984 | confirmado |
 | TRA-6 | Saldo del origen menor que el monto → `422 {"error":"E507","mensaje":"saldo insuficiente"}`. Transferir exactamente el saldo está permitido (`saldo >= monto`). | 17, 627, 629, 630 | confirmado |
+| TRA-7 | **Si el origen y el destino tienen el mismo nombre de titular** (el nombre dado en ALTA, comparado de forma exacta: distingue mayúsculas y no recorta espacios), **no se aplica el límite E506**. Una transferencia de 150000 o de 9999999999 pasa si hay saldo, y con saldo insuficiente se responde E507. El tope de 10 dígitos (E303) sigue aplicando. | 1602, 1942, 1952, 1978, 1980, 1981, 1988, 1990, 2000, 2418, 2421 | confirmado |
 
 ### ANULA;operacion (1 argumento)
 | ID | Comportamiento | Evidencia | Confianza |
@@ -115,7 +116,7 @@ Los cuerpos se escriben exactos. Todos los textos van en español y con tildes.
 ## 4. Memoria entre requests
 | ID | Comportamiento | Evidencia | Confianza |
 |---|---|---|---|
-| MEM-1 | El servicio guarda las cuentas (id y saldo), las operaciones (tipo, cuentas, monto y si están anuladas) y dos contadores, AC y OP. | 2–21 | confirmado |
+| MEM-1 | El servicio guarda las cuentas (id, **nombre del titular** y saldo), las operaciones (tipo, cuentas, monto y si están anuladas) y dos contadores, AC y OP. El nombre no se devuelve nunca, pero decide si aplica el límite de TRANSFER (TRA-7). | 2–21, 1978, 1988, 2000 | confirmado |
 | MEM-2 | Los contadores AC y OP son independientes. `/__reset` los reinicia a 0001 y borra todo el estado anterior. | 44, 461, 472, 474, 733–742 | confirmado |
 | MEM-3 | Solo los éxitos consumen números. Las operaciones que fallan (E303, E401, E506, E507) no consumen número de OP. ANULA no genera ni consume número de OP. Las ALTA que fallan (E104, E302) no consumen número de AC. | 10, 11, 621–628, 633 | confirmado |
 | MEM-4 | El estado de anulación se recuerda: la segunda ANULA da `ok:false`. | 14, 15, 635, 638 | confirmado |
@@ -143,8 +144,8 @@ Orden de evaluación: el primero que aplica gana.
 | ERR-13 | 14 | 404 | `{"error":"E401","mensaje":"cuenta inexistente"}` | cuenta inexistente | 16, 488, 489, 490, 504 | confirmado |
 | ERR-14 | 14 | 404 | `{"error":"E402","mensaje":"operación inexistente"}` | ANULA de una operación inexistente | 497, 498 | confirmado |
 | ERR-14b | — | 409 | `{"error":"E520","mensaje":"operación destructiva: detiene el servicio; reenvía con confirmación"}` | HALT con 1 argumento | 612 | probable (visto una vez; orden frente a E4xx/E5xx sin probar) |
-| ERR-15 | 15 | 422 | `{"error":"E506","mensaje":"límite excedido"}` | TRANSFER > 100000 | 10, 486, 491 | confirmado |
-| ERR-16 | 16 | 422 | `{"error":"E507","mensaje":"saldo insuficiente"}` | saldo < monto | 17 | probable |
+| ERR-15 | 15 | 422 | `{"error":"E506","mensaje":"límite excedido"}` | TRANSFER > 100000 entre titulares distintos | 10, 486, 491, 1917, 1931, 1983 | confirmado |
+| ERR-16 | 16 | 422 | `{"error":"E507","mensaje":"saldo insuficiente"}` | saldo < monto (entre mismo titular, también por encima de 100000) | 17, 627, 630, 1978, 1942 | confirmado |
 
 Pruebas de orden:
 - E404 > E001: 33, 34, 683.
@@ -161,7 +162,7 @@ Pruebas de orden:
 - E304 > E401: 516.
 - E304 > E506: 518.
 - E401 > E506: 490.
-- E506 > E507: 491.
+- E506 > E507 entre titulares distintos: 491, 1921, 1931. Con el mismo titular E506 no existe: 1978.
 
 Con `m` no string se responde E102, no E101. E101 es el error de tamaño del cuerpo (413).
 
@@ -169,6 +170,7 @@ Con `m` no string se responde E102, no E101. E101 es el error de tamaño del cue
 | ID | Comportamiento | Evidencia | Confianza |
 |---|---|---|---|
 | CAM-1 | A las ~10:30 (UTC-5), la repetición de los 20 ejemplos de la mañana dio respuestas idénticas. | 2–21 | confirmado |
+| CAM-5 | A las ~13:08 (UTC-5), `probe/drift.ts` dio 20 de 20 idénticos. Entre medias, 80 secuencias de fuzz de negocio (semillas 404 y 505) coincidieron con el reemplazo salvo la regla TRA-7, que no es un cambio de versión: 1920 repite 491 con el mismo resultado. | 1522–2413, 1920, 2423–2442 | confirmado |
 | CAM-4 | A las 12:52 (UTC-5), la cuarta repetición de los 20 ejemplos dio respuestas idénticas. Entre medias, 90 secuencias aleatorias de fuzz (3 semillas) coincidieron por completo con este SPEC implementado. | 816–1500, 1502–1521 | confirmado |
 | CAM-3 | A las 12:26 (UTC-5), la tercera repetición de los 20 ejemplos dio respuestas idénticas. | 744–763 | confirmado |
 | CAM-2 | A las 12:20 (UTC-5), la segunda repetición de los 20 ejemplos también dio respuestas idénticas: sin cambios de versión hasta esa hora. | 652–671 | confirmado |
@@ -176,6 +178,7 @@ Con `m` no string se responde E102, no E101. E101 es el error de tamaño del cue
 ## 7. Riesgos
 | ID | Riesgo | Evidencia | Confianza | Cómo cerrarlo |
 |---|---|---|---|---|
+| RIE-10 | El límite de 100000 por transferencia se esquiva creando una cuenta con el mismo nombre que el origen, porque el nombre no está verificado ni es único. | 1976–1981, 2418 | confirmado | Identificar al titular con un id verificado (KYC) y no por el nombre libre. Aplicar el límite también entre cuentas propias o registrar esas transferencias aparte. |
 | RIE-1 | ANULA de un depósito ya gastado, o de una transferencia cuyo destino ya gastó, deja saldos negativos. | 495, 496, 632, 637 | confirmado | Rechazar la anulación si deja saldo < 0, o solo permitir anular operaciones sin consumo posterior. |
 | RIE-2 | El dígito de control es un checksum público (MOD 97‑10), no una firma: cualquiera puede generar mensajes válidos. | 461–470 | confirmado | Usar HMAC con una clave secreta por cliente. |
 | RIE-3 | `PING` no valida el control. | 458, 459 | confirmado | Validar todos los comandos por igual. |

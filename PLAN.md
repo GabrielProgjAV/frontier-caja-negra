@@ -5,7 +5,7 @@
 > **Solo UN agente prueba el original a la vez**, porque el token comparte estado y presupuesto. Antes de
 > probar, apúntate en "Sonda activa" y libérala al terminar.
 
-**Sonda activa:** sesión 1 (fuzz --business 2x40 + drift.ts), desde 13:03
+**Sonda activa:** libre (desde 13:10)
 
 ## Entregables para las 20:00
 | Entregable | Formato exacto | Fuente |
@@ -60,9 +60,11 @@ Estados: `todo` · `doing` · `done` · `blocked`.
 | 20 | s13-s17: rutas exactas, cuerpo (E101 413 si > 8192 bytes, Content-Type ignorado), contadores tras el reset, drift. Para la sesión 2: E101, /health sin token -> 401, HALT -> E520/E302 | sesión 1 | done | 12:27 |
 | 21 | s18-s20: monto máximo de 10 dígitos (sin BigInt), Authorization exacta "Bearer <token>", nombres con espacios. Para la sesión 2: DEP/TRA monto ^[1-9][0-9]{0,9}$; auth exacta | sesión 1 | done | 12:36 |
 | 22 | Fuzz: 3 semillas (101, 202, 303) x 30 seqs = 90 secuencias, 595 mensajes, 0 diferencias (ids 816-1500). HALT excluido del fuzzer. Cobertura débil: E506 (1), E507 (2); sin E100-E103/E201 (los cubre diff.ts). Drift s21 a las 12:52: sin cambios | sesión 1 | done | 12:53 |
+| 23 | Fuzz --business: 2 semillas (404, 505) x 40 seqs, 6-12 pasos, 725 mensajes (ids 1522-2413). 1 diferencia: TRA-7 (límite E506 no aplica entre cuentas con el mismo nombre de titular), investigada en s22-s32. drift.ts ~13:08: 20/20 sin cambios | sesión 1 | done | 13:10 |
+| 24 | **Sesión 2: implementar TRA-7.** Guardar el nombre en cada cuenta (ALTA). En TRANSFER, si nombre(origen) === nombre(destino) (exacto, sin trim, distingue mayúsculas), saltar el check E506; E303/E304/E401/E507 igual. diff.ts falla en 1602, 1942, 1952, 1978, 1980, 1981, 2418, 2419 | sesión 2 | todo | 13:10 |
 
 ## Presupuesto
-1521 de 8000 requests usadas (12:53). Fuente de verdad: `probe/budget.json`.
+2442 de 8000 requests usadas (13:10). Fuente de verdad: `probe/budget.json`.
 
 ## Sesión 2 (12:38)
 | # | Tarea | Estado |
