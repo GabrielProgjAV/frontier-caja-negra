@@ -30,8 +30,10 @@ const ERRORS: Record<string, [number, string]> = {
 const ARITY: Record<string, number> = { PING: 0, ALTA: 1, CONSULTA: 1, DEPOSITO: 2, TRANSFER: 3, ANULA: 1, HALT: 1 };
 // ponytail: counts BYTES (assumed, not probed with multibyte chars); body limit exact value tested by 716-726
 const MAX_BODY = 8192;
-const LIMITE_TRANSFER = 100000; // 100000 ok, 100001 E506 (485, 486)
+const LIMITE_TRANSFER = 50000; // T6 (v2, 16:16): 50000 ok (5943), 50001 E506 (5942); v1 was 100000
 
+// T5 (v2, 16:16): CONSULTA saldo = internal integer / 100 as string with exactly 2 decimals, '-' if negative (5952-5971, 5833)
+const fmt = (n: number) => (n < 0 ? '-' : '') + Math.floor(Math.abs(n) / 100) + '.' + String(Math.abs(n) % 100).padStart(2, '0');
 const fail = (state: State, code: string, extra?: object): Result =>
   ({ state, status: ERRORS[code][0], body: { error: code, mensaje: ERRORS[code][1], ...extra } });
 const nextId = (prefix: string, o: object) => prefix + String(Object.keys(o).length + 1).padStart(4, '0');
@@ -100,7 +102,7 @@ export function handle(prev: State, raw: string): Result {
     case 'CONSULTA': {
       const [c] = args;
       if (!has(cuentas, c)) return fail(prev, 'E401');
-      return ok(200, { cuenta_id: c, saldo: cuentas[c] });
+      return ok(200, { cuenta_id: c, saldo: fmt(cuentas[c]) });
     }
     case 'DEPOSITO': {
       const [to, s] = args;
