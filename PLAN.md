@@ -5,7 +5,7 @@
 > **Solo UN agente prueba el original a la vez**, porque el token comparte estado y presupuesto. Antes de
 > probar, apúntate en "Sonda activa" y libérala al terminar.
 
-**Sonda activa:** libre (desde 14:06)
+**Sonda activa:** libre (14:35)
 
 ## Entregables para las 20:00
 | Entregable | Formato exacto | Fuente |
@@ -81,9 +81,10 @@ Cambios exactos en `src/` derivados de sondas (ids T*, distintos de los B* de "E
 | # | Hallazgo (SPEC) | Cambio exacto en `src/` | Prueba | Estado |
 |---|---|---|---|---|
 | T1 | (resuelve B8 de "Estado del builder") CMD-1a2 / CMD-1c: la `sugerencia` de E301 es **el comando más cercano (Levenshtein ≤ 2) y, en empate, el primero en orden alfabético**, no "el primero de la lista a distancia ≤ 2". | En `src/core/handle.ts`, `suggest()`: reemplazar `return SUGERIBLES.find((k) => dist(cmd, k) <= 2);` por `let best: string \| undefined, bd = 3; for (const k of [...SUGERIBLES].sort()) { const d = dist(cmd, k); if (d < bd) { bd = d; best = k; } } return best;` (orden alfabético + comparación estricta `<` = en empate gana el primero alfabético). Actualizar el comentario de la función. | `diff.ts` hoy falla exactamente en 3592–3606 (15 líneas); con el cambio deben pasar las 146 respuestas E301 del log (comprobado con un modelo equivalente). | pendiente |
+| T2 | Estado `halted`: `HALT;1` pone el token en estado halted (503 E599). En ese estado, `POST /msg` autenticado responde 503 E599 sin importar el cuerpo. `HALT` con arg ≠ 1 sigue dando 409 E520. `POST /__reset` limpia el estado (incluido halted). `GET /health` funciona normal. Sin token o ruta inexistente se evalúan antes (401/404). | 1) `src/core/state.ts`: añadir `halted: false` a `initialState()` y al tipo `State`. 2) `src/server.ts`: después de validar ruta y auth, si `req.method==='POST' && pathname==='/msg'` y `state.halted===true`, devolver inmediatamente 503 `{"error":"E599","mensaje":"service halted"}` (antes de mirar tamaño/JSON). 3) `src/core/handle.ts`: `HALT;1` devuelve `state` con `halted: true` y status 503 cuerpo E599; `HALT` con arg ≠ 1 devuelve E520 (sin cambiar `halted`). 4) `POST /__reset` en `server.ts` debe poner `halted: false` al reiniciar. | `node probe/diff.ts` debe seguir al 100 % (las secuencias antiguas no usan HALT;1). Validar con las secuencias sHALT-3 y sHALT-4 grabadas en el log. | pendiente |
 
 ## Presupuesto
-3950 de 8000 requests usadas (14:06). Fuente de verdad: `probe/budget.json`.
+4042 de 8000 requests usadas (14:35). Fuente de verdad: `probe/budget.json`.
 
 **Supuestos para que sesión 1 los confirme:**
 - E101 cuenta **bytes** (`Buffer.byteLength`), no caracteres; se probó solo con ASCII. Falta un cuerpo > 8192 bytes con caracteres multibyte pero < 8192 caracteres.
@@ -100,7 +101,7 @@ y cuenta las líneas por rama). Ids de `experimentos.jsonl`.
 | # | Supuesto del código | Evidencia en el log | Riesgo |
 |---|---|---|---|
 | B1 | **BUG.** `x in cuentas` / `ops[x]` aceptan claves de `Object.prototype`: `CONSULTA;constructor` → 200 `{"cuenta_id":"constructor"}`, `CONSULTA;__proto__` → 200 con `"saldo":{}`, `DEPOSITO;toString;5`, `TRANSFER;…;hasOwnProperty;5` y `ANULA;constructor` → 200 (y `ANULA` corrompe saldos con NaN). Lo esperable es E401/E402 | ninguna: ningún id del log usa esos nombres (todo E401/E402 visto son ids normales: 16, 498, 641, 832…) | medio: fuzz o tests ocultos con ids raros. **Propuesta de tarea:** usar `Object.hasOwn` (o `Object.create(null)` en `initialState`). Sin sondear: es seguro suponer E401/E402 |
-| B2 | `HALT` con 1 argumento cualquiera → E520 y no cambia el estado | **un solo** E520 (612, arg `x`); 0 args → E302 (613, 617); estado intacto solo por 614-615 | alto si hay un argumento de confirmación (`CONFIRMAR`, `SI`…): el mensaje dice "reenvía con confirmación". Sin probar: HALT con 2+ args, con control malo (el código da E202/E201) |
+| B2 | `HALT;1` → 503 E599 y activa estado halted. `HALT` con arg ≠ 1 → E520 y no cambia estado. | 3980, 3991 (HALT;1); 3976, 3994–4023 (args 0,2,01,true,si,confirmar,ok,yes) | resuelto por T2 |
 | B3 | Segmento vacío en la posición del comando (`;64`, `;ALTA;x;cc`, `;`) → E104 | ninguna: E104 visto solo en idx 1, 2, 3 y en el control (40, 505, 509-511, 698, 699, 835, 859) | bajo-medio: podría ser E301 o E202 |
 | B4 | E101 cuenta bytes (`Buffer.byteLength`) | límite exacto 8192/8193 solo con ASCII (716-728); 0 cuerpos E101 con multibyte | bajo (ya en supuestos de arriba) |
 | B5 | Ids de cuenta `AC-%04d` a partir de AC-0010 | máximo visto AC-0007; el formato de 4 dígitos sí se vio en OP-0010+ (781-787) | bajo |

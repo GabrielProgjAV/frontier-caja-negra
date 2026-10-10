@@ -1,0 +1,5 @@
+[
+  {"hipotesis":"HALT;confirmar: activa halted?","body":{"m":"HALT;confirmar;80"}},
+  {"hipotesis":"verificar estado tras HALT;confirmar: PING","body":{"m":"PING;64"}},
+  {"hipotesis":"reset: fin de secuencia","path":"/__reset"}
+]

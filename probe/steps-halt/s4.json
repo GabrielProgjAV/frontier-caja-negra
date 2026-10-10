@@ -1,0 +1,8 @@
+[
+  {"hipotesis":"ALTA para prueba de persistencia","body":{"m":"ALTA;Ana;50"}},
+  {"hipotesis":"DEPOSITO para prueba de persistencia","body":{"m":"DEPOSITO;AC-0001;100;82"}},
+  {"hipotesis":"HALT;1: poner en halted","body":{"m":"HALT;1;19"}},
+  {"hipotesis":"reset: volver al estado inicial","path":"/__reset"},
+  {"hipotesis":"CONSULTA tras reset post-HALT: persistio?","body":{"m":"CONSULTA;AC-0001;14"}},
+  {"hipotesis":"reset: fin de secuencia","path":"/__reset"}
+]

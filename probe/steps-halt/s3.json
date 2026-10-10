@@ -1,0 +1,12 @@
+[
+  {"hipotesis":"HALT;1: poner en estado halted","body":{"m":"HALT;1;19"}},
+  {"hipotesis":"halted: PING;64","body":{"m":"PING;64"}},
+  {"hipotesis":"halted: comando desconocido SALDO;AC-0001;64","body":{"m":"SALDO;AC-0001;64"}},
+  {"hipotesis":"halted: JSON invalido","raw":"{bad json","contentType":null},
+  {"hipotesis":"halted: control incorrecto PING;99","body":{"m":"PING;99"}},
+  {"hipotesis":"halted: HALT;1 otra vez","body":{"m":"HALT;1;19"}},
+  {"hipotesis":"halted: POST /msg sin token","path":"/msg","auth":"none","body":{"m":"PING;64"}},
+  {"hipotesis":"halted: ruta inexistente","method":"GET","path":"/inventada","auth":"ok"},
+  {"hipotesis":"halted: GET /health","method":"GET","path":"/health","auth":"ok"},
+  {"hipotesis":"reset: fin de secuencia","path":"/__reset"}
+]

@@ -3948,3 +3948,95 @@
 {"id":3948,"seq":"drift-190441","x_req":3577,"hipotesis":"drift: ejemplo 18 sigue igual que en la mañana","request":{"m":"DEPOSITO;AC-0002;700;35"},"status":200,"response":{"status":"recieved","operacionId":"OP-0004"},"conclusion":"sin cambios: idéntico a la versión de la mañana (drift.ts, 14:04)"}
 {"id":3949,"seq":"drift-190441","x_req":3578,"hipotesis":"drift: ejemplo 19 sigue igual que en la mañana","request":{"m":"CONSULTA;AC-0002;11"},"status":200,"response":{"cuenta_id":"AC-0002","saldo":40700},"conclusion":"sin cambios: idéntico a la versión de la mañana (drift.ts, 14:04)"}
 {"id":3950,"seq":"drift-190441","x_req":3579,"hipotesis":"drift: ejemplo 20 sigue igual que en la mañana","request":{"m":"ALTA;Lucia;Gomez;11"},"status":400,"response":{"error":"E302","mensaje":"aridad inválida"},"conclusion":"sin cambios: idéntico a la versión de la mañana (drift.ts, 14:04)"}
+{"id":3951,"seq":"s42-1","x_req":null,"hipotesis":"reset: antes de HALT con confirmación","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":3952,"seq":"s42-1","x_req":3580,"hipotesis":"HALT;CONFIRMAR: ¿algún argumento de confirmación cambia la respuesta E520?","request":{"m":"HALT;CONFIRMAR;80"},"status":409,"response":{"error":"E520","mensaje":"operación destructiva: detiene el servicio; reenvía con confirmación"},"conclusion":"igual que HALT;x: E520 409"}
+{"id":3953,"seq":"s42-1","x_req":3581,"hipotesis":"tras HALT;arg: el servicio sigue vivo","request":{"m":"PING;64"},"status":200,"response":{"pong":true}}
+{"id":3954,"seq":"s42-1","x_req":null,"hipotesis":"reset: después de HALT con confirmación","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":3955,"seq":"s42-2","x_req":null,"hipotesis":"reset: antes de HALT con confirmación","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":3956,"seq":"s42-2","x_req":3582,"hipotesis":"HALT;CONFIRMO: ¿algún argumento de confirmación cambia la respuesta E520?","request":{"m":"HALT;CONFIRMO;9"},"status":409,"response":{"error":"E520","mensaje":"operación destructiva: detiene el servicio; reenvía con confirmación"},"conclusion":"igual que HALT;x: E520 409"}
+{"id":3957,"seq":"s42-2","x_req":3583,"hipotesis":"tras HALT;arg: el servicio sigue vivo","request":{"m":"PING;64"},"status":200,"response":{"pong":true}}
+{"id":3958,"seq":"s42-2","x_req":null,"hipotesis":"reset: después de HALT con confirmación","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":3959,"seq":"s42-3","x_req":null,"hipotesis":"reset: antes de HALT con confirmación","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":3960,"seq":"s42-3","x_req":3584,"hipotesis":"HALT;SI: ¿algún argumento de confirmación cambia la respuesta E520?","request":{"m":"HALT;SI;49"},"status":409,"response":{"error":"E520","mensaje":"operación destructiva: detiene el servicio; reenvía con confirmación"},"conclusion":"igual que HALT;x: E520 409"}
+{"id":3961,"seq":"s42-3","x_req":3585,"hipotesis":"tras HALT;arg: el servicio sigue vivo","request":{"m":"PING;64"},"status":200,"response":{"pong":true}}
+{"id":3962,"seq":"s42-3","x_req":null,"hipotesis":"reset: después de HALT con confirmación","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":3963,"seq":"s42-4","x_req":null,"hipotesis":"reset: antes de HALT con confirmación","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":3964,"seq":"s42-4","x_req":3586,"hipotesis":"HALT;SÍ: ¿algún argumento de confirmación cambia la respuesta E520?","request":{"m":"HALT;SÍ;57"},"status":409,"response":{"error":"E520","mensaje":"operación destructiva: detiene el servicio; reenvía con confirmación"},"conclusion":"igual que HALT;x: E520 409"}
+{"id":3965,"seq":"s42-4","x_req":3587,"hipotesis":"tras HALT;arg: el servicio sigue vivo","request":{"m":"PING;64"},"status":200,"response":{"pong":true}}
+{"id":3966,"seq":"s42-4","x_req":null,"hipotesis":"reset: después de HALT con confirmación","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":3967,"seq":"s42-5","x_req":null,"hipotesis":"reset: antes de HALT con confirmación","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":3968,"seq":"s42-5","x_req":3588,"hipotesis":"HALT;YES: ¿algún argumento de confirmación cambia la respuesta E520?","request":{"m":"HALT;YES;69"},"status":409,"response":{"error":"E520","mensaje":"operación destructiva: detiene el servicio; reenvía con confirmación"},"conclusion":"igual que HALT;x: E520 409"}
+{"id":3969,"seq":"s42-5","x_req":3589,"hipotesis":"tras HALT;arg: el servicio sigue vivo","request":{"m":"PING;64"},"status":200,"response":{"pong":true}}
+{"id":3970,"seq":"s42-5","x_req":null,"hipotesis":"reset: después de HALT con confirmación","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":3971,"seq":"s42-6","x_req":null,"hipotesis":"reset: antes de HALT con confirmación","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":3972,"seq":"s42-6","x_req":3590,"hipotesis":"HALT;CONFIRM: ¿algún argumento de confirmación cambia la respuesta E520?","request":{"m":"HALT;CONFIRM;51"},"status":409,"response":{"error":"E520","mensaje":"operación destructiva: detiene el servicio; reenvía con confirmación"},"conclusion":"igual que HALT;x: E520 409"}
+{"id":3973,"seq":"s42-6","x_req":3591,"hipotesis":"tras HALT;arg: el servicio sigue vivo","request":{"m":"PING;64"},"status":200,"response":{"pong":true}}
+{"id":3974,"seq":"s42-6","x_req":null,"hipotesis":"reset: después de HALT con confirmación","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":3975,"seq":"s42-7","x_req":null,"hipotesis":"reset: antes de HALT con confirmación","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":3976,"seq":"s42-7","x_req":3592,"hipotesis":"HALT;OK: ¿algún argumento de confirmación cambia la respuesta E520?","request":{"m":"HALT;OK;75"},"status":409,"response":{"error":"E520","mensaje":"operación destructiva: detiene el servicio; reenvía con confirmación"},"conclusion":"igual que HALT;x: E520 409"}
+{"id":3977,"seq":"s42-7","x_req":3593,"hipotesis":"tras HALT;arg: el servicio sigue vivo","request":{"m":"PING;64"},"status":200,"response":{"pong":true}}
+{"id":3978,"seq":"s42-7","x_req":null,"hipotesis":"reset: después de HALT con confirmación","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":3979,"seq":"s42-8","x_req":null,"hipotesis":"reset: antes de HALT con confirmación","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":3980,"seq":"s42-8","x_req":3594,"hipotesis":"HALT;1: ¿algún argumento de confirmación cambia la respuesta E520?","request":{"m":"HALT;1;19"},"status":503,"response":{"error":"E599","mensaje":"service halted"},"conclusion":"DIFERENTE a E520"}
+{"id":3981,"seq":"s42-8","x_req":3595,"hipotesis":"tras HALT;1 cambiado: ¿cómo responde el servicio? PING;64","request":{"m":"PING;64"},"status":503,"response":{"error":"E599","mensaje":"service halted"}}
+{"id":3982,"seq":"s42-8","x_req":3596,"hipotesis":"tras HALT;1 cambiado: ¿cómo responde el servicio? CONSULTA;AC-0001;14","request":{"m":"CONSULTA;AC-0001;14"},"status":503,"response":{"error":"E599","mensaje":"service halted"}}
+{"id":3983,"seq":"s42-8","x_req":3597,"hipotesis":"tras HALT;1 cambiado: ¿cómo responde el servicio? ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":503,"response":{"error":"E599","mensaje":"service halted"}}
+{"id":3984,"seq":"s42-8","x_req":null,"hipotesis":"tras HALT;1: GET /health","request":null,"status":200,"response":{"ok":true},"method":"GET","path":"/health","auth":"ok"}
+{"id":3985,"seq":"s42-8","x_req":null,"hipotesis":"reset: tras HALT cambiado, ¿repara?","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":3986,"seq":"s42-8","x_req":3598,"hipotesis":"tras reset: ¿PING normal?","request":{"m":"PING;64"},"status":200,"response":{"pong":true}}
+{"id":3987,"seq":"sHALT-1","x_req":null,"hipotesis":"reset: inicio de secuencia","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":3988,"seq":"sHALT-1","x_req":3599,"hipotesis":"HALT;1: respuesta exacta del comando oculto","request":null,"status":400,"response":{"error":"E100","mensaje":"json inválido"}}
+{"id":3989,"seq":"sHALT-1","x_req":null,"hipotesis":"reset: fin de secuencia","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":3990,"seq":"sHALT-1","x_req":null,"hipotesis":"reset: inicio de secuencia","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":3991,"seq":"sHALT-1","x_req":3600,"hipotesis":"HALT;1: respuesta exacta del comando oculto","request":{"m":"HALT;1;19"},"status":503,"response":{"error":"E599","mensaje":"service halted"}}
+{"id":3992,"seq":"sHALT-1","x_req":null,"hipotesis":"reset: fin de secuencia","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":3993,"seq":"sHALT-2","x_req":null,"hipotesis":"reset: inicio de secuencia","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":3994,"seq":"sHALT-2","x_req":3601,"hipotesis":"HALT;0: activa halted?","request":{"m":"HALT;0;22"},"status":409,"response":{"error":"E520","mensaje":"operación destructiva: detiene el servicio; reenvía con confirmación"}}
+{"id":3995,"seq":"sHALT-2","x_req":3602,"hipotesis":"verificar estado tras HALT;0: PING","request":{"m":"PING;64"},"status":200,"response":{"pong":true}}
+{"id":3996,"seq":"sHALT-2","x_req":null,"hipotesis":"reset: fin de secuencia","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":3997,"seq":"sHALT-2","x_req":null,"hipotesis":"reset: inicio de secuencia","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":3998,"seq":"sHALT-2","x_req":3603,"hipotesis":"HALT;2: activa halted?","request":{"m":"HALT;2;16"},"status":409,"response":{"error":"E520","mensaje":"operación destructiva: detiene el servicio; reenvía con confirmación"}}
+{"id":3999,"seq":"sHALT-2","x_req":3604,"hipotesis":"verificar estado tras HALT;2: PING","request":{"m":"PING;64"},"status":200,"response":{"pong":true}}
+{"id":4000,"seq":"sHALT-2","x_req":null,"hipotesis":"reset: fin de secuencia","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4001,"seq":"sHALT-2","x_req":null,"hipotesis":"reset: inicio de secuencia","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4002,"seq":"sHALT-2","x_req":3605,"hipotesis":"HALT;01: activa halted?","request":{"m":"HALT;01;14"},"status":409,"response":{"error":"E520","mensaje":"operación destructiva: detiene el servicio; reenvía con confirmación"}}
+{"id":4003,"seq":"sHALT-2","x_req":3606,"hipotesis":"verificar estado tras HALT;01: PING","request":{"m":"PING;64"},"status":200,"response":{"pong":true}}
+{"id":4004,"seq":"sHALT-2","x_req":null,"hipotesis":"reset: fin de secuencia","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4005,"seq":"sHALT-2","x_req":null,"hipotesis":"reset: inicio de secuencia","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4006,"seq":"sHALT-2","x_req":3607,"hipotesis":"HALT;true: activa halted?","request":{"m":"HALT;true;81"},"status":409,"response":{"error":"E520","mensaje":"operación destructiva: detiene el servicio; reenvía con confirmación"}}
+{"id":4007,"seq":"sHALT-2","x_req":3608,"hipotesis":"verificar estado tras HALT;true: PING","request":{"m":"PING;64"},"status":200,"response":{"pong":true}}
+{"id":4008,"seq":"sHALT-2","x_req":null,"hipotesis":"reset: fin de secuencia","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4009,"seq":"sHALT-2","x_req":null,"hipotesis":"reset: inicio de secuencia","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4010,"seq":"sHALT-2","x_req":3609,"hipotesis":"HALT;si: activa halted?","request":{"m":"HALT;si;49"},"status":409,"response":{"error":"E520","mensaje":"operación destructiva: detiene el servicio; reenvía con confirmación"}}
+{"id":4011,"seq":"sHALT-2","x_req":3610,"hipotesis":"verificar estado tras HALT;si: PING","request":{"m":"PING;64"},"status":200,"response":{"pong":true}}
+{"id":4012,"seq":"sHALT-2","x_req":null,"hipotesis":"reset: fin de secuencia","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4013,"seq":"sHALT-2","x_req":null,"hipotesis":"reset: inicio de secuencia","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4014,"seq":"sHALT-2","x_req":3611,"hipotesis":"HALT;confirmar: activa halted?","request":{"m":"HALT;confirmar;80"},"status":409,"response":{"error":"E520","mensaje":"operación destructiva: detiene el servicio; reenvía con confirmación"}}
+{"id":4015,"seq":"sHALT-2","x_req":3612,"hipotesis":"verificar estado tras HALT;confirmar: PING","request":{"m":"PING;64"},"status":200,"response":{"pong":true}}
+{"id":4016,"seq":"sHALT-2","x_req":null,"hipotesis":"reset: fin de secuencia","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4017,"seq":"sHALT-2","x_req":null,"hipotesis":"reset: inicio de secuencia","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4018,"seq":"sHALT-2","x_req":3613,"hipotesis":"HALT;ok: activa halted?","request":{"m":"HALT;ok;75"},"status":409,"response":{"error":"E520","mensaje":"operación destructiva: detiene el servicio; reenvía con confirmación"}}
+{"id":4019,"seq":"sHALT-2","x_req":3614,"hipotesis":"verificar estado tras HALT;ok: PING","request":{"m":"PING;64"},"status":200,"response":{"pong":true}}
+{"id":4020,"seq":"sHALT-2","x_req":null,"hipotesis":"reset: fin de secuencia","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4021,"seq":"sHALT-2","x_req":null,"hipotesis":"reset: inicio de secuencia","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4022,"seq":"sHALT-2","x_req":3615,"hipotesis":"HALT;yes: activa halted?","request":{"m":"HALT;yes;69"},"status":409,"response":{"error":"E520","mensaje":"operación destructiva: detiene el servicio; reenvía con confirmación"}}
+{"id":4023,"seq":"sHALT-2","x_req":3616,"hipotesis":"verificar estado tras HALT;yes: PING","request":{"m":"PING;64"},"status":200,"response":{"pong":true}}
+{"id":4024,"seq":"sHALT-2","x_req":null,"hipotesis":"reset: fin de secuencia","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4025,"seq":"sHALT-3","x_req":null,"hipotesis":"reset: inicio de secuencia","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4026,"seq":"sHALT-3","x_req":3617,"hipotesis":"HALT;1: poner en estado halted","request":{"m":"HALT;1;19"},"status":503,"response":{"error":"E599","mensaje":"service halted"}}
+{"id":4027,"seq":"sHALT-3","x_req":3618,"hipotesis":"halted: PING;64","request":{"m":"PING;64"},"status":503,"response":{"error":"E599","mensaje":"service halted"}}
+{"id":4028,"seq":"sHALT-3","x_req":3619,"hipotesis":"halted: comando desconocido SALDO;AC-0001;64","request":{"m":"SALDO;AC-0001;64"},"status":503,"response":{"error":"E599","mensaje":"service halted"}}
+{"id":4029,"seq":"sHALT-3","x_req":3620,"hipotesis":"halted: JSON invalido","request":"{bad json","status":503,"response":{"error":"E599","mensaje":"service halted"},"content_type":null}
+{"id":4030,"seq":"sHALT-3","x_req":3621,"hipotesis":"halted: control incorrecto PING;99","request":{"m":"PING;99"},"status":503,"response":{"error":"E599","mensaje":"service halted"}}
+{"id":4031,"seq":"sHALT-3","x_req":3622,"hipotesis":"halted: HALT;1 otra vez","request":{"m":"HALT;1;19"},"status":503,"response":{"error":"E599","mensaje":"service halted"}}
+{"id":4032,"seq":"sHALT-3","x_req":null,"hipotesis":"halted: POST /msg sin token","request":{"m":"PING;64"},"status":401,"response":{"error":"E001","mensaje":"no autorizado"},"method":"POST","path":"/msg","auth":"none"}
+{"id":4033,"seq":"sHALT-3","x_req":null,"hipotesis":"halted: ruta inexistente","request":null,"status":404,"response":{"error":"E404","mensaje":"ruta desconocida"},"method":"GET","path":"/inventada","auth":"ok"}
+{"id":4034,"seq":"sHALT-3","x_req":null,"hipotesis":"halted: GET /health","request":null,"status":200,"response":{"ok":true},"method":"GET","path":"/health","auth":"ok"}
+{"id":4035,"seq":"sHALT-3","x_req":null,"hipotesis":"reset: fin de secuencia","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4036,"seq":"sHALT-4","x_req":null,"hipotesis":"reset: inicio de secuencia","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4037,"seq":"sHALT-4","x_req":3623,"hipotesis":"ALTA para prueba de persistencia","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4038,"seq":"sHALT-4","x_req":3624,"hipotesis":"DEPOSITO para prueba de persistencia","request":{"m":"DEPOSITO;AC-0001;100;82"},"status":200,"response":{"status":"recieved","operacionId":"OP-0001"}}
+{"id":4039,"seq":"sHALT-4","x_req":3625,"hipotesis":"HALT;1: poner en halted","request":{"m":"HALT;1;19"},"status":503,"response":{"error":"E599","mensaje":"service halted"}}
+{"id":4040,"seq":"sHALT-4","x_req":null,"hipotesis":"reset: volver al estado inicial","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4041,"seq":"sHALT-4","x_req":3626,"hipotesis":"CONSULTA tras reset post-HALT: persistio?","request":{"m":"CONSULTA;AC-0001;14"},"status":404,"response":{"error":"E401","mensaje":"cuenta inexistente"}}
+{"id":4042,"seq":"sHALT-4","x_req":null,"hipotesis":"reset: fin de secuencia","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}

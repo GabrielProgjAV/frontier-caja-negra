@@ -179,8 +179,14 @@ Comprobación rápida: subir en 1 el último dígito de `AC-000N` baja el contro
 |---|---|---|---|
 | HAL-1 | HALT existe. Se descubrió por la `sugerencia` de `HELP`, y responde E302/E520 en lugar de E301. | 540, 612, 613, 617 | confirmado |
 | HAL-2 | Sin argumentos → E302, así que su aridad es 1. No distingue mayúsculas. | 613, 617 | confirmado |
-| HAL-3 | `HALT;x` → `409 {"error":"E520","mensaje":"operación destructiva: detiene el servicio; reenvía con confirmación"}`. **Probado solo con el argumento `x`** (612); no se probaron otros argumentos ni se probarán. No cambia el estado y el servicio sigue respondiendo después. | 612, 614, 615, 616 | probable |
-| HAL-4 | Con otros argumentos, o con una "confirmación", HALT no se probó, a propósito, por ser destructivo. El reemplazo responde E520 a cualquier argumento. | — | supuesto |
+| HAL-3 | `HALT;1` → `503 {"error":"E599","mensaje":"service halted"}` y **pone el token en estado halted**. | 3980, 3991 | confirmado |
+| HAL-3b | `HALT;<arg>` con cualquier argumento distinto de `1` (probados: `0`, `2`, `01`, `true`, `si`, `confirmar`, `ok`, `yes`) → `409 E520` y **no** cambia el estado. | 3976, 3994–4023 | confirmado |
+| HAL-4 | En estado halted, `POST /msg` autenticado responde `503 E599` sin importar el contenido (JSON inválido, control incorrecto, comando desconocido, HALT;1 repetido). | 3981–3983, 4027–4031 | confirmado |
+| HAL-5 | En estado halted, `POST /msg` sin token → `401 E001`: la autenticación se evalúa antes que el halt. | 4032 | confirmado |
+| HAL-6 | En estado halted, ruta inexistente → `404 E404`: la ruta se evalúa antes que el halt. | 4033 | confirmado |
+| HAL-7 | En estado halted, `GET /health` → `200 {"ok":true}`. | 3984, 4034 | confirmado |
+| HAL-8 | En estado halted, `POST /__reset` → `200 {"ok":true}` y **restaura el estado normal**, incluido el flag `halted`. | 3985, 4039–4040, 4042 | confirmado |
+| HAL-9 | El estado halted persiste entre requests y es parte del estado del token; solo `HALT;1` lo activa y solo `POST /__reset` lo desactiva. | 4037–4042 | confirmado |
 
 ## 4. Memoria entre requests
 | ID | Comportamiento | Evidencia | Confianza |
@@ -193,6 +199,7 @@ Comprobación rápida: subir en 1 el último dígito de `AC-000N` baja el contro
 | MEM-5 | Los saldos reflejan todas las operaciones válidas no anuladas. Los errores no cambian el estado. | 9, 20, 475, 484, 494 | confirmado |
 | MEM-6 | `X-Req` cuenta los `POST /msg` autenticados (incluidos los que dan 400) y no se reinicia con `/__reset`. Viene vacío en `/__reset`, `/health`, 404 y 401. | 21–31, 36, 52, 53 | confirmado |
 | MEM-7 | No hay dependencia del ritmo ni detección de duplicados: la misma secuencia de 10 pasos a 8,2 req/s y a 2 req/s da respuestas idénticas, y un DEPOSITO o una TRANSFER repetidos exactamente crean una operación nueva cada vez. | 3909–3918, 3920–3929 | confirmado |
+| MEM-8 | El servicio tiene un estado `halted` por token. Solo `HALT;1` lo activa; `POST /__reset` lo desactiva. Mientras está activo, `POST /msg` autenticado responde `503 E599`. | 3980–3986, 4026–4042 | confirmado |
 
 ## 5. Errores
 Todas las respuestas de error son JSON `{"error":"<código>","mensaje":"<texto>"}`, con el cuerpo exacto de la última columna (con tildes, y con el espacio final de E301). **Orden de evaluación: se recorre la tabla de arriba abajo y gana la primera regla que aplica**; la columna Orden da la posición (`O<n>`). Las reglas que comparten posición no compiten entre sí: pertenecen a comandos distintos o son excluyentes (por ejemplo un control es mal formado o es un número, nunca las dos cosas).
@@ -210,13 +217,14 @@ Todas las respuestas de error son JSON `{"error":"<código>","mensaje":"<texto>"
 | ERR-9 | Control inválido: el control es numérico pero no coincide con el calculado (2.1). Incluye ceros a la izquierda (`03`). No se evalúa para `PING`. | 3, 41–43, 51, 809 | confirmado | O9 | 400 | `{"error":"E202","mensaje":"control inválido"}` |
 | ERR-10 | Comando desconocido. Si el nombre está a distancia de Levenshtein ≤ 2 de un comando, la respuesta añade `"sugerencia":"<COMANDO>"` con el más cercano y, en empate, el primero alfabético (CMD-1a, CMD-1a2). | 13, 47, 48, 50, 539, 540, 589–604, 3592–3610 | confirmado | O10 | 400 | `{"error":"E301","mensaje":"comando desconocido "}` (con el espacio final; más `"sugerencia"` opcional) |
 | ERR-11 | Aridad inválida: el número de argumentos (segmentos entre el comando y el control) no es el del comando: PING 0, ALTA 1, CONSULTA 1, DEPOSITO 2, TRANSFER 3, ANULA 1, HALT 1. | 21, 499–504, 514, 613, 617 | confirmado | O11 | 400 | `{"error":"E302","mensaje":"aridad inválida"}` |
-| ERR-12 | Operación destructiva: `HALT` con un argumento. Como solo HALT produce E520, su posición frente a E303–E507 no se puede observar; el reemplazo lo responde sin mirar el argumento (HAL-3, HAL-4). | 612 | probable | O12 | 409 | `{"error":"E520","mensaje":"operación destructiva: detiene el servicio; reenvía con confirmación"}` |
+| ERR-12 | Operación destructiva: `HALT` con un argumento distinto de `1`. `HALT;1` no usa este error; produce E599 (ERR-19). | 3976, 3994–4023 | confirmado | O12 | 409 | `{"error":"E520","mensaje":"operación destructiva: detiene el servicio; reenvía con confirmación"}` |
 | ERR-13 | Monto inválido: en DEPOSITO y TRANSFER, el monto no cumple `^[1-9][0-9]{0,9}$`. | 476–483, 492, 493, 515, 517, 646, 767–773, 814 | confirmado | O13 | 400 | `{"error":"E303","mensaje":"monto inválido"}` |
 | ERR-14 | Origen y destino iguales: TRANSFER con la misma cuenta en ambos lados (aunque no exista). | 487, 516, 518 | confirmado | O14 | 400 | `{"error":"E304","mensaje":"origen y destino iguales"}` |
 | ERR-15 | Cuenta inexistente: CONSULTA, DEPOSITO o TRANSFER con un id de cuenta que no existe (comparación exacta). Si faltan origen y destino a la vez la respuesta es la misma, así que no importa cuál se evalúe primero. | 16, 488, 489, 490 | confirmado | O15 | 404 | `{"error":"E401","mensaje":"cuenta inexistente"}` |
 | ERR-16 | Operación inexistente: ANULA con un id que no es una operación del estado actual (incluye ids de cuenta y de operaciones borradas por el reset). Comparte la posición O15 con E401 porque son comandos distintos. | 497, 498, 639, 640, 2487, 2488, 2491, 2492 | confirmado | O15 | 404 | `{"error":"E402","mensaje":"operación inexistente"}` |
 | ERR-17 | Límite excedido: TRANSFER de más de 100000 entre cuentas con nombres de titular distintos (TRA-5, TRA-7). | 10, 486, 491, 1917, 1931, 1983 | confirmado | O16 | 422 | `{"error":"E506","mensaje":"límite excedido"}` |
 | ERR-18 | Saldo insuficiente: el saldo del origen es menor que el monto. | 17, 627, 630, 1942, 1978 | confirmado | O17 | 422 | `{"error":"E507","mensaje":"saldo insuficiente"}` |
+| ERR-19 | Servicio detenido: el token está en estado `halted`. Se evalúa después de la autenticación (O2) y antes del tamaño del cuerpo (O3). Solo afecta a `POST /msg`. | 3980–3983, 4026–4031 | confirmado | O2b | 503 | `{"error":"E599","mensaje":"service halted"}` |
 
 ### Pruebas de orden
 Cada fila dice qué error ganó cuando se provocaron los dos a la vez.

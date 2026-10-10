@@ -1,0 +1,4 @@
+[
+  {"hipotesis":"HALT;1: respuesta exacta del comando oculto","body":{"m":"HALT;1;19"}},
+  {"hipotesis":"reset: fin de secuencia","path":"/__reset"}
+]
