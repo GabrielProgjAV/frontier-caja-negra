@@ -22,9 +22,10 @@ const ERRORS: Record<string, [number, string]> = {
   E402: [404, 'operación inexistente'],
   E506: [422, 'límite excedido'],
   E507: [422, 'saldo insuficiente'],
+  E520: [409, 'operación destructiva: detiene el servicio; reenvía con confirmación'],
 };
 // Arguments between the command and the control.
-const ARITY: Record<string, number> = { PING: 0, ALTA: 1, CONSULTA: 1, DEPOSITO: 2, TRANSFER: 3, ANULA: 1 };
+const ARITY: Record<string, number> = { PING: 0, ALTA: 1, CONSULTA: 1, DEPOSITO: 2, TRANSFER: 3, ANULA: 1, HALT: 1 };
 const LIMITE_TRANSFER = 100000; // 100000 ok, 100001 E506 (485, 486)
 
 const fail = (state: State, code: string, extra?: object): Result =>
@@ -35,8 +36,7 @@ const nextId = (prefix: string, o: object) => prefix + String(Object.keys(o).len
 const monto = (s: string) => (/^[1-9]\d*$/.test(s) && Number.isSafeInteger(Number(s)) ? Number(s) : null);
 
 // Suggestion = first known command within Levenshtein 2 (47, 48, 539-604: all 80 E301 lines fit).
-// HALT is hidden: only revealed by HELP -> sugerencia HALT (540). TODO: its behavior when executed (s9+).
-const SUGERIBLES = [...Object.keys(ARITY), 'HALT'];
+const SUGERIBLES = Object.keys(ARITY);
 function suggest(cmd: string) {
   const dist = (a: string, b: string) => {
     let row = Array.from({ length: b.length + 1 }, (_, j) => j);
@@ -73,6 +73,8 @@ export function handle(prev: State, raw: string): Result {
   const ok = (status: number, body: unknown): Result => ({ state, status, body });
 
   switch (cmd) {
+    case 'HALT': // hidden command (540, 612, 613, 617): any single argument asks for confirmation, never executes
+      return fail(prev, 'E520');
     case 'PING':
       return ok(200, { pong: true });
     case 'ALTA': {

@@ -3,6 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "start": "node src/server.ts",
     "probe": "node --env-file=.env probe/send.ts",
     "test": "node --test",
     "typecheck": "tsc --noEmit"
@@ -10,5 +11,8 @@
   "devDependencies": {
     "@types/node": "^24.19.2",
     "typescript": "^7.0.2"
+  },
+  "engines": {
+    "node": ">=24"
   }
 }

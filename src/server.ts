@@ -13,9 +13,9 @@ const reply = (res: ServerResponse, status: number, body: unknown) => {
 export const server = createServer(async (req, res) => {
   const route = `${req.method} ${new URL(req.url ?? '/', 'http://x').pathname}`;
   if (!['GET /health', 'POST /__reset', 'POST /msg'].includes(route)) return reply(res, 404, { error: 'E404', mensaje: 'ruta desconocida' });
-  if (route === 'GET /health') return reply(res, 200, { ok: true }); // supuesto: no auth needed (only probed with auth, 23)
   const token = process.env.TEAM_TOKEN;
   if (!token || req.headers.authorization !== `Bearer ${token}`) return reply(res, 401, { error: 'E001', mensaje: 'no autorizado' });
+  if (route === 'GET /health') return reply(res, 200, { ok: true }); // needs token too (648)
   if (route === 'POST /__reset') { state = initialState(); return reply(res, 200, { ok: true }); }
   req.setEncoding('utf8');
   let raw = '';
@@ -28,5 +28,5 @@ export const server = createServer(async (req, res) => {
 if (import.meta.main) {
   if (!process.env.TEAM_TOKEN) throw new Error('TEAM_TOKEN missing');
   const port = Number(process.env.PORT ?? 3000);
-  server.listen(port, () => console.log(`listening on ${port}`));
+  server.listen(port, '0.0.0.0', () => console.log(`listening on ${port}`));
 }
