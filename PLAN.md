@@ -45,9 +45,9 @@ Estados: `todo` · `doing` · `done` · `blocked`.
 | 5 | s7: límites de comandos (montos, límite E506, misma cuenta, ANULA de depósito o de operación inexistente, aridad por comando, nombres) | sesión 1 | done | 12:06 |
 | 6 | Orden de errores restante. Completo: s7 + s8 (orden en SPEC §5) | sesión 1 | done | 12:16 |
 | 7 | Comandos ocultos (mirar el campo `sugerencia`) | sesión 1 | doing | 12:14 |
-| 8 | `src/core/state.ts` + `handle.ts` (núcleo puro, orden de validación de HANDOFF.md) | sesión 2 | todo | |
-| 9 | `src/server.ts` (`node:http`, autenticación con `TEAM_TOKEN`, `/health`, `/__reset`, 404) | sesión 2 | todo | |
-| 10 | `probe/diff.ts`: reproducir el log contra el reemplazo local, % por comando | sesión 2 | todo | |
+| 8 | `src/core/state.ts` + `handle.ts` (núcleo puro, orden de validación de HANDOFF.md) | sesión 2 | done (falta HALT: solo sugerencia) | 12:18 |
+| 9 | `src/server.ts` (`node:http`, autenticación con `TEAM_TOKEN`, `/health`, `/__reset`, 404) | sesión 2 | done (/health sin auth = supuesto) | 12:18 |
+| 10 | `probe/diff.ts`: reproducir el log contra el reemplazo local, % por comando | sesión 2 | done: ejemplos 20/20, experimentos 610/610 (100%) hasta id 604 | 12:18 |
 | 11 | Desplegar en Render y comprobar `/health` en la URL pública | sesión 2 | todo | |
 | 12 | Ejecución 1 del set oculto (~15:30) | sesión 2 | todo | |
 | 13 | `probe/drift.ts`: canaria contra el original (cada ~1 h) | sesión 1 | todo | |
