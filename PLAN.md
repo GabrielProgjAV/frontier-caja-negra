@@ -5,7 +5,7 @@
 > **Solo UN agente prueba el original a la vez**, porque el token comparte estado y presupuesto. Antes de
 > probar, apúntate en "Sonda activa" y libérala al terminar.
 
-**Sonda activa:** libre (desde 12:06)
+**Sonda activa:** sesión 1 (s8 orden, s9 comandos ocultos, s10 memoria, s11 drift), desde 12:14
 
 ## Entregables para las 20:00
 | Entregable | Formato exacto | Fuente |
@@ -44,7 +44,7 @@ Estados: `todo` · `doing` · `done` · `blocked`.
 | 4 | `HANDOFF.md` + push | sesión 1 | done | 12:00 |
 | 5 | s7: límites de comandos (montos, límite E506, misma cuenta, ANULA de depósito o de operación inexistente, aridad por comando, nombres) | sesión 1 | done | 12:06 |
 | 6 | Orden de errores restante (E104 frente a E201/E202, E302 frente a E401, E506 frente a E507, E401 origen frente a destino). Hecho en s7; faltan E303 frente a E302/E401 y E304 frente a E401 | sesión 1 | doing | 12:06 |
-| 7 | Comandos ocultos (mirar el campo `sugerencia`) | sesión 1 | todo | |
+| 7 | Comandos ocultos (mirar el campo `sugerencia`) | sesión 1 | doing | 12:14 |
 | 8 | `src/core/state.ts` + `handle.ts` (núcleo puro, orden de validación de HANDOFF.md) | sesión 2 | todo | |
 | 9 | `src/server.ts` (`node:http`, autenticación con `TEAM_TOKEN`, `/health`, `/__reset`, 404) | sesión 2 | todo | |
 | 10 | `probe/diff.ts`: reproducir el log contra el reemplazo local, % por comando | sesión 2 | todo | |
