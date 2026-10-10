@@ -1,6 +1,6 @@
 {
-  "nota": "Versiones del original para probe/diff.ts. frontera = primer id de experimentos.jsonl grabado contra v2 (PLAN.md). null = la v2 aún no está activa (aclaración del organizador ~15:45): todo el log es v1. Se rellena cuando llegue el aviso V2 ACTIVA. superseded = ids v1 de experimentos.jsonl cuyo comportamiento cambió en v2 (números o rangos \"a-b\"); incluir también líneas v1 posteriores de la misma seq que dependan del estado que cambió. superseded_ejemplos = ids de pruebas/ejemplos.jsonl que cambiaron en v2.",
-  "frontera": null,
+  "nota": "Versiones del original para probe/diff.ts. frontera = primer id de experimentos.jsonl grabado contra v2 (PLAN.md). v2 detectada por canary-loop a las 16:16: X-Req volvió a 1 en el id 5560. superseded = ids v1 de experimentos.jsonl cuyo comportamiento cambió en v2 (números o rangos \"a-b\"); incluir también líneas v1 posteriores de la misma seq que dependan del estado que cambió. superseded_ejemplos = ids de pruebas/ejemplos.jsonl que cambiaron en v2.",
+  "frontera": 5554,
   "superseded": [],
   "superseded_ejemplos": []
 }
