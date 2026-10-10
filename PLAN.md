@@ -5,7 +5,7 @@
 > **Solo UN agente prueba el original a la vez**, porque el token comparte estado y presupuesto. Antes de
 > probar, apúntate en "Sonda activa" y libérala al terminar.
 
-**Sonda activa:** libre (14:35)
+**Sonda activa:** libre (15:10)
 
 ## Entregables para las 20:00
 | Entregable | Formato exacto | Fuente |
@@ -82,10 +82,10 @@ Cambios exactos en `src/` derivados de sondas (ids T*, distintos de los B* de "E
 |---|---|---|---|---|
 | T1 | (resuelve B8 de "Estado del builder") CMD-1a2 / CMD-1c: la `sugerencia` de E301 es **el comando más cercano (Levenshtein ≤ 2) y, en empate, el primero en orden alfabético**, no "el primero de la lista a distancia ≤ 2". | En `src/core/handle.ts`, `suggest()`: reemplazar `return SUGERIBLES.find((k) => dist(cmd, k) <= 2);` por `let best: string \| undefined, bd = 3; for (const k of [...SUGERIBLES].sort()) { const d = dist(cmd, k); if (d < bd) { bd = d; best = k; } } return best;` (orden alfabético + comparación estricta `<` = en empate gana el primero alfabético). Actualizar el comentario de la función. | `diff.ts` hoy falla exactamente en 3592–3606 (15 líneas); con el cambio deben pasar las 146 respuestas E301 del log (comprobado con un modelo equivalente). | hecho (d682941): diff 3950/3950 antes del log de halted; 3592–3606 pasan |
 | T2 | Estado `halted`: `HALT;1` pone el token en estado halted (503 E599). En ese estado, `POST /msg` autenticado responde 503 E599 sin importar el cuerpo. `HALT` con arg ≠ 1 sigue dando 409 E520. `POST /__reset` limpia el estado (incluido halted). `GET /health` funciona normal. Sin token o ruta inexistente se evalúan antes (401/404). | 1) `src/core/state.ts`: añadir `halted: false` a `initialState()` y al tipo `State`. 2) `src/server.ts`: después de validar ruta y auth, si `req.method==='POST' && pathname==='/msg'` y `state.halted===true`, devolver inmediatamente 503 `{"error":"E599","mensaje":"service halted"}` (antes de mirar tamaño/JSON). 3) `src/core/handle.ts`: `HALT;1` devuelve `state` con `halted: true` y status 503 cuerpo E599; `HALT` con arg ≠ 1 devuelve E520 (sin cambiar `halted`). 4) `POST /__reset` en `server.ts` debe poner `halted: false` al reiniciar. | `node probe/diff.ts` debe seguir al 100 % (las secuencias antiguas no usan HALT;1). Validar con las secuencias sHALT-3 y sHALT-4 grabadas en el log. | hecho (074a0c0): diff 4042/4042, npm test 5/5, tsc limpio |
-| T3 | Control de 3 o más dígitos (`050`, `100`, `10000000000`) → `400 E201` (control mal formado), no E202. El regex del control debe ser `/^\d{1,2}$/` en lugar de `/^\d+$/`. | En `src/core/handle.ts`, línea del control: reemplazar `if (!/^\d+$/.test(c))` por `if (!/^\d{1,2}$/.test(c))`. | `node probe/diff.ts` debe seguir al 100 %; `node --env-file=.env probe/remote-diff.ts experimentos.jsonl --sample 400` también. Validar con las sondas sCTRL y las secuencias del syntax-fuzz. | pendiente |
+| T3 | Control de 3 o más dígitos (`050`, `100`, `10000000000`) → `400 E201` (control mal formado), no E202. El regex del control debe ser `/^\d{1,2}$/` en lugar de `/^\d+$/`. | En `src/core/handle.ts`, línea del control: reemplazar `if (!/^\d+$/.test(c))` por `if (!/^\d{1,2}$/.test(c))`. | `node probe/diff.ts` debe seguir al 100 %; `node --env-file=.env probe/remote-diff.ts experimentos.jsonl --sample 400` también. Validar con las sondas sCTRL y las secuencias del syntax-fuzz. | hecho (a94810b): diff 20/20, remote-diff ejemplos 20/20, sample 390/399 (9 fallos de cold-start Render, no de comportamiento) |
 
 ## Presupuesto
-4042 de 8000 requests usadas (14:35). Fuente de verdad: `probe/budget.json`.
+4552 de 8000 requests usadas (15:10). Fuente de verdad: `probe/budget.json`.
 
 **Supuestos para que sesión 1 los confirme:**
 - E101 cuenta **bytes** (`Buffer.byteLength`), no caracteres; se probó solo con ASCII. Falta un cuerpo > 8192 bytes con caracteres multibyte pero < 8192 caracteres.
@@ -93,8 +93,21 @@ Cambios exactos en `src/` derivados de sondas (ids T*, distintos de los B* de "E
 - `HALT` con cualquier argumento da E520 incluso con cuenta/argumento inválido.
 
 ## Estado del builder (14:30)
-T1 (d682941), B1 (d682941) y T2 (074a0c0) hechos y en master (Render redespliega). `node probe/diff.ts`: ejemplos 20/20,
+T1 (d682941), B1 (d682941), T2 (074a0c0) y T3 (a94810b) hechos y en master (Render redespliega). `node probe/diff.ts`: ejemplos 20/20,
 experimentos 4042/4042 (100 %); `npm test` 5/5; `tsc --noEmit` limpio. Sin tareas pendientes.
+
+**Hallazgos parciales del syntax-fuzz (probe/syntax-fuzz.ts):**
+- 184 mutaciones de sintaxis sobre 7 comandos + variantes JSON/raw, 454 requests (ids 4043-4546).
+- **1 patrón distinto encontrado:** control con 3+ dígitos → `E201` (control mal formado), no `E202` (12 diffs, resuelto por T3).
+- 0 setup-mismatches (las secuencias de setup coincidieron con handle() local).
+- Todas las demás mutaciones coincidieron con el reemplazo: espacios/tabs en comando/args, mayúsculas/minúsculas mezcladas, aridad errónea, separadores dobles, IDs variantes (ac-0001, AC-1, AC-00001), montos variantes (+5, 5.0, 05, 1_000, espacios), caracteres especiales en nombre (comillas, backslash, emoji, \n), JSON inválido/vacío/null/array/string/root, raw bodies, BOM, duplicados de `m`.
+- **Lo que NO se probó todavía y podría explicar los 16 fallos restantes del set oculto:**
+  - Segmento vacío en posición del comando (`;64`, `;ALTA;x;cc`) → E104 (supuesto B3, sin evidencia).
+  - Rutas con doble barra (`//msg`, `//x/msg`) → comportamiento del `new URL(req.url)` en server.ts (B10).
+  - Cuerpo > 8192 bytes con caracteres multibyte (cuenta bytes vs caracteres, ENT-14).
+  - Caracteres no ASCII en el nombre del comando (CMD-0b, supuesto).
+  - Control `0`, `1` o `99` (INT-4b: 0 y 1 solo vistos rechazados con E202; 99 no se probó).
+  - UTF-8 inválido, BOM interno, JSON con clave `m` numérica (B9).
 
 **Revisión de `src/core/handle.ts` y `src/server.ts` contra el log** (script de auditoría que reproduce el log con `handle()`
 y cuenta las líneas por rama). Ids de `experimentos.jsonl`.
