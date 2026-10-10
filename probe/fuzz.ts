@@ -27,7 +27,8 @@ const pick = <T,>(xs: T[]): T => xs[int(xs.length)];
 const pad = (p: string, n: number) => p + String(n).padStart(4, '0');
 const NAMES = ['Ana', 'Beto', 'Lucia', 'Mateo', 'Juan Perez', 'Zoe', '123', 'Ñandú'];
 const AMOUNTS = ['1', '50', '700', '1000', '99999', '100000', '100001', '120000', '250000', '0', '-5', '10.5', '0100', '1e3', 'abc', '+100', '99999999999999999999'];
-const TYPOS = ['PIGN', 'DEPOSITOS', 'TRANSFE', 'CONSULTAR', 'ANULAR', 'HELP', 'HALT', 'SALDOS', 'RETIRO', 'X'];
+// HALT is never sent: it is destructive and already characterized (SPEC HAL-*). HELP is safe (E301 + sugerencia HALT).
+const TYPOS = ['PIGN', 'DEPOSITOS', 'TRANSFE', 'CONSULTAR', 'ANULAR', 'HELP', 'SALDOS', 'RETIRO', 'X'];
 
 // A message is a list of segments, the control is appended afterwards.
 function account(st: State) {
@@ -69,6 +70,7 @@ function step(st: State): string {
     }
   }
   const payload = parts.join(';');
+  if (/^halt$/i.test(parts[0].trim())) throw new Error('refusing to send HALT to the original');
   const c = control(payload);
   return `${payload};${validControl ? c : c === 98 ? 1 : c + 1}`;
 }
