@@ -8,7 +8,8 @@ Los cuerpos se escriben exactos. Todos los textos van en español y con tildes.
 | ID | Comportamiento | Evidencia | Confianza |
 |---|---|---|---|
 | ENT-1 | `POST /msg` con cuerpo JSON `{"m":"<segmentos separados por ;>"}`. El último segmento es el dígito de control. | 2–21 | confirmado |
-| ENT-2 | `GET /health` → `200 {"ok":true}` | 23 | probable |
+| ENT-2 | `GET /health` con token → `200 {"ok":true}`. Sin token → `401 E001`. | 23, 648 | confirmado |
+| ENT-2b | `POST /__reset` sin token → `401 E001` y no reinicia el estado. | 649, 650 | confirmado |
 | ENT-3 | `POST /__reset` → `200 {"ok":true}`. Vuelve al estado inicial: sin cuentas ni operaciones, y los contadores empiezan otra vez en `AC-0001` y `OP-0001`. | 1, 22, 44, 461, 472 | confirmado |
 | ENT-4 | Cualquier otra ruta o método, incluidos `GET /` y `GET /msg`, → `404 {"error":"E404","mensaje":"ruta desconocida"}` | 24, 25, 26 | confirmado |
 | ENT-5 | Autenticación con `Authorization: Bearer <token>`. Sin token o con un token desconocido → `401 {"error":"E001","mensaje":"no autorizado"}` | 27, 28 | confirmado |
@@ -53,14 +54,15 @@ Los cuerpos se escriben exactos. Todos los textos van en español y con tildes.
 |---|---|---|---|
 | ALTA-1 | Crea una cuenta con saldo 0 → `201 {"cuentaId":"AC-NNNN"}`: secuencial, empieza en 0001 tras el reset, 4 dígitos con ceros a la izquierda. | 4, 5, 6, 44, 461, 462, 472, 473 | confirmado |
 | ALTA-2 | Acepta nombres con espacios, numéricos, de 200 caracteres y no ASCII. | 469, 506, 507, 508 | confirmado |
-| ALTA-3 | Nombre vacío (`ALTA;;c`) → E104. Dos argumentos → E302. | 505, 21 | confirmado |
+| ALTA-3 | Nombre vacío (`ALTA;;c`) → E104. Dos argumentos → E302. | 505, 21, 621, 622 | confirmado |
+| ALTA-4 | Los nombres pueden repetirse: un `ALTA;Ana` duplicado crea otra cuenta. | 619, 620 | confirmado |
 
 ### CONSULTA;cuenta (1 argumento)
 | ID | Comportamiento | Evidencia | Confianza |
 |---|---|---|---|
 | CON-1 | → `200 {"cuenta_id":"AC-NNNN","saldo":N}`. Ojo: la clave es `cuenta_id`, no `cuentaId`. | 6, 9, 12, 20 | confirmado |
 | CON-2 | Cuenta inexistente → `404 {"error":"E401","mensaje":"cuenta inexistente"}` | 16, 467 | confirmado |
-| CON-3 | El id de cuenta distingue mayúsculas: `ac-0002` → E401 aunque exista `AC-0002`. | 468 | probable |
+| CON-3 | Los ids de cuenta se comparan de forma exacta en todos los comandos: distinguen mayúsculas, no se recortan espacios y no se rellenan ceros. `ac-0001`, ` AC-0001`, `AC-0001 ` y `AC-1` → E401. | 468, 641, 642, 643, 644, 645 | confirmado |
 
 ### DEPOSITO;cuenta;monto (2 argumentos)
 | ID | Comportamiento | Evidencia | Confianza |
@@ -68,6 +70,8 @@ Los cuerpos se escriben exactos. Todos los textos van en español y con tildes.
 | DEP-1 | Suma el monto al saldo → `200 {"status":"recieved","operacionId":"OP-NNNN"}`, con `recieved` mal escrito tal cual. | 7, 19, 20, 463, 474, 475 | confirmado |
 | DEP-2 | El monto debe ser un entero > 0, solo dígitos y sin ceros a la izquierda. Si no → `400 {"error":"E303","mensaje":"monto inválido"}`, sin efecto sobre el saldo. Falla con: `0`, `-100`, `10.5`, `0100`, `1e3`, 20 dígitos, `abc`, `" 100"`. | 476–484 | confirmado |
 | DEP-3 | Los depósitos no tienen límite: 500000 se aceptó. | 474 | probable |
+| DEP-4 | Cuenta inexistente con monto válido → `404 E401`. Con monto inválido gana E303. | 626, 515 | confirmado |
+| DEP-5 | El monto con signo `+` → E303: solo se aceptan dígitos. | 646 | probable |
 
 ### TRANSFER;origen;destino;monto (3 argumentos)
 | ID | Comportamiento | Evidencia | Confianza |
@@ -77,15 +81,16 @@ Los cuerpos se escriben exactos. Todos los textos van en español y con tildes.
 | TRA-3 | Origen igual a destino → `400 {"error":"E304","mensaje":"origen y destino iguales"}` | 487, 516, 518 | confirmado |
 | TRA-4 | Origen o destino inexistente → `404 E401` | 488, 489, 490 | confirmado |
 | TRA-5 | Límite por operación de 100000, inclusivo. Más → `422 {"error":"E506","mensaje":"límite excedido"}`. No es acumulado. | 10, 11, 485, 486 | confirmado |
-| TRA-6 | Saldo del origen menor que el monto → `422 {"error":"E507","mensaje":"saldo insuficiente"}` | 17 | probable |
+| TRA-6 | Saldo del origen menor que el monto → `422 {"error":"E507","mensaje":"saldo insuficiente"}`. Transferir exactamente el saldo está permitido (`saldo >= monto`). | 17, 627, 629, 630 | confirmado |
 
 ### ANULA;operacion (1 argumento)
 | ID | Comportamiento | Evidencia | Confianza |
 |---|---|---|---|
 | ANU-1 | Revierte la operación → `200 {"ok":true,"anulada":"OP-NNNN"}`. En una transferencia, devuelve el monto al origen y lo quita del destino. | 14, 17, 465, 466 | confirmado |
-| ANU-2 | Anular otra vez → `200 {"ok":false,"motivo":"ya anulada"}`. Ojo: status 200. | 15 | probable |
-| ANU-3 | Se puede anular un depósito aunque el saldo ya se haya gastado: el saldo queda **negativo**. | 495, 496 | confirmado |
-| ANU-4 | Operación inexistente o id mal formado → `404 {"error":"E402","mensaje":"operación inexistente"}` | 497, 498 | confirmado |
+| ANU-2 | Anular otra vez → `200 {"ok":false,"motivo":"ya anulada"}`. Ojo: status 200. | 15, 638 | confirmado |
+| ANU-3 | Se puede anular un depósito aunque el saldo ya se haya gastado: el saldo queda **negativo**. | 495, 496, 631, 632 | confirmado |
+| ANU-3b | Se puede anular una transferencia aunque el destino ya haya gastado el monto: el destino queda **negativo** y el origen recupera el monto. No se comprueba el saldo al anular. | 635, 636, 637 | confirmado |
+| ANU-4 | Operación inexistente o id mal formado → `404 {"error":"E402","mensaje":"operación inexistente"}`. El id se compara de forma exacta: `op-0001` y `OP-1` → E402. | 497, 498, 639, 640 | confirmado |
 
 ### HALT;x (1 argumento, comando oculto)
 | ID | Comportamiento | Evidencia | Confianza |
@@ -100,8 +105,8 @@ Los cuerpos se escriben exactos. Todos los textos van en español y con tildes.
 |---|---|---|---|
 | MEM-1 | El servicio guarda las cuentas (id y saldo), las operaciones (tipo, cuentas, monto y si están anuladas) y dos contadores, AC y OP. | 2–21 | confirmado |
 | MEM-2 | Los contadores AC y OP son independientes y `/__reset` los reinicia. | 44, 461, 472, 474 | confirmado |
-| MEM-3 | Una operación que falla (E506) no consume número de OP. | 10, 11 | probable |
-| MEM-4 | El estado de anulación se recuerda: la segunda ANULA da `ok:false`. | 14, 15 | probable |
+| MEM-3 | Solo los éxitos consumen números. Las operaciones que fallan (E303, E401, E506, E507) no consumen número de OP. ANULA no genera ni consume número de OP. Las ALTA que fallan (E104, E302) no consumen número de AC. | 10, 11, 621–628, 633 | confirmado |
+| MEM-4 | El estado de anulación se recuerda: la segunda ANULA da `ok:false`. | 14, 15, 635, 638 | confirmado |
 | MEM-5 | Los saldos reflejan todas las operaciones válidas no anuladas. Los errores no cambian el estado. | 9, 20, 475, 484, 494 | confirmado |
 | MEM-6 | `X-Req` cuenta los `POST /msg` autenticados (incluidos los que dan 400) y no se reinicia con `/__reset`. Viene vacío en `/__reset`, `/health`, 404 y 401. | 21–31, 36, 52, 53 | confirmado |
 
@@ -152,7 +157,7 @@ E101 no se ha observado: `m` no string da E102.
 ## 7. Riesgos
 | ID | Riesgo | Evidencia | Confianza | Cómo cerrarlo |
 |---|---|---|---|---|
-| RIE-1 | ANULA de un depósito ya gastado deja el saldo negativo. | 495, 496 | confirmado | Rechazar la anulación si deja saldo < 0, o solo permitir anular operaciones sin consumo posterior. |
+| RIE-1 | ANULA de un depósito ya gastado, o de una transferencia cuyo destino ya gastó, deja saldos negativos. | 495, 496, 632, 637 | confirmado | Rechazar la anulación si deja saldo < 0, o solo permitir anular operaciones sin consumo posterior. |
 | RIE-2 | El dígito de control es un checksum público (MOD 97‑10), no una firma: cualquiera puede generar mensajes válidos. | 461–470 | confirmado | Usar HMAC con una clave secreta por cliente. |
 | RIE-3 | `PING` no valida el control. | 458, 459 | confirmado | Validar todos los comandos por igual. |
 | RIE-4 | Los ids de cuenta y de operación son secuenciales y se pueden enumerar. Además, E401/E402 revelan si un id existe. | 4, 5, 16, 497 | confirmado | Usar ids aleatorios (UUID) y una respuesta uniforme. |

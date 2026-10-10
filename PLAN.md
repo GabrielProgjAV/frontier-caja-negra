@@ -59,4 +59,4 @@ Estados: `todo` · `doing` · `done` · `blocked`.
 | 19 | Repo público + push final + entrega en `/evento` antes de las 19:40 | humano | todo | |
 
 ## Presupuesto
-617 de 8000 requests usadas (12:18). Fuente de verdad: `probe/budget.json`.
+650 de 8000 requests usadas (12:20). Fuente de verdad: `probe/budget.json`.
