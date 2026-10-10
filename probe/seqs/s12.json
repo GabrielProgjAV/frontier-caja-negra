@@ -1,0 +1,259 @@
+[
+ {
+  "hipotesis": "drift 12:20: replay ejemplo n=1: igual que la version de la manana",
+  "body": {
+   "m": "PING;64"
+  },
+  "expect": {
+   "status": 200,
+   "response": {
+    "pong": true
+   }
+  }
+ },
+ {
+  "hipotesis": "drift 12:20: replay ejemplo n=2: igual que la version de la manana",
+  "body": {
+   "m": "ALTA;Lucia;83"
+  },
+  "expect": {
+   "status": 400,
+   "response": {
+    "error": "E202",
+    "mensaje": "control inválido"
+   }
+  }
+ },
+ {
+  "hipotesis": "drift 12:20: replay ejemplo n=3: igual que la version de la manana",
+  "body": {
+   "m": "ALTA;Lucia;82"
+  },
+  "expect": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0001"
+   }
+  }
+ },
+ {
+  "hipotesis": "drift 12:20: replay ejemplo n=4: igual que la version de la manana",
+  "body": {
+   "m": "ALTA;Mateo;3"
+  },
+  "expect": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0002"
+   }
+  }
+ },
+ {
+  "hipotesis": "drift 12:20: replay ejemplo n=5: igual que la version de la manana",
+  "body": {
+   "m": "CONSULTA;AC-0001;14"
+  },
+  "expect": {
+   "status": 200,
+   "response": {
+    "cuenta_id": "AC-0001",
+    "saldo": 0
+   }
+  }
+ },
+ {
+  "hipotesis": "drift 12:20: replay ejemplo n=6: igual que la version de la manana",
+  "body": {
+   "m": "DEPOSITO;AC-0001;250000;86"
+  },
+  "expect": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0001"
+   }
+  }
+ },
+ {
+  "hipotesis": "drift 12:20: replay ejemplo n=7: igual que la version de la manana",
+  "body": {
+   "m": "TRANSFER;AC-0001;AC-0002;40000;86"
+  },
+  "expect": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0002"
+   }
+  }
+ },
+ {
+  "hipotesis": "drift 12:20: replay ejemplo n=8: igual que la version de la manana",
+  "body": {
+   "m": "CONSULTA;AC-0002;11"
+  },
+  "expect": {
+   "status": 200,
+   "response": {
+    "cuenta_id": "AC-0002",
+    "saldo": 40000
+   }
+  }
+ },
+ {
+  "hipotesis": "drift 12:20: replay ejemplo n=9: igual que la version de la manana",
+  "body": {
+   "m": "TRANSFER;AC-0001;AC-0002;120000;55"
+  },
+  "expect": {
+   "status": 422,
+   "response": {
+    "error": "E506",
+    "mensaje": "límite excedido"
+   }
+  }
+ },
+ {
+  "hipotesis": "drift 12:20: replay ejemplo n=10: igual que la version de la manana",
+  "body": {
+   "m": "TRANSFER;AC-0001;AC-0002;100000;12"
+  },
+  "expect": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0003"
+   }
+  }
+ },
+ {
+  "hipotesis": "drift 12:20: replay ejemplo n=11: igual que la version de la manana",
+  "body": {
+   "m": "CONSULTa;AC-0001;14"
+  },
+  "expect": {
+   "status": 200,
+   "response": {
+    "cuenta_id": "AC-0001",
+    "saldo": 110000
+   }
+  }
+ },
+ {
+  "hipotesis": "drift 12:20: replay ejemplo n=12: igual que la version de la manana",
+  "body": {
+   "m": "SALDOS;AC-0001;38"
+  },
+  "expect": {
+   "status": 400,
+   "response": {
+    "error": "E301",
+    "mensaje": "comando desconocido "
+   }
+  }
+ },
+ {
+  "hipotesis": "drift 12:20: replay ejemplo n=13: igual que la version de la manana",
+  "body": {
+   "m": "ANULA;OP-0003;66"
+  },
+  "expect": {
+   "status": 200,
+   "response": {
+    "ok": true,
+    "anulada": "OP-0003"
+   }
+  }
+ },
+ {
+  "hipotesis": "drift 12:20: replay ejemplo n=14: igual que la version de la manana",
+  "body": {
+   "m": "ANULA;OP-0003;66"
+  },
+  "expect": {
+   "status": 200,
+   "response": {
+    "ok": false,
+    "motivo": "ya anulada"
+   }
+  }
+ },
+ {
+  "hipotesis": "drift 12:20: replay ejemplo n=15: igual que la version de la manana",
+  "body": {
+   "m": "CONSULTA;AC-0009;87"
+  },
+  "expect": {
+   "status": 404,
+   "response": {
+    "error": "E401",
+    "mensaje": "cuenta inexistente"
+   }
+  }
+ },
+ {
+  "hipotesis": "drift 12:20: replay ejemplo n=16: igual que la version de la manana",
+  "body": {
+   "m": "TRANSFER;AC-0002;AC-0001;50000;23"
+  },
+  "expect": {
+   "status": 422,
+   "response": {
+    "error": "E507",
+    "mensaje": "saldo insuficiente"
+   }
+  }
+ },
+ {
+  "hipotesis": "drift 12:20: replay ejemplo n=17: igual que la version de la manana",
+  "body": {
+   "m": "DEPOSITO;AC-0002;700;5X"
+  },
+  "expect": {
+   "status": 400,
+   "response": {
+    "error": "E201",
+    "mensaje": "control mal formado"
+   }
+  }
+ },
+ {
+  "hipotesis": "drift 12:20: replay ejemplo n=18: igual que la version de la manana",
+  "body": {
+   "m": "DEPOSITO;AC-0002;700;35"
+  },
+  "expect": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0004"
+   }
+  }
+ },
+ {
+  "hipotesis": "drift 12:20: replay ejemplo n=19: igual que la version de la manana",
+  "body": {
+   "m": "CONSULTA;AC-0002;11"
+  },
+  "expect": {
+   "status": 200,
+   "response": {
+    "cuenta_id": "AC-0002",
+    "saldo": 40700
+   }
+  }
+ },
+ {
+  "hipotesis": "drift 12:20: replay ejemplo n=20: igual que la version de la manana",
+  "body": {
+   "m": "ALTA;Lucia;Gomez;11"
+  },
+  "expect": {
+   "status": 400,
+   "response": {
+    "error": "E302",
+    "mensaje": "aridad inválida"
+   }
+  }
+ }
+]

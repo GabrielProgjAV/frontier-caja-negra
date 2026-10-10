@@ -5,7 +5,7 @@
 > **Solo UN agente prueba el original a la vez**, porque el token comparte estado y presupuesto. Antes de
 > probar, apúntate en "Sonda activa" y libérala al terminar.
 
-**Sonda activa:** sesión 1 (s8 orden, s9 comandos ocultos, s10 memoria, s11 drift), desde 12:14
+**Sonda activa:** libre (desde 12:20)
 
 ## Entregables para las 20:00
 | Entregable | Formato exacto | Fuente |
@@ -50,7 +50,7 @@ Estados: `todo` · `doing` · `done` · `blocked`.
 | 10 | `probe/diff.ts`: reproducir el log contra el reemplazo local, % por comando | sesión 2 | done: ejemplos 20/20, experimentos 610/610 (100%) hasta id 604 | 12:18 |
 | 11 | Desplegar en Render y comprobar `/health` en la URL pública | sesión 2 | todo | |
 | 12 | Ejecución 1 del set oculto (~15:30) | sesión 2 | todo | |
-| 13 | `probe/drift.ts`: canaria contra el original (cada ~1 h) | sesión 1 | todo | |
+| 13 | `probe/drift.ts`: canaria contra el original (cada ~1 h). Drift manual s12 a las 12:20: sin cambios; falta el script | sesión 1 | todo | 12:20 |
 | 14 | Arreglos a partir de los resultados de la ejecución 1 y de diff | sesión 2 | todo | |
 | 15 | Ejecución 2 del set oculto (~18:00) | sesión 2 | todo | |
 | 16 | `SPEC.md`, las 7 secciones con evidencia (borrador creado; se actualiza tras cada bloque) | sesión 1 | doing | 12:16 |
@@ -59,4 +59,4 @@ Estados: `todo` · `doing` · `done` · `blocked`.
 | 19 | Repo público + push final + entrega en `/evento` antes de las 19:40 | humano | todo | |
 
 ## Presupuesto
-650 de 8000 requests usadas (12:20). Fuente de verdad: `probe/budget.json`.
+671 de 8000 requests usadas (12:20). Fuente de verdad: `probe/budget.json`.

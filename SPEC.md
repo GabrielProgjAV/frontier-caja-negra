@@ -153,6 +153,7 @@ E101 no se ha observado: `m` no string da E102.
 | ID | Comportamiento | Evidencia | Confianza |
 |---|---|---|---|
 | CAM-1 | A las ~10:30 (UTC-5), la repetición de los 20 ejemplos de la mañana dio respuestas idénticas. | 2–21 | confirmado |
+| CAM-2 | A las 12:20 (UTC-5), la segunda repetición de los 20 ejemplos también dio respuestas idénticas: sin cambios de versión hasta esa hora. | 652–671 | confirmado |
 
 ## 7. Riesgos
 | ID | Riesgo | Evidencia | Confianza | Cómo cerrarlo |
