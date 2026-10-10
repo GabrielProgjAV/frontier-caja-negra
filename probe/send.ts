@@ -20,6 +20,7 @@ export type Step = {
   auth?: Auth;
   body?: unknown; // sent as JSON
   raw?: string; // sent verbatim (for malformed bodies)
+  contentType?: string | null; // default application/json when there is a body; null = no header at all
   conclusion?: string;
   conclude?: (line: Record<string, unknown>) => string; // conclusion derived from the response
   expect?: { status: number; response: unknown };
@@ -47,13 +48,16 @@ export async function send(seq: string, s: Step) {
   if (auth === 'ok') headers.authorization = `Bearer ${TOKEN}`;
   if (auth === 'wrong') headers.authorization = 'Bearer wrong-token';
   const payload = s.raw ?? (s.body === undefined ? undefined : JSON.stringify(s.body));
-  if (payload !== undefined) headers['content-type'] = 'application/json';
+  const contentType = s.contentType === undefined ? 'application/json' : s.contentType;
+  if (payload !== undefined && contentType !== null) headers['content-type'] = contentType;
+  // fetch adds text/plain to string bodies; bytes keep the request without Content-Type
+  const fetchBody = payload !== undefined && contentType === null ? Buffer.from(payload) : payload;
 
   for (let tries = 0; ; tries++) {
     await sleep(Math.max(0, last + GAP_MS - Date.now()));
     last = Date.now();
     spend();
-    const res = await fetch(BASE + path, { method, headers, body: payload });
+    const res = await fetch(BASE + path, { method, headers, body: fetchBody });
     const text = await res.text();
     if (res.headers.get('x-frontier-infra') === 'rate-limit') {
       // infra, not the service: never logged as behavior
@@ -70,6 +74,7 @@ export async function send(seq: string, s: Step) {
       request: s.raw ?? s.body ?? null, status: res.status, response,
     };
     if (method !== 'POST' || path !== '/msg' || auth !== 'ok') Object.assign(line, { method, path, auth });
+    if (s.contentType !== undefined) line.content_type = s.contentType;
     const conclusion = s.conclusion ?? s.conclude?.(line);
     if (conclusion) line.conclusion = conclusion;
     appendFileSync(LOG, JSON.stringify(line) + '\n');

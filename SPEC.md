@@ -11,10 +11,17 @@ Los cuerpos se escriben exactos. Todos los textos van en español y con tildes.
 | ENT-2 | `GET /health` con token → `200 {"ok":true}`. Sin token → `401 E001`. | 23, 648 | confirmado |
 | ENT-2b | `POST /__reset` sin token → `401 E001` y no reinicia el estado. | 649, 650 | confirmado |
 | ENT-3 | `POST /__reset` → `200 {"ok":true}`. Vuelve al estado inicial: sin cuentas ni operaciones, y los contadores empiezan otra vez en `AC-0001` y `OP-0001`. | 1, 22, 44, 461, 472 | confirmado |
-| ENT-4 | Cualquier otra ruta o método, incluidos `GET /` y `GET /msg`, → `404 {"error":"E404","mensaje":"ruta desconocida"}` | 24, 25, 26 | confirmado |
+| ENT-4 | Solo existen `POST /msg`, `POST /__reset` y `GET /health`. Cualquier otra combinación de método y ruta (GET/PUT/DELETE/PATCH sobre /msg, GET/PUT/DELETE sobre /__reset, POST/PUT/DELETE sobre /health, `GET /`) → `404 {"error":"E404","mensaje":"ruta desconocida"}` | 24, 25, 26, 673–682 | confirmado |
+| ENT-4b | La ruta se compara de forma exacta: distingue mayúsculas (`/MSG`, `/HEALTH`) y no acepta barra final (`/msg/`, `/health/`) ni `//msg` → 404. | 684, 685, 688, 689, 690 | confirmado |
+| ENT-4c | La query string se ignora: `/msg?x=1` y `/health?x=1` funcionan normalmente. | 686, 687 | confirmado |
+| ENT-4d | `HEAD /health` → 404 con cuerpo vacío: HEAD no se trata como GET. | 691 | probable |
 | ENT-5 | Autenticación con `Authorization: Bearer <token>`. Sin token o con un token desconocido → `401 {"error":"E001","mensaje":"no autorizado"}` | 27, 28 | confirmado |
 | ENT-6 | La ruta se evalúa antes que la autenticación: una ruta desconocida sin token da 404, no 401. | 33, 34 | confirmado |
-| ENT-7 | La autenticación se evalúa antes que el parseo del JSON. | 35 | probable |
+| ENT-7 | La autenticación se evalúa antes que el tamaño y que el parseo del JSON. | 35, 727 | confirmado |
+| ENT-10 | Tamaño máximo del cuerpo: 8192 bytes. Con 8193 o más → `413 {"error":"E101","mensaje":"cuerpo demasiado grande"}`. Se evalúa después de la ruta (404) y de la autenticación (401), y antes del parseo del JSON (E100). Se probó solo con ASCII; que cuente bytes y no caracteres es una suposición. | 702, 703, 714–729 | confirmado |
+| ENT-11 | El Content-Type se ignora: el cuerpo se parsea como JSON aunque sea `text/plain` o falte. | 704, 705 | confirmado |
+| ENT-12 | Cuerpo vacío o sin cuerpo → E100. BOM al inicio → E100. Se aceptan espacios y saltos de línea alrededor del JSON. | 706, 707, 712, 713 | confirmado |
+| ENT-13 | JSON válido que no es un objeto con `m` string (`[]`, `null`, `"texto"`) → E102. Los campos extra se ignoran. Con la clave `m` duplicada gana la última. | 694, 708, 709, 710, 711 | confirmado |
 | ENT-8 | Cada token tiene su propio estado. | README | supuesto |
 | ENT-9 | Header de respuesta `X-Req`: contador numérico (ver MEM-6). Los headers no se califican. | 2–21, 36, 52 | confirmado |
 
@@ -23,13 +30,16 @@ Los cuerpos se escriben exactos. Todos los textos van en español y con tildes.
 |---|---|---|---|
 | INT-1 | Si `m` no tiene `;`, no hay control → `E103` | 31, 39 | confirmado |
 | INT-2 | Si hay un segmento vacío en cualquier posición, incluido el control → `E104`. Se evalúa antes que el control. | 40, 505, 509, 510, 511 | confirmado |
-| INT-3 | Control no numérico → `E201` | 18 | probable |
+| INT-3 | El control debe ser solo dígitos (`[0-9]+`): `5X`, `+14`, `14 ` y `14
+` → `E201`. No se recortan espacios. | 18, 701, 730, 731 | confirmado |
+| INT-3b | Un `;` final deja vacío el último segmento → E104. | 698, 699 | confirmado |
 | INT-4 | Algoritmo (ISO 7064 MOD 97‑10): se toma `m` sin su último segmento. Cada dígito cuenta como dígito y cada letra como su posición en el alfabeto, sin distinguir mayúsculas (A=1 … Z=26, en decimal). Todo lo demás (`;`, `-`, espacios, caracteres no ASCII) se ignora. Con la cadena resultante N, `control = 98 − (N·100 mod 97)`, en el rango 1–98. | 55–64, 146, 198, 234, 235, 334, 427, 457 | confirmado |
 | INT-5 | Predicción a ciegas: 10 de 10 mensajes nuevos aceptados. | 461–470 | confirmado |
 | INT-6 | El control se compara como texto: `03` no equivale a `3`. | 43 | probable |
 | INT-7 | Los espacios se ignoran en el control (pero no en el comando, ver CMD-0). | 47, 48 | probable |
 | INT-8 | Los caracteres no ASCII (`Ñ`, `ú`) se ignoran en el control. | 508 | probable |
-| INT-9 | `PING` no valida el control: cualquier control numérico da 200. | 2, 458, 459 | confirmado |
+| INT-9 | `PING` no valida el control, ni el valor ni el formato: `PING;0`, `PING;1`, `PING;5X`, `PING;64 ` y `PING;64
+` dan 200. Sí aplican E103 (falta `;`) y E104 (segmento vacío). | 2, 39, 40, 458, 459, 695, 696, 700 | confirmado |
 | INT-10 | El control se valida antes que el comando y que la aridad. | 41, 42, 50, 51 | confirmado |
 
 ## 3. Comandos
@@ -104,7 +114,7 @@ Los cuerpos se escriben exactos. Todos los textos van en español y con tildes.
 | ID | Comportamiento | Evidencia | Confianza |
 |---|---|---|---|
 | MEM-1 | El servicio guarda las cuentas (id y saldo), las operaciones (tipo, cuentas, monto y si están anuladas) y dos contadores, AC y OP. | 2–21 | confirmado |
-| MEM-2 | Los contadores AC y OP son independientes y `/__reset` los reinicia. | 44, 461, 472, 474 | confirmado |
+| MEM-2 | Los contadores AC y OP son independientes. `/__reset` los reinicia a 0001 y borra todo el estado anterior. | 44, 461, 472, 474, 733–742 | confirmado |
 | MEM-3 | Solo los éxitos consumen números. Las operaciones que fallan (E303, E401, E506, E507) no consumen número de OP. ANULA no genera ni consume número de OP. Las ALTA que fallan (E104, E302) no consumen número de AC. | 10, 11, 621–628, 633 | confirmado |
 | MEM-4 | El estado de anulación se recuerda: la segunda ANULA da `ok:false`. | 14, 15, 635, 638 | confirmado |
 | MEM-5 | Los saldos reflejan todas las operaciones válidas no anuladas. Los errores no cambian el estado. | 9, 20, 475, 484, 494 | confirmado |
@@ -117,24 +127,28 @@ Orden de evaluación: el primero que aplica gana.
 |---|---|---|---|---|---|---|
 | ERR-1 | 1 | 404 | `{"error":"E404","mensaje":"ruta desconocida"}` | ruta o método desconocido | 24–26, 33, 34 | confirmado |
 | ERR-2 | 2 | 401 | `{"error":"E001","mensaje":"no autorizado"}` | sin token o token inválido | 27, 28, 35 | confirmado |
-| ERR-3 | 3 | 400 | `{"error":"E100","mensaje":"json inválido"}` | el cuerpo no es JSON | 29 | probable |
-| ERR-4 | 4 | 400 | `{"error":"E102","mensaje":"falta m"}` | sin `m`, o `m` no es string | 30, 36, 37, 38 | confirmado |
-| ERR-5 | 5 | 400 | `{"error":"E103","mensaje":"falta control"}` | `m` sin `;` (incluido `""`) | 31, 39 | confirmado |
-| ERR-6 | 6 | 400 | `{"error":"E104","mensaje":"segmento vacío"}` | algún segmento vacío | 40, 505, 509, 510, 511 | confirmado |
-| ERR-7 | 7 | 400 | `{"error":"E201","mensaje":"control mal formado"}` | control no numérico | 18 | probable |
-| ERR-8 | 8 | 400 | `{"error":"E202","mensaje":"control inválido"}` | control incorrecto | 3, 41, 42, 43, 51 | confirmado |
-| ERR-9 | 9 | 400 | `{"error":"E301","mensaje":"comando desconocido "}` (+ `sugerencia` opcional) | comando desconocido | 13, 47, 48, 50 | confirmado |
-| ERR-10 | 10 | 400 | `{"error":"E302","mensaje":"aridad inválida"}` | número de argumentos incorrecto | 21, 499–504, 514 | confirmado |
-| ERR-11 | 11 | 400 | `{"error":"E303","mensaje":"monto inválido"}` | monto no entero positivo canónico | 476–483, 515, 517, 519 | confirmado |
-| ERR-12 | 12 | 400 | `{"error":"E304","mensaje":"origen y destino iguales"}` | TRANSFER a la misma cuenta | 487, 516, 518 | confirmado |
-| ERR-13 | 13 | 404 | `{"error":"E401","mensaje":"cuenta inexistente"}` | cuenta inexistente | 16, 488, 489, 490, 504 | confirmado |
-| ERR-14 | 13 | 404 | `{"error":"E402","mensaje":"operación inexistente"}` | ANULA de una operación inexistente | 497, 498 | confirmado |
+| ERR-2b | 3 | 413 | `{"error":"E101","mensaje":"cuerpo demasiado grande"}` | cuerpo > 8192 bytes | 702, 703, 716, 725, 728 | confirmado |
+| ERR-3 | 4 | 400 | `{"error":"E100","mensaje":"json inválido"}` | el cuerpo no es JSON: vacío, sin cuerpo o con BOM | 29, 706, 707, 712 | confirmado |
+| ERR-4 | 5 | 400 | `{"error":"E102","mensaje":"falta m"}` | sin `m`, o `m` no es string | 30, 36, 37, 38 | confirmado |
+| ERR-5 | 6 | 400 | `{"error":"E103","mensaje":"falta control"}` | `m` sin `;` (incluido `""`) | 31, 39 | confirmado |
+| ERR-6 | 7 | 400 | `{"error":"E104","mensaje":"segmento vacío"}` | algún segmento vacío | 40, 505, 509, 510, 511 | confirmado |
+| ERR-7 | 8 | 400 | `{"error":"E201","mensaje":"control mal formado"}` | control no numérico | 18 | probable |
+| ERR-8 | 9 | 400 | `{"error":"E202","mensaje":"control inválido"}` | control incorrecto | 3, 41, 42, 43, 51 | confirmado |
+| ERR-9 | 10 | 400 | `{"error":"E301","mensaje":"comando desconocido "}` (+ `sugerencia` opcional) | comando desconocido | 13, 47, 48, 50 | confirmado |
+| ERR-10 | 11 | 400 | `{"error":"E302","mensaje":"aridad inválida"}` | número de argumentos incorrecto | 21, 499–504, 514 | confirmado |
+| ERR-11 | 12 | 400 | `{"error":"E303","mensaje":"monto inválido"}` | monto no entero positivo canónico | 476–483, 515, 517, 519 | confirmado |
+| ERR-12 | 13 | 400 | `{"error":"E304","mensaje":"origen y destino iguales"}` | TRANSFER a la misma cuenta | 487, 516, 518 | confirmado |
+| ERR-13 | 14 | 404 | `{"error":"E401","mensaje":"cuenta inexistente"}` | cuenta inexistente | 16, 488, 489, 490, 504 | confirmado |
+| ERR-14 | 14 | 404 | `{"error":"E402","mensaje":"operación inexistente"}` | ANULA de una operación inexistente | 497, 498 | confirmado |
 | ERR-14b | — | 409 | `{"error":"E520","mensaje":"operación destructiva: detiene el servicio; reenvía con confirmación"}` | HALT con 1 argumento | 612 | confirmado (orden frente a E4xx/E5xx sin probar) |
-| ERR-15 | 14 | 422 | `{"error":"E506","mensaje":"límite excedido"}` | TRANSFER > 100000 | 10, 486, 491 | confirmado |
-| ERR-16 | 15 | 422 | `{"error":"E507","mensaje":"saldo insuficiente"}` | saldo < monto | 17 | probable |
+| ERR-15 | 15 | 422 | `{"error":"E506","mensaje":"límite excedido"}` | TRANSFER > 100000 | 10, 486, 491 | confirmado |
+| ERR-16 | 16 | 422 | `{"error":"E507","mensaje":"saldo insuficiente"}` | saldo < monto | 17 | probable |
 
 Pruebas de orden:
-- E404 > E001: 33, 34.
+- E404 > E001: 33, 34, 683.
+- E404 > E101: 729.
+- E001 > E101: 727.
+- E101 > E100: 728.
 - E001 > E100: 35.
 - E104 > E201 y E202: 510, 511.
 - E202 > E301 y E302: 41, 42, 51.
@@ -147,12 +161,13 @@ Pruebas de orden:
 - E401 > E506: 490.
 - E506 > E507: 491.
 
-E101 no se ha observado: `m` no string da E102.
+Con `m` no string se responde E102, no E101. E101 es el error de tamaño del cuerpo (413).
 
 ## 6. Cambios durante el día
 | ID | Comportamiento | Evidencia | Confianza |
 |---|---|---|---|
 | CAM-1 | A las ~10:30 (UTC-5), la repetición de los 20 ejemplos de la mañana dio respuestas idénticas. | 2–21 | confirmado |
+| CAM-3 | A las 12:26 (UTC-5), la tercera repetición de los 20 ejemplos dio respuestas idénticas. | 744–763 | confirmado |
 | CAM-2 | A las 12:20 (UTC-5), la segunda repetición de los 20 ejemplos también dio respuestas idénticas: sin cambios de versión hasta esa hora. | 652–671 | confirmado |
 
 ## 7. Riesgos
