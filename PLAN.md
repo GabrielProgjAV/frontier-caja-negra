@@ -81,3 +81,31 @@ Estados: `todo` · `doing` · `done` · `blocked`.
 - E101 cuenta **bytes** (`Buffer.byteLength`), no caracteres; se probó solo con ASCII. Falta un cuerpo > 8192 bytes con caracteres multibyte pero < 8192 caracteres.
 - Sugerencia de E301: primer comando conocido (orden PING, ALTA, CONSULTA, DEPOSITO, TRANSFER, ANULA, HALT) a distancia de Levenshtein <= 2; el orden decide empates.
 - `HALT` con cualquier argumento da E520 incluso con cuenta/argumento inválido.
+
+## Estado del builder (14:02)
+**TAREAS PARA BUILDER:** no hay sección en este archivo; sin tareas pendientes. Línea base en master `57ef5c4`+:
+`node probe/diff.ts` ejemplos 20/20 y experimentos 3577/3577 (100 %), `npm test` 3/3, `tsc --noEmit` limpio. Código sin cambios.
+
+**Revisión de `src/core/handle.ts` y `src/server.ts` contra el log** (script de auditoría que reproduce el log con `handle()`
+y cuenta las líneas por rama). Ids de `experimentos.jsonl`.
+
+| # | Supuesto del código | Evidencia en el log | Riesgo |
+|---|---|---|---|
+| B1 | **BUG.** `x in cuentas` / `ops[x]` aceptan claves de `Object.prototype`: `CONSULTA;constructor` → 200 `{"cuenta_id":"constructor"}`, `CONSULTA;__proto__` → 200 con `"saldo":{}`, `DEPOSITO;toString;5`, `TRANSFER;…;hasOwnProperty;5` y `ANULA;constructor` → 200 (y `ANULA` corrompe saldos con NaN). Lo esperable es E401/E402 | ninguna: ningún id del log usa esos nombres (todo E401/E402 visto son ids normales: 16, 498, 641, 832…) | medio: fuzz o tests ocultos con ids raros. **Propuesta de tarea:** usar `Object.hasOwn` (o `Object.create(null)` en `initialState`). Sin sondear: es seguro suponer E401/E402 |
+| B2 | `HALT` con 1 argumento cualquiera → E520 y no cambia el estado | **un solo** E520 (612, arg `x`); 0 args → E302 (613, 617); estado intacto solo por 614-615 | alto si hay un argumento de confirmación (`CONFIRMAR`, `SI`…): el mensaje dice "reenvía con confirmación". Sin probar: HALT con 2+ args, con control malo (el código da E202/E201) |
+| B3 | Segmento vacío en la posición del comando (`;64`, `;ALTA;x;cc`, `;`) → E104 | ninguna: E104 visto solo en idx 1, 2, 3 y en el control (40, 505, 509-511, 698, 699, 835, 859) | bajo-medio: podría ser E301 o E202 |
+| B4 | E101 cuenta bytes (`Buffer.byteLength`) | límite exacto 8192/8193 solo con ASCII (716-728); 0 cuerpos E101 con multibyte | bajo (ya en supuestos de arriba) |
+| B5 | Ids de cuenta `AC-%04d` a partir de AC-0010 | máximo visto AC-0007; el formato de 4 dígitos sí se vio en OP-0010+ (781-787) | bajo |
+| B6 | Control de 3+ dígitos (`064`, `100`) o dígitos no ASCII → E202/E201 por comparación de texto | 0 líneas no-PING con control de 3+ dígitos; `03`≠`3` sí (43) | bajo |
+| B7 | Letras no ASCII se ignoran en el checksum | solo `Ñ ú é É` (77 ALTA aceptadas, p. ej. 508, 981); otras (ü, ç, emoji) sin ver | bajo |
+| B8 | Sugerencia E301: primer comando en orden PING…HALT con Levenshtein ≤ 2 | 44 E301 con sugerencia, todas encajan; empates sin distinguir (pendiente AULA/ANLA, CMD-1a2) | bajo |
+| B9 | JSON con clave `m` duplicada (gana la última), BOM, UTF-8 inválido | ninguna | bajo |
+| B10 | `server.ts` usa `new URL(req.url)`: `//msg` → `/` (404 coincide con 690 por accidente) pero `//x/msg` daría ruta `/msg` | 690 solo; `//x/msg` sin ver | muy bajo |
+
+**Respaldados (para no re-sondear):** orden E303→E304→E401→E506→E507 (515-519, 516, 989, 491, 1602); E506 solo en
+TRANSFER (246 DEPOSITO > 100000 aceptados); `n == saldo` permitido (629, 1550, 2418; el comentario "not probed" en
+handle.ts:112 está desactualizado); tope de 10 dígitos en DEPOSITO y TRANSFER (769, 771, 814, 815); TRA-7 exacto (mayúsculas
+1988, espacios 1990); ANULA puede dejar saldos negativos en depósitos y transferencias (495, 635, 2482); los fallos y ANULA no
+consumen id de operación (11, 19, 485); DEPOSITO y TRANSFER comparten contador (19, 633); ALTA fallida no consume id (506, 623);
+nombres vacíos de espacios, largos, numéricos, duplicados aceptados (810, 506, 507, 620); rutas, métodos y variantes de
+Authorization (24-34, 673-691, 790-802).
