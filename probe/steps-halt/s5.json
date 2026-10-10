@@ -1,0 +1,7 @@
+[
+  {"hipotesis":"control de 2 digitos con cero: ALTA;Ana;05","body":{"m":"ALTA;Ana;05"}},
+  {"hipotesis":"control de 3 digitos sin cero: ALTA;Ana;100","body":{"m":"ALTA;Ana;100"}},
+  {"hipotesis":"control de 2 digitos correcto: ALTA;Ana;50","body":{"m":"ALTA;Ana;50"}},
+  {"hipotesis":"control de 3 digitos con ceros: ALTA;Ana;050","body":{"m":"ALTA;Ana;050"}},
+  {"hipotesis":"reset","path":"/__reset"}
+]

@@ -4040,3 +4040,513 @@
 {"id":4040,"seq":"sHALT-4","x_req":null,"hipotesis":"reset: volver al estado inicial","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
 {"id":4041,"seq":"sHALT-4","x_req":3626,"hipotesis":"CONSULTA tras reset post-HALT: persistio?","request":{"m":"CONSULTA;AC-0001;14"},"status":404,"response":{"error":"E401","mensaje":"cuenta inexistente"}}
 {"id":4042,"seq":"sHALT-4","x_req":null,"hipotesis":"reset: fin de secuencia","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4043,"seq":"syn-PING-spaces-1","x_req":null,"hipotesis":"reset for space-start","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4044,"seq":"syn-PING-spaces-1","x_req":3627,"hipotesis":"space-start:  PING;64","request":{"m":" PING;64"},"status":400,"response":{"error":"E301","mensaje":"comando desconocido ","sugerencia":"PING"}}
+{"id":4045,"seq":"syn-PING-spaces-2","x_req":null,"hipotesis":"reset for space-end","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4046,"seq":"syn-PING-spaces-2","x_req":3628,"hipotesis":"space-end: PING ;64","request":{"m":"PING ;64"},"status":400,"response":{"error":"E301","mensaje":"comando desconocido ","sugerencia":"PING"}}
+{"id":4047,"seq":"syn-PING-spaces-3","x_req":null,"hipotesis":"reset for space-before-sep","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4048,"seq":"syn-PING-spaces-3","x_req":3629,"hipotesis":"space-before-sep: PING ;64;64","request":{"m":"PING ;64;64"},"status":400,"response":{"error":"E202","mensaje":"control inválido"}}
+{"id":4049,"seq":"syn-PING-spaces-4","x_req":null,"hipotesis":"reset for space-after-sep","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4050,"seq":"syn-PING-spaces-4","x_req":3630,"hipotesis":"space-after-sep: PING; 64;64","request":{"m":"PING; 64;64"},"status":400,"response":{"error":"E302","mensaje":"aridad inválida"}}
+{"id":4051,"seq":"syn-PING-spaces-5","x_req":null,"hipotesis":"reset for space-after-control","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4052,"seq":"syn-PING-spaces-5","x_req":3631,"hipotesis":"space-after-control: PING;64 ;64","request":{"m":"PING;64 ;64"},"status":400,"response":{"error":"E302","mensaje":"aridad inválida"}}
+{"id":4053,"seq":"syn-PING-spaces-6","x_req":null,"hipotesis":"reset for tab-start","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4054,"seq":"syn-PING-spaces-6","x_req":3632,"hipotesis":"tab-start: \tPING;64","request":{"m":"\tPING;64"},"status":400,"response":{"error":"E301","mensaje":"comando desconocido ","sugerencia":"PING"}}
+{"id":4055,"seq":"syn-PING-spaces-7","x_req":null,"hipotesis":"reset for tab-end","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4056,"seq":"syn-PING-spaces-7","x_req":3633,"hipotesis":"tab-end: PING\t;64","request":{"m":"PING\t;64"},"status":400,"response":{"error":"E301","mensaje":"comando desconocido ","sugerencia":"PING"}}
+{"id":4057,"seq":"syn-PING-spaces-8","x_req":null,"hipotesis":"reset for tab-around-sep","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4058,"seq":"syn-PING-spaces-8","x_req":3634,"hipotesis":"tab-around-sep: PING\t;\t64;64","request":{"m":"PING\t;\t64;64"},"status":400,"response":{"error":"E202","mensaje":"control inválido"}}
+{"id":4059,"seq":"syn-PING-case-1","x_req":null,"hipotesis":"reset for lowercase","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4060,"seq":"syn-PING-case-1","x_req":3635,"hipotesis":"lowercase: ping;64","request":{"m":"ping;64"},"status":200,"response":{"pong":true}}
+{"id":4061,"seq":"syn-PING-case-2","x_req":null,"hipotesis":"reset for mixed","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4062,"seq":"syn-PING-case-2","x_req":3636,"hipotesis":"mixed: Ping;64","request":{"m":"Ping;64"},"status":200,"response":{"pong":true}}
+{"id":4063,"seq":"syn-PING-case-3","x_req":null,"hipotesis":"reset for pInG","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4064,"seq":"syn-PING-case-3","x_req":3637,"hipotesis":"pInG: pInG;64","request":{"m":"pInG;64"},"status":200,"response":{"pong":true}}
+{"id":4065,"seq":"syn-PING-control-1","x_req":null,"hipotesis":"reset for leading-zero","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4066,"seq":"syn-PING-control-1","x_req":3638,"hipotesis":"leading-zero: PING;064","request":{"m":"PING;064"},"status":200,"response":{"pong":true}}
+{"id":4067,"seq":"syn-PING-control-2","x_req":null,"hipotesis":"reset for leading-zeros-3","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4068,"seq":"syn-PING-control-2","x_req":3639,"hipotesis":"leading-zeros-3: PING;0064","request":{"m":"PING;0064"},"status":200,"response":{"pong":true}}
+{"id":4069,"seq":"syn-PING-control-3","x_req":null,"hipotesis":"reset for plus","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4070,"seq":"syn-PING-control-3","x_req":3640,"hipotesis":"plus: PING;+64","request":{"m":"PING;+64"},"status":200,"response":{"pong":true}}
+{"id":4071,"seq":"syn-PING-control-4","x_req":null,"hipotesis":"reset for space-before","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4072,"seq":"syn-PING-control-4","x_req":3641,"hipotesis":"space-before: PING; 64","request":{"m":"PING; 64"},"status":200,"response":{"pong":true}}
+{"id":4073,"seq":"syn-PING-control-5","x_req":null,"hipotesis":"reset for space-after","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4074,"seq":"syn-PING-control-5","x_req":3642,"hipotesis":"space-after: PING;64 ","request":{"m":"PING;64 "},"status":200,"response":{"pong":true}}
+{"id":4075,"seq":"syn-PING-control-6","x_req":null,"hipotesis":"reset for letter-suffix","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4076,"seq":"syn-PING-control-6","x_req":3643,"hipotesis":"letter-suffix: PING;64A","request":{"m":"PING;64A"},"status":200,"response":{"pong":true}}
+{"id":4077,"seq":"syn-PING-control-7","x_req":null,"hipotesis":"reset for empty","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4078,"seq":"syn-PING-control-7","x_req":3644,"hipotesis":"empty: PING;","request":{"m":"PING;"},"status":400,"response":{"error":"E104","mensaje":"segmento vacío"}}
+{"id":4079,"seq":"syn-PING-arity-1","x_req":null,"hipotesis":"reset for one-arg","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4080,"seq":"syn-PING-arity-1","x_req":3645,"hipotesis":"one-arg: PING;x;21","request":{"m":"PING;x;21"},"status":400,"response":{"error":"E302","mensaje":"aridad inválida"}}
+{"id":4081,"seq":"syn-PING-arity-2","x_req":null,"hipotesis":"reset for two-args","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4082,"seq":"syn-PING-arity-2","x_req":3646,"hipotesis":"two-args: PING;x;y;83","request":{"m":"PING;x;y;83"},"status":400,"response":{"error":"E302","mensaje":"aridad inválida"}}
+{"id":4083,"seq":"syn-PING-sep-1","x_req":null,"hipotesis":"reset for leading-sep","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4084,"seq":"syn-PING-sep-1","x_req":3647,"hipotesis":"leading-sep: ;PING;64","request":{"m":";PING;64"},"status":400,"response":{"error":"E104","mensaje":"segmento vacío"}}
+{"id":4085,"seq":"syn-PING-sep-2","x_req":null,"hipotesis":"reset for double-sep","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4086,"seq":"syn-PING-sep-2","x_req":3648,"hipotesis":"double-sep: PING;;64;64","request":{"m":"PING;;64;64"},"status":400,"response":{"error":"E104","mensaje":"segmento vacío"}}
+{"id":4087,"seq":"syn-PING-sep-3","x_req":null,"hipotesis":"reset for trailing-sep","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4088,"seq":"syn-PING-sep-3","x_req":3649,"hipotesis":"trailing-sep: PING;;64","request":{"m":"PING;;64"},"status":400,"response":{"error":"E104","mensaje":"segmento vacío"}}
+{"id":4089,"seq":"syn-ALTA-spaces-1","x_req":null,"hipotesis":"reset for space-start","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4090,"seq":"syn-ALTA-spaces-1","x_req":3650,"hipotesis":"space-start:  ALTA;Ana;50","request":{"m":" ALTA;Ana;50"},"status":400,"response":{"error":"E301","mensaje":"comando desconocido ","sugerencia":"ALTA"}}
+{"id":4091,"seq":"syn-ALTA-spaces-2","x_req":null,"hipotesis":"reset for space-end-cmd","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4092,"seq":"syn-ALTA-spaces-2","x_req":3651,"hipotesis":"space-end-cmd: ALTA ;Ana;85","request":{"m":"ALTA ;Ana;85"},"status":400,"response":{"error":"E202","mensaje":"control inválido"}}
+{"id":4093,"seq":"syn-ALTA-spaces-3","x_req":null,"hipotesis":"reset for space-start-arg","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4094,"seq":"syn-ALTA-spaces-3","x_req":3652,"hipotesis":"space-start-arg: ALTA; Ana;50","request":{"m":"ALTA; Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4095,"seq":"syn-ALTA-spaces-4","x_req":null,"hipotesis":"reset for space-end-arg","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4096,"seq":"syn-ALTA-spaces-4","x_req":3653,"hipotesis":"space-end-arg: ALTA;Ana ;50","request":{"m":"ALTA;Ana ;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4097,"seq":"syn-ALTA-spaces-5","x_req":null,"hipotesis":"reset for space-in-name","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4098,"seq":"syn-ALTA-spaces-5","x_req":3654,"hipotesis":"space-in-name: ALTA;Ana Maria;44","request":{"m":"ALTA;Ana Maria;44"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4099,"seq":"syn-ALTA-spaces-6","x_req":null,"hipotesis":"reset for tab-start","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4100,"seq":"syn-ALTA-spaces-6","x_req":3655,"hipotesis":"tab-start: \tALTA;Ana;50","request":{"m":"\tALTA;Ana;50"},"status":400,"response":{"error":"E301","mensaje":"comando desconocido ","sugerencia":"ALTA"}}
+{"id":4101,"seq":"syn-ALTA-case-1","x_req":null,"hipotesis":"reset for lowercase-cmd","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4102,"seq":"syn-ALTA-case-1","x_req":3656,"hipotesis":"lowercase-cmd: alta;Ana;50","request":{"m":"alta;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4103,"seq":"syn-ALTA-case-2","x_req":null,"hipotesis":"reset for mixed-cmd","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4104,"seq":"syn-ALTA-case-2","x_req":3657,"hipotesis":"mixed-cmd: AlTa;Ana;50","request":{"m":"AlTa;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4105,"seq":"syn-ALTA-case-3","x_req":null,"hipotesis":"reset for lowercase-arg","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4106,"seq":"syn-ALTA-case-3","x_req":3658,"hipotesis":"lowercase-arg: ALTA;ana;50","request":{"m":"ALTA;ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4107,"seq":"syn-ALTA-case-4","x_req":null,"hipotesis":"reset for uppercase-arg","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4108,"seq":"syn-ALTA-case-4","x_req":3659,"hipotesis":"uppercase-arg: ALTA;ANA;50","request":{"m":"ALTA;ANA;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4109,"seq":"syn-ALTA-empty-1","x_req":null,"hipotesis":"reset for empty-name","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4110,"seq":"syn-ALTA-empty-1","x_req":3660,"hipotesis":"empty-name: ALTA;;50","request":{"m":"ALTA;;50"},"status":400,"response":{"error":"E104","mensaje":"segmento vacío"}}
+{"id":4111,"seq":"syn-ALTA-special-1","x_req":null,"hipotesis":"reset for quote-in-name","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4112,"seq":"syn-ALTA-special-1","x_req":3661,"hipotesis":"quote-in-name: ALTA;An\"a;50","request":{"m":"ALTA;An\"a;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4113,"seq":"syn-ALTA-special-2","x_req":null,"hipotesis":"reset for backslash-name","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4114,"seq":"syn-ALTA-special-2","x_req":3662,"hipotesis":"backslash-name: ALTA;An\\a;50","request":{"m":"ALTA;An\\a;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4115,"seq":"syn-ALTA-special-3","x_req":null,"hipotesis":"reset for emoji-name","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4116,"seq":"syn-ALTA-special-3","x_req":3663,"hipotesis":"emoji-name: ALTA;Ana😀;50","request":{"m":"ALTA;Ana😀;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4117,"seq":"syn-ALTA-special-4","x_req":null,"hipotesis":"reset for newline-name","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4118,"seq":"syn-ALTA-special-4","x_req":3664,"hipotesis":"newline-name: ALTA;Ana\nMaria;44","request":{"m":"ALTA;Ana\nMaria;44"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4119,"seq":"syn-ALTA-arity-1","x_req":null,"hipotesis":"reset for no-args","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4120,"seq":"syn-ALTA-arity-1","x_req":3665,"hipotesis":"no-args: ALTA;50","request":{"m":"ALTA;50"},"status":400,"response":{"error":"E202","mensaje":"control inválido"}}
+{"id":4121,"seq":"syn-ALTA-arity-2","x_req":null,"hipotesis":"reset for two-args","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4122,"seq":"syn-ALTA-arity-2","x_req":3666,"hipotesis":"two-args: ALTA;Ana;extra;21","request":{"m":"ALTA;Ana;extra;21"},"status":400,"response":{"error":"E302","mensaje":"aridad inválida"}}
+{"id":4123,"seq":"syn-ALTA-arity-3","x_req":null,"hipotesis":"reset for three-args","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4124,"seq":"syn-ALTA-arity-3","x_req":3667,"hipotesis":"three-args: ALTA;Ana;b;c;79","request":{"m":"ALTA;Ana;b;c;79"},"status":400,"response":{"error":"E302","mensaje":"aridad inválida"}}
+{"id":4125,"seq":"syn-ALTA-sep-1","x_req":null,"hipotesis":"reset for leading-sep","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4126,"seq":"syn-ALTA-sep-1","x_req":3668,"hipotesis":"leading-sep: ;ALTA;Ana;50","request":{"m":";ALTA;Ana;50"},"status":400,"response":{"error":"E104","mensaje":"segmento vacío"}}
+{"id":4127,"seq":"syn-ALTA-sep-2","x_req":null,"hipotesis":"reset for double-sep","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4128,"seq":"syn-ALTA-sep-2","x_req":3669,"hipotesis":"double-sep: ALTA;;Ana;85","request":{"m":"ALTA;;Ana;85"},"status":400,"response":{"error":"E104","mensaje":"segmento vacío"}}
+{"id":4129,"seq":"syn-ALTA-sep-3","x_req":null,"hipotesis":"reset for double-sep-end","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4130,"seq":"syn-ALTA-sep-3","x_req":3670,"hipotesis":"double-sep-end: ALTA;Ana;;50;50","request":{"m":"ALTA;Ana;;50;50"},"status":400,"response":{"error":"E104","mensaje":"segmento vacío"}}
+{"id":4131,"seq":"syn-ALTA-sep-4","x_req":null,"hipotesis":"reset for trailing-sep","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4132,"seq":"syn-ALTA-sep-4","x_req":3671,"hipotesis":"trailing-sep: ALTA;Ana;;50","request":{"m":"ALTA;Ana;;50"},"status":400,"response":{"error":"E104","mensaje":"segmento vacío"}}
+{"id":4133,"seq":"syn-ALTA-control-1","x_req":null,"hipotesis":"reset for leading-zero","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4134,"seq":"syn-ALTA-control-1","x_req":3672,"hipotesis":"leading-zero: ALTA;Ana;050","request":{"m":"ALTA;Ana;050"},"status":400,"response":{"error":"E201","mensaje":"control mal formado"}}
+{"id":4135,"seq":"syn-ALTA-control-2","x_req":null,"hipotesis":"reset for space-before","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4136,"seq":"syn-ALTA-control-2","x_req":3673,"hipotesis":"space-before: ALTA;Ana; 50","request":{"m":"ALTA;Ana; 50"},"status":400,"response":{"error":"E201","mensaje":"control mal formado"}}
+{"id":4137,"seq":"syn-ALTA-control-3","x_req":null,"hipotesis":"reset for space-after","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4138,"seq":"syn-ALTA-control-3","x_req":3674,"hipotesis":"space-after: ALTA;Ana;50 ","request":{"m":"ALTA;Ana;50 "},"status":400,"response":{"error":"E201","mensaje":"control mal formado"}}
+{"id":4139,"seq":"syn-ALTA-control-4","x_req":null,"hipotesis":"reset for plus","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4140,"seq":"syn-ALTA-control-4","x_req":3675,"hipotesis":"plus: ALTA;Ana;+50","request":{"m":"ALTA;Ana;+50"},"status":400,"response":{"error":"E201","mensaje":"control mal formado"}}
+{"id":4141,"seq":"syn-CONSULTA-spaces-1","x_req":null,"hipotesis":"reset for space-start","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4142,"seq":"syn-CONSULTA-spaces-1","x_req":3676,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4143,"seq":"syn-CONSULTA-spaces-1","x_req":3677,"hipotesis":"space-start:  CONSULTA;AC-0001;14","request":{"m":" CONSULTA;AC-0001;14"},"status":400,"response":{"error":"E301","mensaje":"comando desconocido ","sugerencia":"CONSULTA"}}
+{"id":4144,"seq":"syn-CONSULTA-spaces-2","x_req":null,"hipotesis":"reset for space-end-cmd","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4145,"seq":"syn-CONSULTA-spaces-2","x_req":3678,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4146,"seq":"syn-CONSULTA-spaces-2","x_req":3679,"hipotesis":"space-end-cmd: CONSULTA ;AC-0001;11","request":{"m":"CONSULTA ;AC-0001;11"},"status":400,"response":{"error":"E202","mensaje":"control inválido"}}
+{"id":4147,"seq":"syn-CONSULTA-spaces-3","x_req":null,"hipotesis":"reset for space-start-arg","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4148,"seq":"syn-CONSULTA-spaces-3","x_req":3680,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4149,"seq":"syn-CONSULTA-spaces-3","x_req":3681,"hipotesis":"space-start-arg: CONSULTA; AC-0001;14","request":{"m":"CONSULTA; AC-0001;14"},"status":404,"response":{"error":"E401","mensaje":"cuenta inexistente"}}
+{"id":4150,"seq":"syn-CONSULTA-spaces-4","x_req":null,"hipotesis":"reset for space-end-arg","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4151,"seq":"syn-CONSULTA-spaces-4","x_req":3682,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4152,"seq":"syn-CONSULTA-spaces-4","x_req":3683,"hipotesis":"space-end-arg: CONSULTA;AC-0001 ;14","request":{"m":"CONSULTA;AC-0001 ;14"},"status":404,"response":{"error":"E401","mensaje":"cuenta inexistente"}}
+{"id":4153,"seq":"syn-CONSULTA-case-1","x_req":null,"hipotesis":"reset for lowercase-cmd","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4154,"seq":"syn-CONSULTA-case-1","x_req":3684,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4155,"seq":"syn-CONSULTA-case-1","x_req":3685,"hipotesis":"lowercase-cmd: consulta;AC-0001;14","request":{"m":"consulta;AC-0001;14"},"status":200,"response":{"cuenta_id":"AC-0001","saldo":0}}
+{"id":4156,"seq":"syn-CONSULTA-id-1","x_req":null,"hipotesis":"reset for lowercase-id","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4157,"seq":"syn-CONSULTA-id-1","x_req":3686,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4158,"seq":"syn-CONSULTA-id-1","x_req":3687,"hipotesis":"lowercase-id: CONSULTA;ac-0001;14","request":{"m":"CONSULTA;ac-0001;14"},"status":404,"response":{"error":"E401","mensaje":"cuenta inexistente"}}
+{"id":4159,"seq":"syn-CONSULTA-id-2","x_req":null,"hipotesis":"reset for short-id","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4160,"seq":"syn-CONSULTA-id-2","x_req":3688,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4161,"seq":"syn-CONSULTA-id-2","x_req":3689,"hipotesis":"short-id: CONSULTA;AC-1;5","request":{"m":"CONSULTA;AC-1;5"},"status":404,"response":{"error":"E401","mensaje":"cuenta inexistente"}}
+{"id":4162,"seq":"syn-CONSULTA-id-3","x_req":null,"hipotesis":"reset for leading-zero-id","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4163,"seq":"syn-CONSULTA-id-3","x_req":3690,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4164,"seq":"syn-CONSULTA-id-3","x_req":3691,"hipotesis":"leading-zero-id: CONSULTA;AC-01;68","request":{"m":"CONSULTA;AC-01;68"},"status":404,"response":{"error":"E401","mensaje":"cuenta inexistente"}}
+{"id":4165,"seq":"syn-CONSULTA-id-4","x_req":null,"hipotesis":"reset for long-id","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4166,"seq":"syn-CONSULTA-id-4","x_req":3692,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4167,"seq":"syn-CONSULTA-id-4","x_req":3693,"hipotesis":"long-id: CONSULTA;AC-00001;61","request":{"m":"CONSULTA;AC-00001;61"},"status":404,"response":{"error":"E401","mensaje":"cuenta inexistente"}}
+{"id":4168,"seq":"syn-CONSULTA-id-5","x_req":null,"hipotesis":"reset for no-dash-id","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4169,"seq":"syn-CONSULTA-id-5","x_req":3694,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4170,"seq":"syn-CONSULTA-id-5","x_req":3695,"hipotesis":"no-dash-id: CONSULTA;AC0001;14","request":{"m":"CONSULTA;AC0001;14"},"status":404,"response":{"error":"E401","mensaje":"cuenta inexistente"}}
+{"id":4171,"seq":"syn-CONSULTA-id-6","x_req":null,"hipotesis":"reset for space-before-id","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4172,"seq":"syn-CONSULTA-id-6","x_req":3696,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4173,"seq":"syn-CONSULTA-id-6","x_req":3697,"hipotesis":"space-before-id: CONSULTA; AC-0001;14","request":{"m":"CONSULTA; AC-0001;14"},"status":404,"response":{"error":"E401","mensaje":"cuenta inexistente"}}
+{"id":4174,"seq":"syn-CONSULTA-id-7","x_req":null,"hipotesis":"reset for space-after-id","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4175,"seq":"syn-CONSULTA-id-7","x_req":3698,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4176,"seq":"syn-CONSULTA-id-7","x_req":3699,"hipotesis":"space-after-id: CONSULTA;AC-0001 ;14","request":{"m":"CONSULTA;AC-0001 ;14"},"status":404,"response":{"error":"E401","mensaje":"cuenta inexistente"}}
+{"id":4177,"seq":"syn-CONSULTA-arity-1","x_req":null,"hipotesis":"reset for no-args","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4178,"seq":"syn-CONSULTA-arity-1","x_req":3700,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4179,"seq":"syn-CONSULTA-arity-1","x_req":3701,"hipotesis":"no-args: CONSULTA;14","request":{"m":"CONSULTA;14"},"status":400,"response":{"error":"E202","mensaje":"control inválido"}}
+{"id":4180,"seq":"syn-CONSULTA-arity-2","x_req":null,"hipotesis":"reset for two-args","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4181,"seq":"syn-CONSULTA-arity-2","x_req":3702,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4182,"seq":"syn-CONSULTA-arity-2","x_req":3703,"hipotesis":"two-args: CONSULTA;AC-0001;extra;15","request":{"m":"CONSULTA;AC-0001;extra;15"},"status":400,"response":{"error":"E302","mensaje":"aridad inválida"}}
+{"id":4183,"seq":"syn-CONSULTA-sep-1","x_req":null,"hipotesis":"reset for double-sep","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4184,"seq":"syn-CONSULTA-sep-1","x_req":3704,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4185,"seq":"syn-CONSULTA-sep-1","x_req":3705,"hipotesis":"double-sep: CONSULTA;;AC-0001;11","request":{"m":"CONSULTA;;AC-0001;11"},"status":400,"response":{"error":"E104","mensaje":"segmento vacío"}}
+{"id":4186,"seq":"syn-CONSULTA-sep-2","x_req":null,"hipotesis":"reset for trailing-sep","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4187,"seq":"syn-CONSULTA-sep-2","x_req":3706,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4188,"seq":"syn-CONSULTA-sep-2","x_req":3707,"hipotesis":"trailing-sep: CONSULTA;AC-0001;;14","request":{"m":"CONSULTA;AC-0001;;14"},"status":400,"response":{"error":"E104","mensaje":"segmento vacío"}}
+{"id":4189,"seq":"syn-CONSULTA-control-1","x_req":null,"hipotesis":"reset for leading-zero","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4190,"seq":"syn-CONSULTA-control-1","x_req":3708,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4191,"seq":"syn-CONSULTA-control-1","x_req":3709,"hipotesis":"leading-zero: CONSULTA;AC-0001;014","request":{"m":"CONSULTA;AC-0001;014"},"status":400,"response":{"error":"E201","mensaje":"control mal formado"}}
+{"id":4192,"seq":"syn-CONSULTA-control-2","x_req":null,"hipotesis":"reset for space-after","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4193,"seq":"syn-CONSULTA-control-2","x_req":3710,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4194,"seq":"syn-CONSULTA-control-2","x_req":3711,"hipotesis":"space-after: CONSULTA;AC-0001;14 ","request":{"m":"CONSULTA;AC-0001;14 "},"status":400,"response":{"error":"E201","mensaje":"control mal formado"}}
+{"id":4195,"seq":"syn-DEPOSITO-spaces-1","x_req":null,"hipotesis":"reset for space-start","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4196,"seq":"syn-DEPOSITO-spaces-1","x_req":3712,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4197,"seq":"syn-DEPOSITO-spaces-1","x_req":3713,"hipotesis":"space-start:  DEPOSITO;AC-0001;100;82","request":{"m":" DEPOSITO;AC-0001;100;82"},"status":400,"response":{"error":"E301","mensaje":"comando desconocido ","sugerencia":"DEPOSITO"}}
+{"id":4198,"seq":"syn-DEPOSITO-spaces-2","x_req":null,"hipotesis":"reset for space-end-cmd","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4199,"seq":"syn-DEPOSITO-spaces-2","x_req":3714,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4200,"seq":"syn-DEPOSITO-spaces-2","x_req":3715,"hipotesis":"space-end-cmd: DEPOSITO ;AC-0001;100;25","request":{"m":"DEPOSITO ;AC-0001;100;25"},"status":400,"response":{"error":"E202","mensaje":"control inválido"}}
+{"id":4201,"seq":"syn-DEPOSITO-spaces-3","x_req":null,"hipotesis":"reset for space-start-arg1","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4202,"seq":"syn-DEPOSITO-spaces-3","x_req":3716,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4203,"seq":"syn-DEPOSITO-spaces-3","x_req":3717,"hipotesis":"space-start-arg1: DEPOSITO; AC-0001;100;82","request":{"m":"DEPOSITO; AC-0001;100;82"},"status":404,"response":{"error":"E401","mensaje":"cuenta inexistente"}}
+{"id":4204,"seq":"syn-DEPOSITO-spaces-4","x_req":null,"hipotesis":"reset for space-end-arg1","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4205,"seq":"syn-DEPOSITO-spaces-4","x_req":3718,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4206,"seq":"syn-DEPOSITO-spaces-4","x_req":3719,"hipotesis":"space-end-arg1: DEPOSITO;AC-0001 ;100;82","request":{"m":"DEPOSITO;AC-0001 ;100;82"},"status":404,"response":{"error":"E401","mensaje":"cuenta inexistente"}}
+{"id":4207,"seq":"syn-DEPOSITO-spaces-5","x_req":null,"hipotesis":"reset for space-start-arg2","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4208,"seq":"syn-DEPOSITO-spaces-5","x_req":3720,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4209,"seq":"syn-DEPOSITO-spaces-5","x_req":3721,"hipotesis":"space-start-arg2: DEPOSITO;AC-0001; 100;82","request":{"m":"DEPOSITO;AC-0001; 100;82"},"status":400,"response":{"error":"E303","mensaje":"monto inválido"}}
+{"id":4210,"seq":"syn-DEPOSITO-spaces-6","x_req":null,"hipotesis":"reset for space-end-arg2","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4211,"seq":"syn-DEPOSITO-spaces-6","x_req":3722,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4212,"seq":"syn-DEPOSITO-spaces-6","x_req":3723,"hipotesis":"space-end-arg2: DEPOSITO;AC-0001;100 ;82","request":{"m":"DEPOSITO;AC-0001;100 ;82"},"status":400,"response":{"error":"E303","mensaje":"monto inválido"}}
+{"id":4213,"seq":"syn-DEPOSITO-case-1","x_req":null,"hipotesis":"reset for lowercase-cmd","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4214,"seq":"syn-DEPOSITO-case-1","x_req":3724,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4215,"seq":"syn-DEPOSITO-case-1","x_req":3725,"hipotesis":"lowercase-cmd: deposito;AC-0001;100;82","request":{"m":"deposito;AC-0001;100;82"},"status":200,"response":{"status":"recieved","operacionId":"OP-0001"}}
+{"id":4216,"seq":"syn-DEPOSITO-case-2","x_req":null,"hipotesis":"reset for mixed-cmd","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4217,"seq":"syn-DEPOSITO-case-2","x_req":3726,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4218,"seq":"syn-DEPOSITO-case-2","x_req":3727,"hipotesis":"mixed-cmd: Deposito;AC-0001;100;82","request":{"m":"Deposito;AC-0001;100;82"},"status":200,"response":{"status":"recieved","operacionId":"OP-0001"}}
+{"id":4219,"seq":"syn-DEPOSITO-monto-1","x_req":null,"hipotesis":"reset for zero","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4220,"seq":"syn-DEPOSITO-monto-1","x_req":3728,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4221,"seq":"syn-DEPOSITO-monto-1","x_req":3729,"hipotesis":"zero: DEPOSITO;AC-0001;0","request":{"m":"DEPOSITO;AC-0001;0"},"status":400,"response":{"error":"E202","mensaje":"control inválido"}}
+{"id":4222,"seq":"syn-DEPOSITO-monto-2","x_req":null,"hipotesis":"reset for leading-zero","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4223,"seq":"syn-DEPOSITO-monto-2","x_req":3730,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4224,"seq":"syn-DEPOSITO-monto-2","x_req":3731,"hipotesis":"leading-zero: DEPOSITO;AC-0001;05","request":{"m":"DEPOSITO;AC-0001;05"},"status":400,"response":{"error":"E202","mensaje":"control inválido"}}
+{"id":4225,"seq":"syn-DEPOSITO-monto-3","x_req":null,"hipotesis":"reset for plus","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4226,"seq":"syn-DEPOSITO-monto-3","x_req":3732,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4227,"seq":"syn-DEPOSITO-monto-3","x_req":3733,"hipotesis":"plus: DEPOSITO;AC-0001;+5","request":{"m":"DEPOSITO;AC-0001;+5"},"status":400,"response":{"error":"E201","mensaje":"control mal formado"}}
+{"id":4228,"seq":"syn-DEPOSITO-monto-4","x_req":null,"hipotesis":"reset for minus","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4229,"seq":"syn-DEPOSITO-monto-4","x_req":3734,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4230,"seq":"syn-DEPOSITO-monto-4","x_req":3735,"hipotesis":"minus: DEPOSITO;AC-0001;-5","request":{"m":"DEPOSITO;AC-0001;-5"},"status":400,"response":{"error":"E201","mensaje":"control mal formado"}}
+{"id":4231,"seq":"syn-DEPOSITO-monto-5","x_req":null,"hipotesis":"reset for decimal","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4232,"seq":"syn-DEPOSITO-monto-5","x_req":3736,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4233,"seq":"syn-DEPOSITO-monto-5","x_req":3737,"hipotesis":"decimal: DEPOSITO;AC-0001;5.0","request":{"m":"DEPOSITO;AC-0001;5.0"},"status":400,"response":{"error":"E201","mensaje":"control mal formado"}}
+{"id":4234,"seq":"syn-DEPOSITO-monto-6","x_req":null,"hipotesis":"reset for exponent","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4235,"seq":"syn-DEPOSITO-monto-6","x_req":3738,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4236,"seq":"syn-DEPOSITO-monto-6","x_req":3739,"hipotesis":"exponent: DEPOSITO;AC-0001;1e3","request":{"m":"DEPOSITO;AC-0001;1e3"},"status":400,"response":{"error":"E201","mensaje":"control mal formado"}}
+{"id":4237,"seq":"syn-DEPOSITO-monto-7","x_req":null,"hipotesis":"reset for space-before","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4238,"seq":"syn-DEPOSITO-monto-7","x_req":3740,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4239,"seq":"syn-DEPOSITO-monto-7","x_req":3741,"hipotesis":"space-before: DEPOSITO;AC-0001; 100","request":{"m":"DEPOSITO;AC-0001; 100"},"status":400,"response":{"error":"E201","mensaje":"control mal formado"}}
+{"id":4240,"seq":"syn-DEPOSITO-monto-8","x_req":null,"hipotesis":"reset for space-after","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4241,"seq":"syn-DEPOSITO-monto-8","x_req":3742,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4242,"seq":"syn-DEPOSITO-monto-8","x_req":3743,"hipotesis":"space-after: DEPOSITO;AC-0001;100 ","request":{"m":"DEPOSITO;AC-0001;100 "},"status":400,"response":{"error":"E201","mensaje":"control mal formado"}}
+{"id":4243,"seq":"syn-DEPOSITO-monto-9","x_req":null,"hipotesis":"reset for underscore","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4244,"seq":"syn-DEPOSITO-monto-9","x_req":3744,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4245,"seq":"syn-DEPOSITO-monto-9","x_req":3745,"hipotesis":"underscore: DEPOSITO;AC-0001;1_000","request":{"m":"DEPOSITO;AC-0001;1_000"},"status":400,"response":{"error":"E201","mensaje":"control mal formado"}}
+{"id":4246,"seq":"syn-DEPOSITO-monto-10","x_req":null,"hipotesis":"reset for comma","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4247,"seq":"syn-DEPOSITO-monto-10","x_req":3746,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4248,"seq":"syn-DEPOSITO-monto-10","x_req":3747,"hipotesis":"comma: DEPOSITO;AC-0001;1,000","request":{"m":"DEPOSITO;AC-0001;1,000"},"status":400,"response":{"error":"E201","mensaje":"control mal formado"}}
+{"id":4249,"seq":"syn-DEPOSITO-monto-11","x_req":null,"hipotesis":"reset for space-internal","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4250,"seq":"syn-DEPOSITO-monto-11","x_req":3748,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4251,"seq":"syn-DEPOSITO-monto-11","x_req":3749,"hipotesis":"space-internal: DEPOSITO;AC-0001;1 000","request":{"m":"DEPOSITO;AC-0001;1 000"},"status":400,"response":{"error":"E201","mensaje":"control mal formado"}}
+{"id":4252,"seq":"syn-DEPOSITO-monto-12","x_req":null,"hipotesis":"reset for eleven-digits","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4253,"seq":"syn-DEPOSITO-monto-12","x_req":3750,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4254,"seq":"syn-DEPOSITO-monto-12","x_req":3751,"hipotesis":"eleven-digits: DEPOSITO;AC-0001;10000000000","request":{"m":"DEPOSITO;AC-0001;10000000000"},"status":400,"response":{"error":"E201","mensaje":"control mal formado"}}
+{"id":4255,"seq":"syn-DEPOSITO-monto-13","x_req":null,"hipotesis":"reset for max-10-ok","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4256,"seq":"syn-DEPOSITO-monto-13","x_req":3752,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4257,"seq":"syn-DEPOSITO-monto-13","x_req":3753,"hipotesis":"max-10-ok: DEPOSITO;AC-0001;9999999999","request":{"m":"DEPOSITO;AC-0001;9999999999"},"status":400,"response":{"error":"E201","mensaje":"control mal formado"}}
+{"id":4258,"seq":"syn-DEPOSITO-id-1","x_req":null,"hipotesis":"reset for lowercase-id","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4259,"seq":"syn-DEPOSITO-id-1","x_req":3754,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4260,"seq":"syn-DEPOSITO-id-1","x_req":3755,"hipotesis":"lowercase-id: DEPOSITO;ac-0001;100;82","request":{"m":"DEPOSITO;ac-0001;100;82"},"status":404,"response":{"error":"E401","mensaje":"cuenta inexistente"}}
+{"id":4261,"seq":"syn-DEPOSITO-id-2","x_req":null,"hipotesis":"reset for short-id","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4262,"seq":"syn-DEPOSITO-id-2","x_req":3756,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4263,"seq":"syn-DEPOSITO-id-2","x_req":3757,"hipotesis":"short-id: DEPOSITO;AC-1;100;5","request":{"m":"DEPOSITO;AC-1;100;5"},"status":404,"response":{"error":"E401","mensaje":"cuenta inexistente"}}
+{"id":4264,"seq":"syn-DEPOSITO-arity-1","x_req":null,"hipotesis":"reset for one-arg","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4265,"seq":"syn-DEPOSITO-arity-1","x_req":3758,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4266,"seq":"syn-DEPOSITO-arity-1","x_req":3759,"hipotesis":"one-arg: DEPOSITO;AC-0001;82","request":{"m":"DEPOSITO;AC-0001;82"},"status":400,"response":{"error":"E202","mensaje":"control inválido"}}
+{"id":4267,"seq":"syn-DEPOSITO-arity-2","x_req":null,"hipotesis":"reset for three-args","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4268,"seq":"syn-DEPOSITO-arity-2","x_req":3760,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4269,"seq":"syn-DEPOSITO-arity-2","x_req":3761,"hipotesis":"three-args: DEPOSITO;AC-0001;100;extra;91","request":{"m":"DEPOSITO;AC-0001;100;extra;91"},"status":400,"response":{"error":"E302","mensaje":"aridad inválida"}}
+{"id":4270,"seq":"syn-DEPOSITO-sep-1","x_req":null,"hipotesis":"reset for double-sep1","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4271,"seq":"syn-DEPOSITO-sep-1","x_req":3762,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4272,"seq":"syn-DEPOSITO-sep-1","x_req":3763,"hipotesis":"double-sep1: DEPOSITO;;AC-0001;100;25","request":{"m":"DEPOSITO;;AC-0001;100;25"},"status":400,"response":{"error":"E104","mensaje":"segmento vacío"}}
+{"id":4273,"seq":"syn-DEPOSITO-sep-2","x_req":null,"hipotesis":"reset for double-sep2","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4274,"seq":"syn-DEPOSITO-sep-2","x_req":3764,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4275,"seq":"syn-DEPOSITO-sep-2","x_req":3765,"hipotesis":"double-sep2: DEPOSITO;AC-0001;;100;4","request":{"m":"DEPOSITO;AC-0001;;100;4"},"status":400,"response":{"error":"E104","mensaje":"segmento vacío"}}
+{"id":4276,"seq":"syn-DEPOSITO-sep-3","x_req":null,"hipotesis":"reset for trailing-sep","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4277,"seq":"syn-DEPOSITO-sep-3","x_req":3766,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4278,"seq":"syn-DEPOSITO-sep-3","x_req":3767,"hipotesis":"trailing-sep: DEPOSITO;AC-0001;100;;82","request":{"m":"DEPOSITO;AC-0001;100;;82"},"status":400,"response":{"error":"E104","mensaje":"segmento vacío"}}
+{"id":4279,"seq":"syn-DEPOSITO-control-1","x_req":null,"hipotesis":"reset for leading-zero","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4280,"seq":"syn-DEPOSITO-control-1","x_req":3768,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4281,"seq":"syn-DEPOSITO-control-1","x_req":3769,"hipotesis":"leading-zero: DEPOSITO;AC-0001;100;082","request":{"m":"DEPOSITO;AC-0001;100;082"},"status":400,"response":{"error":"E201","mensaje":"control mal formado"}}
+{"id":4282,"seq":"syn-DEPOSITO-control-2","x_req":null,"hipotesis":"reset for space-after","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4283,"seq":"syn-DEPOSITO-control-2","x_req":3770,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4284,"seq":"syn-DEPOSITO-control-2","x_req":3771,"hipotesis":"space-after: DEPOSITO;AC-0001;100;82 ","request":{"m":"DEPOSITO;AC-0001;100;82 "},"status":400,"response":{"error":"E201","mensaje":"control mal formado"}}
+{"id":4285,"seq":"syn-TRANSFER-spaces-1","x_req":null,"hipotesis":"reset for space-start","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4286,"seq":"syn-TRANSFER-spaces-1","x_req":3772,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4287,"seq":"syn-TRANSFER-spaces-1","x_req":3773,"hipotesis":"setup ALTA;Bob;24","request":{"m":"ALTA;Bob;24"},"status":201,"response":{"cuentaId":"AC-0002"}}
+{"id":4288,"seq":"syn-TRANSFER-spaces-1","x_req":3774,"hipotesis":"space-start:  TRANSFER;AC-0001;AC-0002;50;87","request":{"m":" TRANSFER;AC-0001;AC-0002;50;87"},"status":400,"response":{"error":"E301","mensaje":"comando desconocido ","sugerencia":"TRANSFER"}}
+{"id":4289,"seq":"syn-TRANSFER-spaces-2","x_req":null,"hipotesis":"reset for space-end-cmd","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4290,"seq":"syn-TRANSFER-spaces-2","x_req":3775,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4291,"seq":"syn-TRANSFER-spaces-2","x_req":3776,"hipotesis":"setup ALTA;Bob;24","request":{"m":"ALTA;Bob;24"},"status":201,"response":{"cuentaId":"AC-0002"}}
+{"id":4292,"seq":"syn-TRANSFER-spaces-2","x_req":3777,"hipotesis":"space-end-cmd: TRANSFER ;AC-0001;AC-0002;50;89","request":{"m":"TRANSFER ;AC-0001;AC-0002;50;89"},"status":400,"response":{"error":"E202","mensaje":"control inválido"}}
+{"id":4293,"seq":"syn-TRANSFER-spaces-3","x_req":null,"hipotesis":"reset for space-start-arg1","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4294,"seq":"syn-TRANSFER-spaces-3","x_req":3778,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4295,"seq":"syn-TRANSFER-spaces-3","x_req":3779,"hipotesis":"setup ALTA;Bob;24","request":{"m":"ALTA;Bob;24"},"status":201,"response":{"cuentaId":"AC-0002"}}
+{"id":4296,"seq":"syn-TRANSFER-spaces-3","x_req":3780,"hipotesis":"space-start-arg1: TRANSFER; AC-0001;AC-0002;50;87","request":{"m":"TRANSFER; AC-0001;AC-0002;50;87"},"status":404,"response":{"error":"E401","mensaje":"cuenta inexistente"}}
+{"id":4297,"seq":"syn-TRANSFER-spaces-4","x_req":null,"hipotesis":"reset for space-end-arg1","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4298,"seq":"syn-TRANSFER-spaces-4","x_req":3781,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4299,"seq":"syn-TRANSFER-spaces-4","x_req":3782,"hipotesis":"setup ALTA;Bob;24","request":{"m":"ALTA;Bob;24"},"status":201,"response":{"cuentaId":"AC-0002"}}
+{"id":4300,"seq":"syn-TRANSFER-spaces-4","x_req":3783,"hipotesis":"space-end-arg1: TRANSFER;AC-0001 ;AC-0002;50;87","request":{"m":"TRANSFER;AC-0001 ;AC-0002;50;87"},"status":404,"response":{"error":"E401","mensaje":"cuenta inexistente"}}
+{"id":4301,"seq":"syn-TRANSFER-spaces-5","x_req":null,"hipotesis":"reset for space-start-arg2","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4302,"seq":"syn-TRANSFER-spaces-5","x_req":3784,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4303,"seq":"syn-TRANSFER-spaces-5","x_req":3785,"hipotesis":"setup ALTA;Bob;24","request":{"m":"ALTA;Bob;24"},"status":201,"response":{"cuentaId":"AC-0002"}}
+{"id":4304,"seq":"syn-TRANSFER-spaces-5","x_req":3786,"hipotesis":"space-start-arg2: TRANSFER;AC-0001; AC-0002;50;87","request":{"m":"TRANSFER;AC-0001; AC-0002;50;87"},"status":404,"response":{"error":"E401","mensaje":"cuenta inexistente"}}
+{"id":4305,"seq":"syn-TRANSFER-spaces-6","x_req":null,"hipotesis":"reset for space-end-arg2","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4306,"seq":"syn-TRANSFER-spaces-6","x_req":3787,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4307,"seq":"syn-TRANSFER-spaces-6","x_req":3788,"hipotesis":"setup ALTA;Bob;24","request":{"m":"ALTA;Bob;24"},"status":201,"response":{"cuentaId":"AC-0002"}}
+{"id":4308,"seq":"syn-TRANSFER-spaces-6","x_req":3789,"hipotesis":"space-end-arg2: TRANSFER;AC-0001;AC-0002 ;50;87","request":{"m":"TRANSFER;AC-0001;AC-0002 ;50;87"},"status":404,"response":{"error":"E401","mensaje":"cuenta inexistente"}}
+{"id":4309,"seq":"syn-TRANSFER-spaces-7","x_req":null,"hipotesis":"reset for space-start-arg3","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4310,"seq":"syn-TRANSFER-spaces-7","x_req":3790,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4311,"seq":"syn-TRANSFER-spaces-7","x_req":3791,"hipotesis":"setup ALTA;Bob;24","request":{"m":"ALTA;Bob;24"},"status":201,"response":{"cuentaId":"AC-0002"}}
+{"id":4312,"seq":"syn-TRANSFER-spaces-7","x_req":3792,"hipotesis":"space-start-arg3: TRANSFER;AC-0001;AC-0002; 50;87","request":{"m":"TRANSFER;AC-0001;AC-0002; 50;87"},"status":400,"response":{"error":"E303","mensaje":"monto inválido"}}
+{"id":4313,"seq":"syn-TRANSFER-case-1","x_req":null,"hipotesis":"reset for lowercase-cmd","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4314,"seq":"syn-TRANSFER-case-1","x_req":3793,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4315,"seq":"syn-TRANSFER-case-1","x_req":3794,"hipotesis":"setup ALTA;Bob;24","request":{"m":"ALTA;Bob;24"},"status":201,"response":{"cuentaId":"AC-0002"}}
+{"id":4316,"seq":"syn-TRANSFER-case-1","x_req":3795,"hipotesis":"lowercase-cmd: transfer;AC-0001;AC-0002;50;87","request":{"m":"transfer;AC-0001;AC-0002;50;87"},"status":422,"response":{"error":"E507","mensaje":"saldo insuficiente"}}
+{"id":4317,"seq":"syn-TRANSFER-case-2","x_req":null,"hipotesis":"reset for mixed-cmd","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4318,"seq":"syn-TRANSFER-case-2","x_req":3796,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4319,"seq":"syn-TRANSFER-case-2","x_req":3797,"hipotesis":"setup ALTA;Bob;24","request":{"m":"ALTA;Bob;24"},"status":201,"response":{"cuentaId":"AC-0002"}}
+{"id":4320,"seq":"syn-TRANSFER-case-2","x_req":3798,"hipotesis":"mixed-cmd: Transfer;AC-0001;AC-0002;50;87","request":{"m":"Transfer;AC-0001;AC-0002;50;87"},"status":422,"response":{"error":"E507","mensaje":"saldo insuficiente"}}
+{"id":4321,"seq":"syn-TRANSFER-monto-1","x_req":null,"hipotesis":"reset for zero","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4322,"seq":"syn-TRANSFER-monto-1","x_req":3799,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4323,"seq":"syn-TRANSFER-monto-1","x_req":3800,"hipotesis":"setup ALTA;Bob;24","request":{"m":"ALTA;Bob;24"},"status":201,"response":{"cuentaId":"AC-0002"}}
+{"id":4324,"seq":"syn-TRANSFER-monto-1","x_req":3801,"hipotesis":"zero: TRANSFER;AC-0001;AC-0002;0","request":{"m":"TRANSFER;AC-0001;AC-0002;0"},"status":400,"response":{"error":"E202","mensaje":"control inválido"}}
+{"id":4325,"seq":"syn-TRANSFER-monto-2","x_req":null,"hipotesis":"reset for leading-zero","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4326,"seq":"syn-TRANSFER-monto-2","x_req":3802,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4327,"seq":"syn-TRANSFER-monto-2","x_req":3803,"hipotesis":"setup ALTA;Bob;24","request":{"m":"ALTA;Bob;24"},"status":201,"response":{"cuentaId":"AC-0002"}}
+{"id":4328,"seq":"syn-TRANSFER-monto-2","x_req":3804,"hipotesis":"leading-zero: TRANSFER;AC-0001;AC-0002;05","request":{"m":"TRANSFER;AC-0001;AC-0002;05"},"status":400,"response":{"error":"E202","mensaje":"control inválido"}}
+{"id":4329,"seq":"syn-TRANSFER-monto-3","x_req":null,"hipotesis":"reset for plus","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4330,"seq":"syn-TRANSFER-monto-3","x_req":3805,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4331,"seq":"syn-TRANSFER-monto-3","x_req":3806,"hipotesis":"setup ALTA;Bob;24","request":{"m":"ALTA;Bob;24"},"status":201,"response":{"cuentaId":"AC-0002"}}
+{"id":4332,"seq":"syn-TRANSFER-monto-3","x_req":3807,"hipotesis":"plus: TRANSFER;AC-0001;AC-0002;+5","request":{"m":"TRANSFER;AC-0001;AC-0002;+5"},"status":400,"response":{"error":"E201","mensaje":"control mal formado"}}
+{"id":4333,"seq":"syn-TRANSFER-monto-4","x_req":null,"hipotesis":"reset for decimal","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4334,"seq":"syn-TRANSFER-monto-4","x_req":3808,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4335,"seq":"syn-TRANSFER-monto-4","x_req":3809,"hipotesis":"setup ALTA;Bob;24","request":{"m":"ALTA;Bob;24"},"status":201,"response":{"cuentaId":"AC-0002"}}
+{"id":4336,"seq":"syn-TRANSFER-monto-4","x_req":3810,"hipotesis":"decimal: TRANSFER;AC-0001;AC-0002;5.0","request":{"m":"TRANSFER;AC-0001;AC-0002;5.0"},"status":400,"response":{"error":"E201","mensaje":"control mal formado"}}
+{"id":4337,"seq":"syn-TRANSFER-monto-5","x_req":null,"hipotesis":"reset for exponent","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4338,"seq":"syn-TRANSFER-monto-5","x_req":3811,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4339,"seq":"syn-TRANSFER-monto-5","x_req":3812,"hipotesis":"setup ALTA;Bob;24","request":{"m":"ALTA;Bob;24"},"status":201,"response":{"cuentaId":"AC-0002"}}
+{"id":4340,"seq":"syn-TRANSFER-monto-5","x_req":3813,"hipotesis":"exponent: TRANSFER;AC-0001;AC-0002;1e3","request":{"m":"TRANSFER;AC-0001;AC-0002;1e3"},"status":400,"response":{"error":"E201","mensaje":"control mal formado"}}
+{"id":4341,"seq":"syn-TRANSFER-monto-6","x_req":null,"hipotesis":"reset for eleven-digits","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4342,"seq":"syn-TRANSFER-monto-6","x_req":3814,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4343,"seq":"syn-TRANSFER-monto-6","x_req":3815,"hipotesis":"setup ALTA;Bob;24","request":{"m":"ALTA;Bob;24"},"status":201,"response":{"cuentaId":"AC-0002"}}
+{"id":4344,"seq":"syn-TRANSFER-monto-6","x_req":3816,"hipotesis":"eleven-digits: TRANSFER;AC-0001;AC-0002;10000000000","request":{"m":"TRANSFER;AC-0001;AC-0002;10000000000"},"status":400,"response":{"error":"E201","mensaje":"control mal formado"}}
+{"id":4345,"seq":"syn-TRANSFER-monto-7","x_req":null,"hipotesis":"reset for over-limit","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4346,"seq":"syn-TRANSFER-monto-7","x_req":3817,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4347,"seq":"syn-TRANSFER-monto-7","x_req":3818,"hipotesis":"setup ALTA;Bob;24","request":{"m":"ALTA;Bob;24"},"status":201,"response":{"cuentaId":"AC-0002"}}
+{"id":4348,"seq":"syn-TRANSFER-monto-7","x_req":3819,"hipotesis":"over-limit: TRANSFER;AC-0001;AC-0002;100001","request":{"m":"TRANSFER;AC-0001;AC-0002;100001"},"status":400,"response":{"error":"E201","mensaje":"control mal formado"}}
+{"id":4349,"seq":"syn-TRANSFER-monto-8","x_req":null,"hipotesis":"reset for limit-ok","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4350,"seq":"syn-TRANSFER-monto-8","x_req":3820,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4351,"seq":"syn-TRANSFER-monto-8","x_req":3821,"hipotesis":"setup ALTA;Bob;24","request":{"m":"ALTA;Bob;24"},"status":201,"response":{"cuentaId":"AC-0002"}}
+{"id":4352,"seq":"syn-TRANSFER-monto-8","x_req":3822,"hipotesis":"limit-ok: TRANSFER;AC-0001;AC-0002;100000","request":{"m":"TRANSFER;AC-0001;AC-0002;100000"},"status":400,"response":{"error":"E201","mensaje":"control mal formado"}}
+{"id":4353,"seq":"syn-TRANSFER-id-1","x_req":null,"hipotesis":"reset for lowercase-from","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4354,"seq":"syn-TRANSFER-id-1","x_req":3823,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4355,"seq":"syn-TRANSFER-id-1","x_req":3824,"hipotesis":"setup ALTA;Bob;24","request":{"m":"ALTA;Bob;24"},"status":201,"response":{"cuentaId":"AC-0002"}}
+{"id":4356,"seq":"syn-TRANSFER-id-1","x_req":3825,"hipotesis":"lowercase-from: TRANSFER;ac-0001;AC-0002;50;87","request":{"m":"TRANSFER;ac-0001;AC-0002;50;87"},"status":404,"response":{"error":"E401","mensaje":"cuenta inexistente"}}
+{"id":4357,"seq":"syn-TRANSFER-id-2","x_req":null,"hipotesis":"reset for short-from","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4358,"seq":"syn-TRANSFER-id-2","x_req":3826,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4359,"seq":"syn-TRANSFER-id-2","x_req":3827,"hipotesis":"setup ALTA;Bob;24","request":{"m":"ALTA;Bob;24"},"status":201,"response":{"cuentaId":"AC-0002"}}
+{"id":4360,"seq":"syn-TRANSFER-id-2","x_req":3828,"hipotesis":"short-from: TRANSFER;AC-1;AC-0002;50;76","request":{"m":"TRANSFER;AC-1;AC-0002;50;76"},"status":404,"response":{"error":"E401","mensaje":"cuenta inexistente"}}
+{"id":4361,"seq":"syn-TRANSFER-same-1","x_req":null,"hipotesis":"reset for same-account","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4362,"seq":"syn-TRANSFER-same-1","x_req":3829,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4363,"seq":"syn-TRANSFER-same-1","x_req":3830,"hipotesis":"setup ALTA;Bob;24","request":{"m":"ALTA;Bob;24"},"status":201,"response":{"cuentaId":"AC-0002"}}
+{"id":4364,"seq":"syn-TRANSFER-same-1","x_req":3831,"hipotesis":"same-account: TRANSFER;AC-0001;AC-0001;50;96","request":{"m":"TRANSFER;AC-0001;AC-0001;50;96"},"status":400,"response":{"error":"E304","mensaje":"origen y destino iguales"}}
+{"id":4365,"seq":"syn-TRANSFER-same-name-1","x_req":null,"hipotesis":"reset for same-name-skip-limit","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4366,"seq":"syn-TRANSFER-same-name-1","x_req":3832,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4367,"seq":"syn-TRANSFER-same-name-1","x_req":3833,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0002"}}
+{"id":4368,"seq":"syn-TRANSFER-same-name-1","x_req":3834,"hipotesis":"same-name-skip-limit: TRANSFER;AC-0001;AC-0002;100001","request":{"m":"TRANSFER;AC-0001;AC-0002;100001"},"status":400,"response":{"error":"E201","mensaje":"control mal formado"}}
+{"id":4369,"seq":"syn-TRANSFER-arity-1","x_req":null,"hipotesis":"reset for two-args","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4370,"seq":"syn-TRANSFER-arity-1","x_req":3835,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4371,"seq":"syn-TRANSFER-arity-1","x_req":3836,"hipotesis":"setup ALTA;Bob;24","request":{"m":"ALTA;Bob;24"},"status":201,"response":{"cuentaId":"AC-0002"}}
+{"id":4372,"seq":"syn-TRANSFER-arity-1","x_req":3837,"hipotesis":"two-args: TRANSFER;AC-0001;AC-0002;50","request":{"m":"TRANSFER;AC-0001;AC-0002;50"},"status":400,"response":{"error":"E202","mensaje":"control inválido"}}
+{"id":4373,"seq":"syn-TRANSFER-arity-2","x_req":null,"hipotesis":"reset for four-args","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4374,"seq":"syn-TRANSFER-arity-2","x_req":3838,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4375,"seq":"syn-TRANSFER-arity-2","x_req":3839,"hipotesis":"setup ALTA;Bob;24","request":{"m":"ALTA;Bob;24"},"status":201,"response":{"cuentaId":"AC-0002"}}
+{"id":4376,"seq":"syn-TRANSFER-arity-2","x_req":3840,"hipotesis":"four-args: TRANSFER;AC-0001;AC-0002;50;extra;11","request":{"m":"TRANSFER;AC-0001;AC-0002;50;extra;11"},"status":400,"response":{"error":"E302","mensaje":"aridad inválida"}}
+{"id":4377,"seq":"syn-TRANSFER-sep-1","x_req":null,"hipotesis":"reset for double-sep1","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4378,"seq":"syn-TRANSFER-sep-1","x_req":3841,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4379,"seq":"syn-TRANSFER-sep-1","x_req":3842,"hipotesis":"setup ALTA;Bob;24","request":{"m":"ALTA;Bob;24"},"status":201,"response":{"cuentaId":"AC-0002"}}
+{"id":4380,"seq":"syn-TRANSFER-sep-1","x_req":3843,"hipotesis":"double-sep1: TRANSFER;;AC-0001;AC-0002;50;89","request":{"m":"TRANSFER;;AC-0001;AC-0002;50;89"},"status":400,"response":{"error":"E104","mensaje":"segmento vacío"}}
+{"id":4381,"seq":"syn-TRANSFER-sep-2","x_req":null,"hipotesis":"reset for trailing-sep","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4382,"seq":"syn-TRANSFER-sep-2","x_req":3844,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4383,"seq":"syn-TRANSFER-sep-2","x_req":3845,"hipotesis":"setup ALTA;Bob;24","request":{"m":"ALTA;Bob;24"},"status":201,"response":{"cuentaId":"AC-0002"}}
+{"id":4384,"seq":"syn-TRANSFER-sep-2","x_req":3846,"hipotesis":"trailing-sep: TRANSFER;AC-0001;AC-0002;50;;87","request":{"m":"TRANSFER;AC-0001;AC-0002;50;;87"},"status":400,"response":{"error":"E104","mensaje":"segmento vacío"}}
+{"id":4385,"seq":"syn-TRANSFER-control-1","x_req":null,"hipotesis":"reset for leading-zero","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4386,"seq":"syn-TRANSFER-control-1","x_req":3847,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4387,"seq":"syn-TRANSFER-control-1","x_req":3848,"hipotesis":"setup ALTA;Bob;24","request":{"m":"ALTA;Bob;24"},"status":201,"response":{"cuentaId":"AC-0002"}}
+{"id":4388,"seq":"syn-TRANSFER-control-1","x_req":3849,"hipotesis":"leading-zero: TRANSFER;AC-0001;AC-0002;50;087","request":{"m":"TRANSFER;AC-0001;AC-0002;50;087"},"status":400,"response":{"error":"E201","mensaje":"control mal formado"}}
+{"id":4389,"seq":"syn-ANULA-spaces-1","x_req":null,"hipotesis":"reset for space-start","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4390,"seq":"syn-ANULA-spaces-1","x_req":3850,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4391,"seq":"syn-ANULA-spaces-1","x_req":3851,"hipotesis":"setup DEPOSITO;AC-0001;100;82","request":{"m":"DEPOSITO;AC-0001;100;82"},"status":200,"response":{"status":"recieved","operacionId":"OP-0001"}}
+{"id":4392,"seq":"syn-ANULA-spaces-1","x_req":3852,"hipotesis":"space-start:  ANULA;OP-0001;66","request":{"m":" ANULA;OP-0001;66"},"status":400,"response":{"error":"E202","mensaje":"control inválido"}}
+{"id":4393,"seq":"syn-ANULA-spaces-2","x_req":null,"hipotesis":"reset for space-end-cmd","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4394,"seq":"syn-ANULA-spaces-2","x_req":3853,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4395,"seq":"syn-ANULA-spaces-2","x_req":3854,"hipotesis":"setup DEPOSITO;AC-0001;100;82","request":{"m":"DEPOSITO;AC-0001;100;82"},"status":200,"response":{"status":"recieved","operacionId":"OP-0001"}}
+{"id":4396,"seq":"syn-ANULA-spaces-2","x_req":3855,"hipotesis":"space-end-cmd: ANULA ;OP-0001;45","request":{"m":"ANULA ;OP-0001;45"},"status":400,"response":{"error":"E202","mensaje":"control inválido"}}
+{"id":4397,"seq":"syn-ANULA-spaces-3","x_req":null,"hipotesis":"reset for space-start-arg","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4398,"seq":"syn-ANULA-spaces-3","x_req":3856,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4399,"seq":"syn-ANULA-spaces-3","x_req":3857,"hipotesis":"setup DEPOSITO;AC-0001;100;82","request":{"m":"DEPOSITO;AC-0001;100;82"},"status":200,"response":{"status":"recieved","operacionId":"OP-0001"}}
+{"id":4400,"seq":"syn-ANULA-spaces-3","x_req":3858,"hipotesis":"space-start-arg: ANULA; OP-0001;72","request":{"m":"ANULA; OP-0001;72"},"status":404,"response":{"error":"E402","mensaje":"operación inexistente"}}
+{"id":4401,"seq":"syn-ANULA-spaces-4","x_req":null,"hipotesis":"reset for space-end-arg","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4402,"seq":"syn-ANULA-spaces-4","x_req":3859,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4403,"seq":"syn-ANULA-spaces-4","x_req":3860,"hipotesis":"setup DEPOSITO;AC-0001;100;82","request":{"m":"DEPOSITO;AC-0001;100;82"},"status":200,"response":{"status":"recieved","operacionId":"OP-0001"}}
+{"id":4404,"seq":"syn-ANULA-spaces-4","x_req":3861,"hipotesis":"space-end-arg: ANULA;OP-0001 ;72","request":{"m":"ANULA;OP-0001 ;72"},"status":404,"response":{"error":"E402","mensaje":"operación inexistente"}}
+{"id":4405,"seq":"syn-ANULA-case-1","x_req":null,"hipotesis":"reset for lowercase-cmd","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4406,"seq":"syn-ANULA-case-1","x_req":3862,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4407,"seq":"syn-ANULA-case-1","x_req":3863,"hipotesis":"setup DEPOSITO;AC-0001;100;82","request":{"m":"DEPOSITO;AC-0001;100;82"},"status":200,"response":{"status":"recieved","operacionId":"OP-0001"}}
+{"id":4408,"seq":"syn-ANULA-case-1","x_req":3864,"hipotesis":"lowercase-cmd: anula;OP-0001;66","request":{"m":"anula;OP-0001;66"},"status":400,"response":{"error":"E202","mensaje":"control inválido"}}
+{"id":4409,"seq":"syn-ANULA-case-2","x_req":null,"hipotesis":"reset for mixed-cmd","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4410,"seq":"syn-ANULA-case-2","x_req":3865,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4411,"seq":"syn-ANULA-case-2","x_req":3866,"hipotesis":"setup DEPOSITO;AC-0001;100;82","request":{"m":"DEPOSITO;AC-0001;100;82"},"status":200,"response":{"status":"recieved","operacionId":"OP-0001"}}
+{"id":4412,"seq":"syn-ANULA-case-2","x_req":3867,"hipotesis":"mixed-cmd: AnUlA;OP-0001;66","request":{"m":"AnUlA;OP-0001;66"},"status":400,"response":{"error":"E202","mensaje":"control inválido"}}
+{"id":4413,"seq":"syn-ANULA-id-1","x_req":null,"hipotesis":"reset for lowercase-id","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4414,"seq":"syn-ANULA-id-1","x_req":3868,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4415,"seq":"syn-ANULA-id-1","x_req":3869,"hipotesis":"setup DEPOSITO;AC-0001;100;82","request":{"m":"DEPOSITO;AC-0001;100;82"},"status":200,"response":{"status":"recieved","operacionId":"OP-0001"}}
+{"id":4416,"seq":"syn-ANULA-id-1","x_req":3870,"hipotesis":"lowercase-id: ANULA;op-0001;72","request":{"m":"ANULA;op-0001;72"},"status":404,"response":{"error":"E402","mensaje":"operación inexistente"}}
+{"id":4417,"seq":"syn-ANULA-id-2","x_req":null,"hipotesis":"reset for short-id","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4418,"seq":"syn-ANULA-id-2","x_req":3871,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4419,"seq":"syn-ANULA-id-2","x_req":3872,"hipotesis":"setup DEPOSITO;AC-0001;100;82","request":{"m":"DEPOSITO;AC-0001;100;82"},"status":200,"response":{"status":"recieved","operacionId":"OP-0001"}}
+{"id":4420,"seq":"syn-ANULA-id-2","x_req":3873,"hipotesis":"short-id: ANULA;OP-1;91","request":{"m":"ANULA;OP-1;91"},"status":404,"response":{"error":"E402","mensaje":"operación inexistente"}}
+{"id":4421,"seq":"syn-ANULA-id-3","x_req":null,"hipotesis":"reset for leading-zero-id","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4422,"seq":"syn-ANULA-id-3","x_req":3874,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4423,"seq":"syn-ANULA-id-3","x_req":3875,"hipotesis":"setup DEPOSITO;AC-0001;100;82","request":{"m":"DEPOSITO;AC-0001;100;82"},"status":200,"response":{"status":"recieved","operacionId":"OP-0001"}}
+{"id":4424,"seq":"syn-ANULA-id-3","x_req":3876,"hipotesis":"leading-zero-id: ANULA;OP-01;55","request":{"m":"ANULA;OP-01;55"},"status":404,"response":{"error":"E402","mensaje":"operación inexistente"}}
+{"id":4425,"seq":"syn-ANULA-id-4","x_req":null,"hipotesis":"reset for long-id","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4426,"seq":"syn-ANULA-id-4","x_req":3877,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4427,"seq":"syn-ANULA-id-4","x_req":3878,"hipotesis":"setup DEPOSITO;AC-0001;100;82","request":{"m":"DEPOSITO;AC-0001;100;82"},"status":200,"response":{"status":"recieved","operacionId":"OP-0001"}}
+{"id":4428,"seq":"syn-ANULA-id-4","x_req":3879,"hipotesis":"long-id: ANULA;OP-00001;59","request":{"m":"ANULA;OP-00001;59"},"status":404,"response":{"error":"E402","mensaje":"operación inexistente"}}
+{"id":4429,"seq":"syn-ANULA-id-5","x_req":null,"hipotesis":"reset for no-dash-id","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4430,"seq":"syn-ANULA-id-5","x_req":3880,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4431,"seq":"syn-ANULA-id-5","x_req":3881,"hipotesis":"setup DEPOSITO;AC-0001;100;82","request":{"m":"DEPOSITO;AC-0001;100;82"},"status":200,"response":{"status":"recieved","operacionId":"OP-0001"}}
+{"id":4432,"seq":"syn-ANULA-id-5","x_req":3882,"hipotesis":"no-dash-id: ANULA;OP0001;72","request":{"m":"ANULA;OP0001;72"},"status":404,"response":{"error":"E402","mensaje":"operación inexistente"}}
+{"id":4433,"seq":"syn-ANULA-id-6","x_req":null,"hipotesis":"reset for account-id","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4434,"seq":"syn-ANULA-id-6","x_req":3883,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4435,"seq":"syn-ANULA-id-6","x_req":3884,"hipotesis":"setup DEPOSITO;AC-0001;100;82","request":{"m":"DEPOSITO;AC-0001;100;82"},"status":200,"response":{"status":"recieved","operacionId":"OP-0001"}}
+{"id":4436,"seq":"syn-ANULA-id-6","x_req":3885,"hipotesis":"account-id: ANULA;AC-0001;59","request":{"m":"ANULA;AC-0001;59"},"status":404,"response":{"error":"E402","mensaje":"operación inexistente"}}
+{"id":4437,"seq":"syn-ANULA-arity-1","x_req":null,"hipotesis":"reset for no-args","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4438,"seq":"syn-ANULA-arity-1","x_req":3886,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4439,"seq":"syn-ANULA-arity-1","x_req":3887,"hipotesis":"setup DEPOSITO;AC-0001;100;82","request":{"m":"DEPOSITO;AC-0001;100;82"},"status":200,"response":{"status":"recieved","operacionId":"OP-0001"}}
+{"id":4440,"seq":"syn-ANULA-arity-1","x_req":3888,"hipotesis":"no-args: ANULA;66","request":{"m":"ANULA;66"},"status":400,"response":{"error":"E202","mensaje":"control inválido"}}
+{"id":4441,"seq":"syn-ANULA-arity-2","x_req":null,"hipotesis":"reset for two-args","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4442,"seq":"syn-ANULA-arity-2","x_req":3889,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4443,"seq":"syn-ANULA-arity-2","x_req":3890,"hipotesis":"setup DEPOSITO;AC-0001;100;82","request":{"m":"DEPOSITO;AC-0001;100;82"},"status":200,"response":{"status":"recieved","operacionId":"OP-0001"}}
+{"id":4444,"seq":"syn-ANULA-arity-2","x_req":3891,"hipotesis":"two-args: ANULA;OP-0001;extra;57","request":{"m":"ANULA;OP-0001;extra;57"},"status":400,"response":{"error":"E302","mensaje":"aridad inválida"}}
+{"id":4445,"seq":"syn-ANULA-sep-1","x_req":null,"hipotesis":"reset for double-sep","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4446,"seq":"syn-ANULA-sep-1","x_req":3892,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4447,"seq":"syn-ANULA-sep-1","x_req":3893,"hipotesis":"setup DEPOSITO;AC-0001;100;82","request":{"m":"DEPOSITO;AC-0001;100;82"},"status":200,"response":{"status":"recieved","operacionId":"OP-0001"}}
+{"id":4448,"seq":"syn-ANULA-sep-1","x_req":3894,"hipotesis":"double-sep: ANULA;;OP-0001;45","request":{"m":"ANULA;;OP-0001;45"},"status":400,"response":{"error":"E104","mensaje":"segmento vacío"}}
+{"id":4449,"seq":"syn-ANULA-sep-2","x_req":null,"hipotesis":"reset for trailing-sep","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4450,"seq":"syn-ANULA-sep-2","x_req":3895,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4451,"seq":"syn-ANULA-sep-2","x_req":3896,"hipotesis":"setup DEPOSITO;AC-0001;100;82","request":{"m":"DEPOSITO;AC-0001;100;82"},"status":200,"response":{"status":"recieved","operacionId":"OP-0001"}}
+{"id":4452,"seq":"syn-ANULA-sep-2","x_req":3897,"hipotesis":"trailing-sep: ANULA;OP-0001;;66","request":{"m":"ANULA;OP-0001;;66"},"status":400,"response":{"error":"E104","mensaje":"segmento vacío"}}
+{"id":4453,"seq":"syn-ANULA-control-1","x_req":null,"hipotesis":"reset for leading-zero","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4454,"seq":"syn-ANULA-control-1","x_req":3898,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4455,"seq":"syn-ANULA-control-1","x_req":3899,"hipotesis":"setup DEPOSITO;AC-0001;100;82","request":{"m":"DEPOSITO;AC-0001;100;82"},"status":200,"response":{"status":"recieved","operacionId":"OP-0001"}}
+{"id":4456,"seq":"syn-ANULA-control-1","x_req":3900,"hipotesis":"leading-zero: ANULA;OP-0001;066","request":{"m":"ANULA;OP-0001;066"},"status":400,"response":{"error":"E201","mensaje":"control mal formado"}}
+{"id":4457,"seq":"syn-ANULA-control-2","x_req":null,"hipotesis":"reset for space-after","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4458,"seq":"syn-ANULA-control-2","x_req":3901,"hipotesis":"setup ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4459,"seq":"syn-ANULA-control-2","x_req":3902,"hipotesis":"setup DEPOSITO;AC-0001;100;82","request":{"m":"DEPOSITO;AC-0001;100;82"},"status":200,"response":{"status":"recieved","operacionId":"OP-0001"}}
+{"id":4460,"seq":"syn-ANULA-control-2","x_req":3903,"hipotesis":"space-after: ANULA;OP-0001;66 ","request":{"m":"ANULA;OP-0001;66 "},"status":400,"response":{"error":"E201","mensaje":"control mal formado"}}
+{"id":4461,"seq":"syn-HALT-spaces-1","x_req":null,"hipotesis":"reset for space-start","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4462,"seq":"syn-HALT-spaces-1","x_req":3904,"hipotesis":"space-start:  HALT;1;19","request":{"m":" HALT;1;19"},"status":400,"response":{"error":"E301","mensaje":"comando desconocido ","sugerencia":"HALT"}}
+{"id":4463,"seq":"syn-HALT-spaces-2","x_req":null,"hipotesis":"reset for space-end-cmd","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4464,"seq":"syn-HALT-spaces-2","x_req":3905,"hipotesis":"space-end-cmd: HALT ;1;71","request":{"m":"HALT ;1;71"},"status":400,"response":{"error":"E202","mensaje":"control inválido"}}
+{"id":4465,"seq":"syn-HALT-spaces-3","x_req":null,"hipotesis":"reset for space-start-arg","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4466,"seq":"syn-HALT-spaces-3","x_req":3906,"hipotesis":"space-start-arg: HALT; 1;19","request":{"m":"HALT; 1;19"},"status":409,"response":{"error":"E520","mensaje":"operación destructiva: detiene el servicio; reenvía con confirmación"}}
+{"id":4467,"seq":"syn-HALT-spaces-4","x_req":null,"hipotesis":"reset for space-end-arg","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4468,"seq":"syn-HALT-spaces-4","x_req":3907,"hipotesis":"space-end-arg: HALT;1 ;19","request":{"m":"HALT;1 ;19"},"status":409,"response":{"error":"E520","mensaje":"operación destructiva: detiene el servicio; reenvía con confirmación"}}
+{"id":4469,"seq":"syn-HALT-case-1","x_req":null,"hipotesis":"reset for lowercase-cmd","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4470,"seq":"syn-HALT-case-1","x_req":3908,"hipotesis":"lowercase-cmd: halt;1;19","request":{"m":"halt;1;19"},"status":503,"response":{"error":"E599","mensaje":"service halted"}}
+{"id":4471,"seq":"syn-HALT-case-2","x_req":null,"hipotesis":"reset for mixed-cmd","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4472,"seq":"syn-HALT-case-2","x_req":3909,"hipotesis":"mixed-cmd: HaLt;1;19","request":{"m":"HaLt;1;19"},"status":503,"response":{"error":"E599","mensaje":"service halted"}}
+{"id":4473,"seq":"syn-HALT-arg-1","x_req":null,"hipotesis":"reset for zero","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4474,"seq":"syn-HALT-arg-1","x_req":3910,"hipotesis":"zero: HALT;0;22","request":{"m":"HALT;0;22"},"status":409,"response":{"error":"E520","mensaje":"operación destructiva: detiene el servicio; reenvía con confirmación"}}
+{"id":4475,"seq":"syn-HALT-arg-2","x_req":null,"hipotesis":"reset for two","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4476,"seq":"syn-HALT-arg-2","x_req":3911,"hipotesis":"two: HALT;2;16","request":{"m":"HALT;2;16"},"status":409,"response":{"error":"E520","mensaje":"operación destructiva: detiene el servicio; reenvía con confirmación"}}
+{"id":4477,"seq":"syn-HALT-arg-3","x_req":null,"hipotesis":"reset for x","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4478,"seq":"syn-HALT-arg-3","x_req":3912,"hipotesis":"x: HALT;x;42","request":{"m":"HALT;x;42"},"status":409,"response":{"error":"E520","mensaje":"operación destructiva: detiene el servicio; reenvía con confirmación"}}
+{"id":4479,"seq":"syn-HALT-arg-4","x_req":null,"hipotesis":"reset for empty","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4480,"seq":"syn-HALT-arg-4","x_req":3913,"hipotesis":"empty: HALT;;19","request":{"m":"HALT;;19"},"status":400,"response":{"error":"E104","mensaje":"segmento vacío"}}
+{"id":4481,"seq":"syn-HALT-arity-1","x_req":null,"hipotesis":"reset for no-args","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4482,"seq":"syn-HALT-arity-1","x_req":3914,"hipotesis":"no-args: HALT;19","request":{"m":"HALT;19"},"status":400,"response":{"error":"E202","mensaje":"control inválido"}}
+{"id":4483,"seq":"syn-HALT-arity-2","x_req":null,"hipotesis":"reset for two-args","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4484,"seq":"syn-HALT-arity-2","x_req":3915,"hipotesis":"two-args: HALT;1;extra;32","request":{"m":"HALT;1;extra;32"},"status":400,"response":{"error":"E302","mensaje":"aridad inválida"}}
+{"id":4485,"seq":"syn-HALT-sep-1","x_req":null,"hipotesis":"reset for double-sep","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4486,"seq":"syn-HALT-sep-1","x_req":3916,"hipotesis":"double-sep: HALT;;1;71","request":{"m":"HALT;;1;71"},"status":400,"response":{"error":"E104","mensaje":"segmento vacío"}}
+{"id":4487,"seq":"syn-HALT-sep-2","x_req":null,"hipotesis":"reset for trailing-sep","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4488,"seq":"syn-HALT-sep-2","x_req":3917,"hipotesis":"trailing-sep: HALT;1;;19","request":{"m":"HALT;1;;19"},"status":400,"response":{"error":"E104","mensaje":"segmento vacío"}}
+{"id":4489,"seq":"syn-HALT-control-1","x_req":null,"hipotesis":"reset for leading-zero","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4490,"seq":"syn-HALT-control-1","x_req":3918,"hipotesis":"leading-zero: HALT;1;019","request":{"m":"HALT;1;019"},"status":400,"response":{"error":"E201","mensaje":"control mal formado"}}
+{"id":4491,"seq":"syn-HALT-control-2","x_req":null,"hipotesis":"reset for space-after","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4492,"seq":"syn-HALT-control-2","x_req":3919,"hipotesis":"space-after: HALT;1;19 ","request":{"m":"HALT;1;19 "},"status":400,"response":{"error":"E201","mensaje":"control mal formado"}}
+{"id":4493,"seq":"syn-UNKNOWN-1","x_req":null,"hipotesis":"reset for HELP","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4494,"seq":"syn-UNKNOWN-1","x_req":3920,"hipotesis":"HELP: HELP;72","request":{"m":"HELP;72"},"status":400,"response":{"error":"E301","mensaje":"comando desconocido ","sugerencia":"HALT"}}
+{"id":4495,"seq":"syn-UNKNOWN-2","x_req":null,"hipotesis":"reset for BALANCE","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4496,"seq":"syn-UNKNOWN-2","x_req":3921,"hipotesis":"BALANCE: BALANCE;57","request":{"m":"BALANCE;57"},"status":400,"response":{"error":"E301","mensaje":"comando desconocido "}}
+{"id":4497,"seq":"syn-UNKNOWN-3","x_req":null,"hipotesis":"reset for SALDO","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4498,"seq":"syn-UNKNOWN-3","x_req":3922,"hipotesis":"SALDO: SALDO;38","request":{"m":"SALDO;38"},"status":400,"response":{"error":"E301","mensaje":"comando desconocido "}}
+{"id":4499,"seq":"syn-UNKNOWN-4","x_req":null,"hipotesis":"reset for empty-cmd","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4500,"seq":"syn-UNKNOWN-4","x_req":3923,"hipotesis":"empty-cmd: ;64","request":{"m":";64"},"status":400,"response":{"error":"E104","mensaje":"segmento vacío"}}
+{"id":4501,"seq":"syn-UNKNOWN-5","x_req":null,"hipotesis":"reset for semicolon-only","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4502,"seq":"syn-UNKNOWN-5","x_req":3924,"hipotesis":"semicolon-only: ;;64","request":{"m":";;64"},"status":400,"response":{"error":"E104","mensaje":"segmento vacío"}}
+{"id":4503,"seq":"syn-JSON-1","x_req":null,"hipotesis":"reset for null-m","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4504,"seq":"syn-JSON-1","x_req":3925,"hipotesis":"null-m: ","request":"{\"m\":null}","status":400,"response":{"error":"E102","mensaje":"falta m"}}
+{"id":4505,"seq":"syn-JSON-2","x_req":null,"hipotesis":"reset for number-m","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4506,"seq":"syn-JSON-2","x_req":3926,"hipotesis":"number-m: ","request":"{\"m\":123}","status":400,"response":{"error":"E102","mensaje":"falta m"}}
+{"id":4507,"seq":"syn-JSON-3","x_req":null,"hipotesis":"reset for bool-m","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4508,"seq":"syn-JSON-3","x_req":3927,"hipotesis":"bool-m: ","request":"{\"m\":true}","status":400,"response":{"error":"E102","mensaje":"falta m"}}
+{"id":4509,"seq":"syn-JSON-4","x_req":null,"hipotesis":"reset for array-m","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4510,"seq":"syn-JSON-4","x_req":3928,"hipotesis":"array-m: ","request":"{\"m\":[]}","status":400,"response":{"error":"E102","mensaje":"falta m"}}
+{"id":4511,"seq":"syn-JSON-5","x_req":null,"hipotesis":"reset for object-m","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4512,"seq":"syn-JSON-5","x_req":3929,"hipotesis":"object-m: ","request":"{\"m\":{}}","status":400,"response":{"error":"E102","mensaje":"falta m"}}
+{"id":4513,"seq":"syn-JSON-6","x_req":null,"hipotesis":"reset for missing-m","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4514,"seq":"syn-JSON-6","x_req":3930,"hipotesis":"missing-m: ","request":"{}","status":400,"response":{"error":"E102","mensaje":"falta m"}}
+{"id":4515,"seq":"syn-JSON-7","x_req":null,"hipotesis":"reset for array-root","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4516,"seq":"syn-JSON-7","x_req":3931,"hipotesis":"array-root: ","request":"[]","status":400,"response":{"error":"E102","mensaje":"falta m"}}
+{"id":4517,"seq":"syn-JSON-8","x_req":null,"hipotesis":"reset for string-root","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4518,"seq":"syn-JSON-8","x_req":3932,"hipotesis":"string-root: ","request":"\"texto\"","status":400,"response":{"error":"E102","mensaje":"falta m"}}
+{"id":4519,"seq":"syn-JSON-9","x_req":null,"hipotesis":"reset for duplicate-m-last-wins","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4520,"seq":"syn-JSON-9","x_req":3933,"hipotesis":"duplicate-m-last-wins: ","request":"{\"m\":\"PING;64\",\"m\":\"ALTA;Ana;50\"}","status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4521,"seq":"syn-JSON-10","x_req":null,"hipotesis":"reset for bad-json","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4522,"seq":"syn-JSON-10","x_req":3934,"hipotesis":"bad-json: ","request":"{bad json","status":400,"response":{"error":"E100","mensaje":"json inválido"}}
+{"id":4523,"seq":"syn-JSON-11","x_req":null,"hipotesis":"reset for bom-prefix","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4524,"seq":"syn-JSON-11","x_req":3935,"hipotesis":"bom-prefix: ","request":"﻿{\"m\":\"PING;64\"}","status":400,"response":{"error":"E100","mensaje":"json inválido"}}
+{"id":4525,"seq":"syn-JSON-12","x_req":null,"hipotesis":"reset for newline-in-m","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4526,"seq":"syn-JSON-12","x_req":3936,"hipotesis":"newline-in-m: ","request":"{\"m\":\"PING;\\n64\"}","status":200,"response":{"pong":true}}
+{"id":4527,"seq":"syn-JSON-13","x_req":null,"hipotesis":"reset for tab-in-m","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4528,"seq":"syn-JSON-13","x_req":3937,"hipotesis":"tab-in-m: ","request":"{\"m\":\"PING;\\t64\"}","status":200,"response":{"pong":true}}
+{"id":4529,"seq":"syn-JSON-14","x_req":null,"hipotesis":"reset for null-root","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4530,"seq":"syn-JSON-14","x_req":3938,"hipotesis":"null-root: ","request":"null","status":400,"response":{"error":"E102","mensaje":"falta m"}}
+{"id":4531,"seq":"syn-JSON-15","x_req":null,"hipotesis":"reset for number-root","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4532,"seq":"syn-JSON-15","x_req":3939,"hipotesis":"number-root: ","request":"42","status":400,"response":{"error":"E102","mensaje":"falta m"}}
+{"id":4533,"seq":"syn-JSON-16","x_req":null,"hipotesis":"reset for empty-body","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4534,"seq":"syn-JSON-16","x_req":3940,"hipotesis":"empty-body: ","request":"","status":400,"response":{"error":"E100","mensaje":"json inválido"}}
+{"id":4535,"seq":"syn-JSON-17","x_req":null,"hipotesis":"reset for spaces-only","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4536,"seq":"syn-JSON-17","x_req":3941,"hipotesis":"spaces-only: ","request":"   ","status":400,"response":{"error":"E100","mensaje":"json inválido"}}
+{"id":4537,"seq":"syn-RAW-1","x_req":null,"hipotesis":"reset for plain-text","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4538,"seq":"syn-RAW-1","x_req":3942,"hipotesis":"plain-text: ","request":"PING;64","status":400,"response":{"error":"E100","mensaje":"json inválido"}}
+{"id":4539,"seq":"syn-RAW-2","x_req":null,"hipotesis":"reset for plain-text-json-like","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4540,"seq":"syn-RAW-2","x_req":3943,"hipotesis":"plain-text-json-like: ","request":"m=PING;64","status":400,"response":{"error":"E100","mensaje":"json inválido"}}
+{"id":4541,"seq":"syn-RAW-3","x_req":null,"hipotesis":"reset for trailing-comma","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4542,"seq":"syn-RAW-3","x_req":3944,"hipotesis":"trailing-comma: ","request":"{\"m\":\"PING;64\",}","status":400,"response":{"error":"E100","mensaje":"json inválido"}}
+{"id":4543,"seq":"syn-RAW-4","x_req":null,"hipotesis":"reset for single-quotes","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4544,"seq":"syn-RAW-4","x_req":3945,"hipotesis":"single-quotes: ","request":"{'m':'PING;64'}","status":400,"response":{"error":"E100","mensaje":"json inválido"}}
+{"id":4545,"seq":"syn-RAW-5","x_req":null,"hipotesis":"reset for unclosed-string","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4546,"seq":"syn-RAW-5","x_req":3946,"hipotesis":"unclosed-string: ","request":"{\"m\":\"PING;64}","status":400,"response":{"error":"E100","mensaje":"json inválido"}}
+{"id":4547,"seq":"sCTRL","x_req":null,"hipotesis":"reset: inicio de secuencia","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":4548,"seq":"sCTRL","x_req":3947,"hipotesis":"control de 2 digitos con cero: ALTA;Ana;05","request":{"m":"ALTA;Ana;05"},"status":400,"response":{"error":"E202","mensaje":"control inválido"}}
+{"id":4549,"seq":"sCTRL","x_req":3948,"hipotesis":"control de 3 digitos sin cero: ALTA;Ana;100","request":{"m":"ALTA;Ana;100"},"status":400,"response":{"error":"E201","mensaje":"control mal formado"}}
+{"id":4550,"seq":"sCTRL","x_req":3949,"hipotesis":"control de 2 digitos correcto: ALTA;Ana;50","request":{"m":"ALTA;Ana;50"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":4551,"seq":"sCTRL","x_req":3950,"hipotesis":"control de 3 digitos con ceros: ALTA;Ana;050","request":{"m":"ALTA;Ana;050"},"status":400,"response":{"error":"E201","mensaje":"control mal formado"}}
+{"id":4552,"seq":"sCTRL","x_req":null,"hipotesis":"reset","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}

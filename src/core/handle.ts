@@ -72,7 +72,7 @@ export function handle(prev: State, raw: string): Result {
   const cmd = seg[0].toUpperCase();
   if (cmd !== 'PING') { // PING skips the control entirely (458, 459, README "PING;XX")
     const c = seg[seg.length - 1];
-    if (!/^\d+$/.test(c)) return fail(prev, 'E201');
+    if (!/^\d{1,2}$/.test(c)) return fail(prev, 'E201');
     if (String(control(m.slice(0, m.lastIndexOf(';')))) !== c) return fail(prev, 'E202');
   }
   if (!has(ARITY, cmd)) { const s = suggest(cmd); return fail(prev, 'E301', s ? { sugerencia: s } : undefined); }
