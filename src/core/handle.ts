@@ -42,7 +42,8 @@ const monto = (s: string) => (/^[1-9][0-9]{0,9}$/.test(s) ? Number(s) : null);
 // T1: suggestion = closest known command within Levenshtein 2; ties -> first in alphabetical order (3592-3606, s38-s39).
 const SUGERIBLES = Object.keys(ARITY);
 function suggest(cmd: string) {
-  const dist = (a: string, b: string) => {
+  const dist = (sa: string, sb: string) => {
+    const a = [...sa], b = [...sb]; // T4: distance in code points ('PING😀😀' -> PING, 4668)
     let row = Array.from({ length: b.length + 1 }, (_, j) => j);
     for (let i = 1; i <= a.length; i++) {
       const next = [i];
@@ -69,7 +70,7 @@ export function handle(prev: State, raw: string): Result {
   if (!m.includes(';')) return fail(prev, 'E103');
   const seg = m.split(';');
   if (seg.includes('')) return fail(prev, 'E104');
-  const cmd = seg[0].toUpperCase();
+  const cmd = seg[0].replace(/[a-z]+/g, (x) => x.toUpperCase()); // T4: ASCII-only uppercase ('pıng', 'CONſULTA', 'ß' stay unknown: 4641-4645, 4670)
   if (cmd !== 'PING') { // PING skips the control entirely (458, 459, README "PING;XX")
     const c = seg[seg.length - 1];
     if (!/^\d{1,2}$/.test(c)) return fail(prev, 'E201');
