@@ -36,21 +36,22 @@ el original y avisa de cualquier diferencia.
 | Medida | Resultado |
 |---|---|
 | `pruebas/ejemplos.jsonl` contra el reemplazo local | 20/20 |
-| `experimentos.jsonl` contra el reemplazo local | 1670/1671; la diferencia es el id 1602, un caso que el fuzz encontró y que sigue abierto (ver abajo) |
+| `experimentos.jsonl` contra el reemplazo local | 2442/2442 |
+| Reemplazo desplegado en Render (`remote-diff.ts`) | ejemplos 20/20; muestra de 299 líneas (33 secuencias) 299/299; latencia máxima 845 ms, p95 243 ms |
 | Fuzz contra el original (semillas 101, 202, 303) | 90 secuencias, 595 mensajes, 0 diferencias |
+| Fuzz de negocio contra el original (semillas 404, 505) | 80 secuencias, 725 mensajes, 1 diferencia (TRA-7), ya corregida |
 | Drift de los 20 ejemplos contra el original (12:52) | sin cambios |
 | Tests (`npm test`) | 3 de 3 |
 
 Límites de esos números:
 - El diff sobre el log reproduce el mismo log con el que se construyó el reemplazo, así que mide que no hay regresiones y no cobertura nueva.
   La medida independiente es el fuzz.
-- Diferencia abierta (id 1602, fuzz de negocio): `TRANSFER;AC-0001;AC-0002;100001` con saldo 0 en el origen devolvió `E507`, y nuestro
-  reemplazo devuelve `E506`. Otros 4 casos con saldo 0 (ids 1438, 1589, 1612, 1836) sí dieron `E506`, así que el orden entre ambos errores
-  depende de algo que todavía no se identificó.
+- El fuzz de negocio encontró una regla que no habíamos visto (TRA-7): entre dos cuentas con el mismo nombre de titular no se aplica
+  el límite de 100000 por transferencia. Está implementada y el diff local la cubre, pero todavía no se volvió a fuzzear contra el original.
 - El fuzz cubrió poco los errores de límite excedido (E506, 1 caso) y saldo insuficiente (E507, 2 casos), y no incluye
   errores de forma (E100 a E103, E201), que cubre el diff. Excluye `HALT` a propósito.
-- El reemplazo está desplegado en Render, pero su comprobación remota con `remote-diff.ts` está pendiente. No hay todavía un
-  resultado medido sobre el set de evaluación.
+- La comprobación remota usa solo una muestra del log, no el log completo. No hay todavía un resultado medido sobre el set de
+  evaluación del reto.
 - [SPEC.md](SPEC.md) es un borrador. Cada comportamiento indica su confianza (confirmado, probable o supuesto); los supuestos son lo
   que hace el reemplazo donde no se probó nada, por ejemplo que el límite de 8192 bytes cuenta bytes y no caracteres.
 

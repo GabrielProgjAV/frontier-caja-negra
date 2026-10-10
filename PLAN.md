@@ -48,7 +48,7 @@ Estados: `todo` · `doing` · `done` · `blocked`.
 | 8 | `src/core/state.ts` + `handle.ts` (núcleo puro, orden de validación de HANDOFF.md) | sesión 2 | done (incluye HALT→E520) | 12:25 |
 | 9 | `src/server.ts` (`node:http`, autenticación con `TEAM_TOKEN`, `/health`, `/__reset`, 404) | sesión 2 | done (health/reset exigen token; 0.0.0.0:PORT) | 12:25 |
 | 10 | `probe/diff.ts`: reproducir el log contra el reemplazo local, % por comando | sesión 2 | done: ejemplos 20/20, experimentos 815/815 (100%) | 12:38 |
-| 11 | Desplegar en Render y comprobar `/health` en la URL pública | sesión 2 | doing: desplegado en https://frontier-caja-negra.onrender.com, pero responde 401 con el TEAM_TOKEN de .env (token de Render por confirmar) | 12:54 |
+| 11 | Desplegar en Render y comprobar `/health` en la URL pública | sesión 2 | done: https://frontier-caja-negra.onrender.com, `/health` 200 con token; e4dc5a4 en vivo (13:18) | 13:20 |
 | 12 | Ejecución 1 del set oculto (~15:30) | sesión 2 | todo | |
 | 13 | `probe/drift.ts`: canaria contra el original (cada ~1 h). Drift manual s12 (12:20) y s17 (12:27): sin cambios; falta el script | sesión 1 | todo | 12:27 |
 | 14 | Arreglos a partir de los resultados de la ejecución 1 y de diff | sesión 2 | todo | |
@@ -61,24 +61,20 @@ Estados: `todo` · `doing` · `done` · `blocked`.
 | 21 | s18-s20: monto máximo de 10 dígitos (sin BigInt), Authorization exacta "Bearer <token>", nombres con espacios. Para la sesión 2: DEP/TRA monto ^[1-9][0-9]{0,9}$; auth exacta | sesión 1 | done | 12:36 |
 | 22 | Fuzz: 3 semillas (101, 202, 303) x 30 seqs = 90 secuencias, 595 mensajes, 0 diferencias (ids 816-1500). HALT excluido del fuzzer. Cobertura débil: E506 (1), E507 (2); sin E100-E103/E201 (los cubre diff.ts). Drift s21 a las 12:52: sin cambios | sesión 1 | done | 12:53 |
 | 23 | Fuzz --business: 2 semillas (404, 505) x 40 seqs, 6-12 pasos, 725 mensajes (ids 1522-2413). 1 diferencia: TRA-7 (límite E506 no aplica entre cuentas con el mismo nombre de titular), investigada en s22-s32. drift.ts ~13:08: 20/20 sin cambios | sesión 1 | done | 13:10 |
-| 24 | **Sesión 2: implementar TRA-7.** Guardar el nombre en cada cuenta (ALTA). En TRANSFER, si nombre(origen) === nombre(destino) (exacto, sin trim, distingue mayúsculas), saltar el check E506; E303/E304/E401/E507 igual. diff.ts falla en 1602, 1942, 1952, 1978, 1980, 1981, 2418, 2419 | sesión 2 | todo | 13:10 |
+| 24 | **Sesión 2: implementar TRA-7.** Guardar el nombre en cada cuenta (ALTA). En TRANSFER, si nombre(origen) === nombre(destino) (exacto, sin trim, distingue mayúsculas), saltar el check E506; E303/E304/E401/E507 igual. diff.ts falla en 1602, 1942, 1952, 1978, 1980, 1981, 2418, 2419 | sesión 2 | done (e4dc5a4: diff 2442/2442, desplegado en Render) | 13:20 |
+| 25 | E101 (413 si el cuerpo pasa de 8192 bytes, tras auth y antes del JSON); tope de monto de 10 dígitos (9999999999 pasa, 11 dígitos E303); diff soporta `auth: header:...` | sesión 2 | done | 13:20 |
+| 26 | `probe/validate-log.ts`: 815 líneas, 0 problemas (el taskkill no rompió nada) | sesión 2 | done | 13:20 |
+| 27 | `probe/fuzz.ts` (no ejecutado contra el original; probado en sandbox contra el servidor local: 40 secuencias, 0 diferencias). Lo ejecuta sesión 1 con `node --env-file=.env probe/fuzz.ts --seqs N [--seed S]` | sesión 2 | done | 13:20 |
+| 28 | DEPLOY.md corregido para Render Free + ping externo cada 5 min | sesión 2 | done | 13:20 |
+| 29 | `probe/remote-diff.ts` (REPLACEMENT_URL + TEAM_TOKEN; % y latencia; `--sample N`). Contra Render (13:20, commit e4dc5a4): ejemplos 20/20, latencia máx 845 ms, p95 243 ms; muestra de 299 líneas (33 secuencias) 299/299, máx 455 ms, p95 236 ms | sesión 2 | done | 13:20 |
+| 30 | `probe/drift.ts`: canaria de los 20 ejemplos contra el original (no ejecutado; lo corre sesión 1: `node --env-file=.env probe/drift.ts`). Probado en sandbox local | sesión 2 | done | 13:20 |
+| 31 | README.md del reto movido a RETO.md (referencias actualizadas) y README.md nuevo del proyecto, solo con cifras medidas | sesión 2 | done | 13:20 |
+| 32 | Diferencia 1602 (E506 frente a E507) del fuzz de negocio: explicada por TRA-7 (tarea 24), implementada en e4dc5a4; diff 2442/2442 | sesión 2 | done | 13:20 |
 
 ## Presupuesto
 2442 de 8000 requests usadas (13:10). Fuente de verdad: `probe/budget.json`.
-
-## Sesión 2 (12:38)
-| # | Tarea | Estado |
-|---|---|---|
-| 21 | E101 (413 si el cuerpo pasa de 8192 bytes, tras auth y antes del JSON); tope de monto de 10 dígitos (9999999999 pasa, 11 dígitos E303); diff soporta `auth: header:...` | done |
-| 22 | `probe/validate-log.ts`: 815 líneas, 0 problemas (el taskkill no rompió nada) | done |
-| 23 | `probe/fuzz.ts` (no ejecutado contra el original; probado en sandbox contra el servidor local: 40 secuencias, 0 diferencias). Lo ejecuta sesión 1 con `node --env-file=.env probe/fuzz.ts --seqs N [--seed S]` | done |
-| 24 | DEPLOY.md corregido para Render Free + ping externo cada 5 min | done |
 
 **Supuestos para que sesión 1 los confirme:**
 - E101 cuenta **bytes** (`Buffer.byteLength`), no caracteres; se probó solo con ASCII. Falta un cuerpo > 8192 bytes con caracteres multibyte pero < 8192 caracteres.
 - Sugerencia de E301: primer comando conocido (orden PING, ALTA, CONSULTA, DEPOSITO, TRANSFER, ANULA, HALT) a distancia de Levenshtein <= 2; el orden decide empates.
 - `HALT` con cualquier argumento da E520 incluso con cuenta/argumento inválido.
-| 25 | `probe/remote-diff.ts` (REPLACEMENT_URL + TEAM_TOKEN; % y latencia máxima; `--sample N`). Probado contra servidor local: ejemplos 20/20, latencia máx 160 ms. **Sin correr contra Render (12:54): 401 con el TEAM_TOKEN de .env** | blocked |
-| 26 | `probe/drift.ts`: canaria de los 20 ejemplos contra el original (no ejecutado; lo corre sesión 1: `node --env-file=.env probe/drift.ts`). Probado en sandbox local | done |
-| 27 | README.md del reto movido a RETO.md (referencias actualizadas) y README.md nuevo del proyecto, solo con cifras medidas (13:04). Falta: remote-diff contra Render cuando el token quede bien | done |
-| 28 | **Abierto para sesión 1:** el fuzz de negocio encontró una diferencia, id 1602 (seq fuzzbb8_9): `TRANSFER;AC-0001;AC-0002;100001;9` con saldo origen 0 -> original E507, nosotros E506. Con saldo 0 y el mismo monto dieron E506 los ids 1438, 1589, 1612, 1836. Lo que distingue a 1602: el destino tiene saldo 4315 (deposito OP-0002) y hubo 3 TRANSFER fallidos por E304 antes. Hipótesis: el orden E506/E507 depende del saldo del destino o de intentos previos. Hay que sondearlo (13:05) | todo |
