@@ -1,0 +1,31 @@
+{"id":1,"seq":"s1","x_req":null,"hipotesis":"reset: inicio de secuencia","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":2,"seq":"s1","x_req":1,"hipotesis":"replay ejemplo n=1: igual que la version de la manana","request":{"m":"PING;64"},"status":200,"response":{"pong":true}}
+{"id":3,"seq":"s1","x_req":2,"hipotesis":"replay ejemplo n=2: igual que la version de la manana","request":{"m":"ALTA;Lucia;83"},"status":400,"response":{"error":"E202","mensaje":"control inválido"}}
+{"id":4,"seq":"s1","x_req":3,"hipotesis":"replay ejemplo n=3: igual que la version de la manana","request":{"m":"ALTA;Lucia;82"},"status":201,"response":{"cuentaId":"AC-0001"}}
+{"id":5,"seq":"s1","x_req":4,"hipotesis":"replay ejemplo n=4: igual que la version de la manana","request":{"m":"ALTA;Mateo;3"},"status":201,"response":{"cuentaId":"AC-0002"}}
+{"id":6,"seq":"s1","x_req":5,"hipotesis":"replay ejemplo n=5: igual que la version de la manana","request":{"m":"CONSULTA;AC-0001;14"},"status":200,"response":{"cuenta_id":"AC-0001","saldo":0}}
+{"id":7,"seq":"s1","x_req":6,"hipotesis":"replay ejemplo n=6: igual que la version de la manana","request":{"m":"DEPOSITO;AC-0001;250000;86"},"status":200,"response":{"status":"recieved","operacionId":"OP-0001"}}
+{"id":8,"seq":"s1","x_req":7,"hipotesis":"replay ejemplo n=7: igual que la version de la manana","request":{"m":"TRANSFER;AC-0001;AC-0002;40000;86"},"status":200,"response":{"status":"recieved","operacionId":"OP-0002"}}
+{"id":9,"seq":"s1","x_req":8,"hipotesis":"replay ejemplo n=8: igual que la version de la manana","request":{"m":"CONSULTA;AC-0002;11"},"status":200,"response":{"cuenta_id":"AC-0002","saldo":40000}}
+{"id":10,"seq":"s1","x_req":9,"hipotesis":"replay ejemplo n=9: igual que la version de la manana","request":{"m":"TRANSFER;AC-0001;AC-0002;120000;55"},"status":422,"response":{"error":"E506","mensaje":"límite excedido"}}
+{"id":11,"seq":"s1","x_req":10,"hipotesis":"replay ejemplo n=10: igual que la version de la manana","request":{"m":"TRANSFER;AC-0001;AC-0002;100000;12"},"status":200,"response":{"status":"recieved","operacionId":"OP-0003"}}
+{"id":12,"seq":"s1","x_req":11,"hipotesis":"replay ejemplo n=11: igual que la version de la manana","request":{"m":"CONSULTa;AC-0001;14"},"status":200,"response":{"cuenta_id":"AC-0001","saldo":110000}}
+{"id":13,"seq":"s1","x_req":12,"hipotesis":"replay ejemplo n=12: igual que la version de la manana","request":{"m":"SALDOS;AC-0001;38"},"status":400,"response":{"error":"E301","mensaje":"comando desconocido "}}
+{"id":14,"seq":"s1","x_req":13,"hipotesis":"replay ejemplo n=13: igual que la version de la manana","request":{"m":"ANULA;OP-0003;66"},"status":200,"response":{"ok":true,"anulada":"OP-0003"}}
+{"id":15,"seq":"s1","x_req":14,"hipotesis":"replay ejemplo n=14: igual que la version de la manana","request":{"m":"ANULA;OP-0003;66"},"status":200,"response":{"ok":false,"motivo":"ya anulada"}}
+{"id":16,"seq":"s1","x_req":15,"hipotesis":"replay ejemplo n=15: igual que la version de la manana","request":{"m":"CONSULTA;AC-0009;87"},"status":404,"response":{"error":"E401","mensaje":"cuenta inexistente"}}
+{"id":17,"seq":"s1","x_req":16,"hipotesis":"replay ejemplo n=16: igual que la version de la manana","request":{"m":"TRANSFER;AC-0002;AC-0001;50000;23"},"status":422,"response":{"error":"E507","mensaje":"saldo insuficiente"}}
+{"id":18,"seq":"s1","x_req":17,"hipotesis":"replay ejemplo n=17: igual que la version de la manana","request":{"m":"DEPOSITO;AC-0002;700;5X"},"status":400,"response":{"error":"E201","mensaje":"control mal formado"}}
+{"id":19,"seq":"s1","x_req":18,"hipotesis":"replay ejemplo n=18: igual que la version de la manana","request":{"m":"DEPOSITO;AC-0002;700;35"},"status":200,"response":{"status":"recieved","operacionId":"OP-0004"}}
+{"id":20,"seq":"s1","x_req":19,"hipotesis":"replay ejemplo n=19: igual que la version de la manana","request":{"m":"CONSULTA;AC-0002;11"},"status":200,"response":{"cuenta_id":"AC-0002","saldo":40700}}
+{"id":21,"seq":"s1","x_req":20,"hipotesis":"replay ejemplo n=20: igual que la version de la manana","request":{"m":"ALTA;Lucia;Gomez;11"},"status":400,"response":{"error":"E302","mensaje":"aridad inválida"}}
+{"id":22,"seq":"s2","x_req":null,"hipotesis":"reset: inicio de secuencia","request":null,"status":200,"response":{"ok":true},"method":"POST","path":"/__reset","auth":"ok"}
+{"id":23,"seq":"s2","x_req":null,"hipotesis":"GET /health responde 200 sin depender del estado","request":null,"status":200,"response":{"ok":true},"method":"GET","path":"/health","auth":"ok"}
+{"id":24,"seq":"s2","x_req":null,"hipotesis":"GET / ruta raiz: que responde","request":null,"status":404,"response":{"error":"E404","mensaje":"ruta desconocida"},"method":"GET","path":"/","auth":"ok"}
+{"id":25,"seq":"s2","x_req":null,"hipotesis":"ruta inexistente: status y cuerpo exactos","request":null,"status":404,"response":{"error":"E404","mensaje":"ruta desconocida"},"method":"GET","path":"/no-existe","auth":"ok"}
+{"id":26,"seq":"s2","x_req":null,"hipotesis":"GET /msg: metodo no permitido o 404","request":null,"status":404,"response":{"error":"E404","mensaje":"ruta desconocida"},"method":"GET","path":"/msg","auth":"ok"}
+{"id":27,"seq":"s2","x_req":null,"hipotesis":"POST /msg sin token: error de auth","request":{"m":"PING;64"},"status":401,"response":{"error":"E001","mensaje":"no autorizado"},"method":"POST","path":"/msg","auth":"none"}
+{"id":28,"seq":"s2","x_req":null,"hipotesis":"POST /msg con token incorrecto: error de auth","request":{"m":"PING;64"},"status":401,"response":{"error":"E001","mensaje":"no autorizado"},"method":"POST","path":"/msg","auth":"wrong"}
+{"id":29,"seq":"s2","x_req":21,"hipotesis":"cuerpo JSON invalido","request":"{\"m\":","status":400,"response":{"error":"E100","mensaje":"json inválido"}}
+{"id":30,"seq":"s2","x_req":22,"hipotesis":"cuerpo {} sin campo m","request":{},"status":400,"response":{"error":"E102","mensaje":"falta m"}}
+{"id":31,"seq":"s2","x_req":23,"hipotesis":"campo m vacio","request":{"m":""},"status":400,"response":{"error":"E103","mensaje":"falta control"}}
