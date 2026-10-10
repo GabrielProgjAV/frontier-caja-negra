@@ -1,0 +1,50 @@
+[
+ {
+  "hipotesis": "GET /health responde 200 sin depender del estado",
+  "method": "GET",
+  "path": "/health"
+ },
+ {
+  "hipotesis": "GET / ruta raiz: que responde",
+  "method": "GET",
+  "path": "/"
+ },
+ {
+  "hipotesis": "ruta inexistente: status y cuerpo exactos",
+  "method": "GET",
+  "path": "/no-existe"
+ },
+ {
+  "hipotesis": "GET /msg: metodo no permitido o 404",
+  "method": "GET",
+  "path": "/msg"
+ },
+ {
+  "hipotesis": "POST /msg sin token: error de auth",
+  "auth": "none",
+  "body": {
+   "m": "PING;64"
+  }
+ },
+ {
+  "hipotesis": "POST /msg con token incorrecto: error de auth",
+  "auth": "wrong",
+  "body": {
+   "m": "PING;64"
+  }
+ },
+ {
+  "hipotesis": "cuerpo JSON invalido",
+  "raw": "{\"m\":"
+ },
+ {
+  "hipotesis": "cuerpo {} sin campo m",
+  "body": {}
+ },
+ {
+  "hipotesis": "campo m vacio",
+  "body": {
+   "m": ""
+  }
+ }
+]
