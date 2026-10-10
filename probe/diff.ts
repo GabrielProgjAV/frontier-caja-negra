@@ -14,6 +14,7 @@ async function call(method: string, path: string, auth: string, request: unknown
   const headers: Record<string, string> = {};
   if (auth === 'ok') headers.authorization = 'Bearer diff-token';
   if (auth === 'wrong') headers.authorization = 'Bearer wrong-token';
+  if (auth.startsWith('header:')) headers.authorization = auth.slice(7).replace('{T}', 'diff-token'); // s19 header variants
   const body = request == null || method === 'GET' ? undefined : typeof request === 'string' ? request : JSON.stringify(request);
   const res = await fetch(base + path, { method, headers, body });
   const text = await res.text();

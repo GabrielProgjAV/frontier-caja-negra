@@ -47,7 +47,7 @@ Estados: `todo` · `doing` · `done` · `blocked`.
 | 7 | Comandos ocultos: HALT encontrado (E520 409, confirmación sin probar), regla de sugerencia = Levenshtein <= 2 (s9, s10) | sesión 1 | done | 12:18 |
 | 8 | `src/core/state.ts` + `handle.ts` (núcleo puro, orden de validación de HANDOFF.md) | sesión 2 | done (incluye HALT→E520) | 12:25 |
 | 9 | `src/server.ts` (`node:http`, autenticación con `TEAM_TOKEN`, `/health`, `/__reset`, 404) | sesión 2 | done (health/reset exigen token; 0.0.0.0:PORT) | 12:25 |
-| 10 | `probe/diff.ts`: reproducir el log contra el reemplazo local, % por comando | sesión 2 | done: ejemplos 20/20, experimentos 671/671 (100%) | 12:25 |
+| 10 | `probe/diff.ts`: reproducir el log contra el reemplazo local, % por comando | sesión 2 | done: ejemplos 20/20, experimentos 815/815 (100%) | 12:38 |
 | 11 | Desplegar en Render y comprobar `/health` en la URL pública | sesión 2 | todo | |
 | 12 | Ejecución 1 del set oculto (~15:30) | sesión 2 | todo | |
 | 13 | `probe/drift.ts`: canaria contra el original (cada ~1 h). Drift manual s12 (12:20) y s17 (12:27): sin cambios; falta el script | sesión 1 | todo | 12:27 |
@@ -63,3 +63,16 @@ Estados: `todo` · `doing` · `done` · `blocked`.
 
 ## Presupuesto
 815 de 8000 requests usadas (12:36). Fuente de verdad: `probe/budget.json`.
+
+## Sesión 2 (12:38)
+| # | Tarea | Estado |
+|---|---|---|
+| 21 | E101 (413 si el cuerpo pasa de 8192 bytes, tras auth y antes del JSON); tope de monto de 10 dígitos (9999999999 pasa, 11 dígitos E303); diff soporta `auth: header:...` | done |
+| 22 | `probe/validate-log.ts`: 815 líneas, 0 problemas (el taskkill no rompió nada) | done |
+| 23 | `probe/fuzz.ts` (no ejecutado contra el original; probado en sandbox contra el servidor local: 40 secuencias, 0 diferencias). Lo ejecuta sesión 1 con `node --env-file=.env probe/fuzz.ts --seqs N [--seed S]` | done |
+| 24 | DEPLOY.md corregido para Render Free + ping externo cada 5 min | done |
+
+**Supuestos para que sesión 1 los confirme:**
+- E101 cuenta **bytes** (`Buffer.byteLength`), no caracteres; se probó solo con ASCII. Falta un cuerpo > 8192 bytes con caracteres multibyte pero < 8192 caracteres.
+- Sugerencia de E301: primer comando conocido (orden PING, ALTA, CONSULTA, DEPOSITO, TRANSFER, ANULA, HALT) a distancia de Levenshtein <= 2; el orden decide empates.
+- `HALT` con cualquier argumento da E520 incluso con cuenta/argumento inválido.

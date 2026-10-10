@@ -1,5 +1,5 @@
 // Pure core: handle(state, rawBody) -> { state, status, body }. Validation order (ids = experimentos.jsonl):
-// E100 json -> E102 m -> E103 ';' -> E104 empty segment (509-511: before E201/E302) -> [not PING] E201 -> E202
+// E101 body > 8192 bytes (after auth) -> E100 json -> E102 m -> E103 ';' -> E104 empty segment (509-511: before E201/E302) -> [not PING] E201 -> E202
 // (41, 42: before E301/E302) -> E301 -> E302 -> E303 monto (515, 517) -> E304 (516, 518) -> E401 (490) / E402
 // -> E506 (491: before E507) -> E507.
 import { control } from './checksum.ts';
@@ -9,6 +9,7 @@ export type Result = { state: State; status: number; body: unknown };
 
 const ERRORS: Record<string, [number, string]> = {
   E100: [400, 'json inválido'],
+  E101: [413, 'cuerpo demasiado grande'],
   E102: [400, 'falta m'],
   E103: [400, 'falta control'],
   E104: [400, 'segmento vacío'],
@@ -26,14 +27,16 @@ const ERRORS: Record<string, [number, string]> = {
 };
 // Arguments between the command and the control.
 const ARITY: Record<string, number> = { PING: 0, ALTA: 1, CONSULTA: 1, DEPOSITO: 2, TRANSFER: 3, ANULA: 1, HALT: 1 };
+// ponytail: counts BYTES (assumed, not probed with multibyte chars); body limit exact value tested by 716-726
+const MAX_BODY = 8192;
 const LIMITE_TRANSFER = 100000; // 100000 ok, 100001 E506 (485, 486)
 
 const fail = (state: State, code: string, extra?: object): Result =>
   ({ state, status: ERRORS[code][0], body: { error: code, mensaje: ERRORS[code][1], ...extra } });
 const nextId = (prefix: string, o: object) => prefix + String(Object.keys(o).length + 1).padStart(4, '0');
 // Positive integer, no leading zeros, no sign/decimals/exponent/spaces (476-483).
-// ponytail: upper bound assumed at MAX_SAFE_INTEGER; only 99999999999999999999 seen rejected (481)
-const monto = (s: string) => (/^[1-9]\d*$/.test(s) && Number.isSafeInteger(Number(s)) ? Number(s) : null);
+// Max 10 digits: 9999999999 accepted (771, 815), 10000000000 and 99999999999 -> E303 (769, 814).
+const monto = (s: string) => (/^[1-9][0-9]{0,9}$/.test(s) ? Number(s) : null);
 
 // Suggestion = first known command within Levenshtein 2 (47, 48, 539-604: all 80 E301 lines fit).
 const SUGERIBLES = Object.keys(ARITY);
@@ -51,6 +54,7 @@ function suggest(cmd: string) {
 }
 
 export function handle(prev: State, raw: string): Result {
+  if (Buffer.byteLength(raw) > MAX_BODY) return fail(prev, 'E101'); // 702-726, 728: before JSON parse
   let parsed: any;
   try { parsed = JSON.parse(raw); } catch { return fail(prev, 'E100'); }
   const m = parsed?.m;
