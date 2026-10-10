@@ -5,7 +5,7 @@
 > **Solo UN agente prueba el original a la vez**, porque el token comparte estado y presupuesto. Antes de
 > probar, apúntate en "Sonda activa" y libérala al terminar.
 
-**Sonda activa:** sesión 1 (s33-s36 hipótesis trampa, fuzz --business v2, drift), desde 13:15
+**Sonda activa:** libre (desde 13:24)
 
 ## Entregables para las 20:00
 | Entregable | Formato exacto | Fuente |
@@ -62,6 +62,7 @@ Estados: `todo` · `doing` · `done` · `blocked`.
 | 22 | Fuzz: 3 semillas (101, 202, 303) x 30 seqs = 90 secuencias, 595 mensajes, 0 diferencias (ids 816-1500). HALT excluido del fuzzer. Cobertura débil: E506 (1), E507 (2); sin E100-E103/E201 (los cubre diff.ts). Drift s21 a las 12:52: sin cambios | sesión 1 | done | 12:53 |
 | 23 | Fuzz --business: 2 semillas (404, 505) x 40 seqs, 6-12 pasos, 725 mensajes (ids 1522-2413). 1 diferencia: TRA-7 (límite E506 no aplica entre cuentas con el mismo nombre de titular), investigada en s22-s32. drift.ts ~13:08: 20/20 sin cambios | sesión 1 | done | 13:10 |
 | 24 | **Sesión 2: implementar TRA-7.** Guardar el nombre en cada cuenta (ALTA). En TRANSFER, si nombre(origen) === nombre(destino) (exacto, sin trim, distingue mayúsculas), saltar el check E506; E303/E304/E401/E507 igual. diff.ts falla en 1602, 1942, 1952, 1978, 1980, 1981, 2418, 2419 | sesión 2 | done (e4dc5a4: diff 2442/2442, desplegado en Render) | 13:20 |
+| 25 | Trampas: H1 DEPOSITO por nombre/monto, H2 ANULA mismo titular, H3 límite acumulado, H4 ANULA de AC-/op previa: todas negativas (s33-s36). Fuzz --business v2 (setup con fondos, colisiones de nombres, --dry): semillas 707 y 808 x 40 = 80 seqs, 983 mensajes, 0 diferencias. drift.ts 13:21 sin cambios. diff 3577/3577 | sesión 1 | done | 13:24 |
 | 25 | E101 (413 si el cuerpo pasa de 8192 bytes, tras auth y antes del JSON); tope de monto de 10 dígitos (9999999999 pasa, 11 dígitos E303); diff soporta `auth: header:...` | sesión 2 | done | 13:20 |
 | 26 | `probe/validate-log.ts`: 815 líneas, 0 problemas (el taskkill no rompió nada) | sesión 2 | done | 13:20 |
 | 27 | `probe/fuzz.ts` (no ejecutado contra el original; probado en sandbox contra el servidor local: 40 secuencias, 0 diferencias). Lo ejecuta sesión 1 con `node --env-file=.env probe/fuzz.ts --seqs N [--seed S]` | sesión 2 | done | 13:20 |
@@ -72,7 +73,7 @@ Estados: `todo` · `doing` · `done` · `blocked`.
 | 32 | Diferencia 1602 (E506 frente a E507) del fuzz de negocio: explicada por TRA-7 (tarea 24), implementada en e4dc5a4; diff 2442/2442 | sesión 2 | done | 13:20 |
 
 ## Presupuesto
-2442 de 8000 requests usadas (13:10). Fuente de verdad: `probe/budget.json`.
+3577 de 8000 requests usadas (13:24). Fuente de verdad: `probe/budget.json`.
 
 **Supuestos para que sesión 1 los confirme:**
 - E101 cuenta **bytes** (`Buffer.byteLength`), no caracteres; se probó solo con ASCII. Falta un cuerpo > 8192 bytes con caracteres multibyte pero < 8192 caracteres.

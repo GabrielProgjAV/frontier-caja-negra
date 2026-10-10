@@ -67,6 +67,7 @@ Los cuerpos se escriben exactos. Todos los textos van en español y con tildes.
 | ALTA-2 | Acepta nombres con espacios internos, al principio o al final, solo espacios, tabuladores, números, 200 caracteres y caracteres no ASCII. El nombre se guarda tal cual, sin recortar: `"Zoe "` y `"Zoe"` son titulares distintos para TRA-7 (1990). Ningún comando devuelve el nombre. | 469, 506, 507, 508, 804–807, 810, 811, 1990 | confirmado |
 | ALTA-3 | Nombre literalmente vacío (`ALTA;;c`) → E104. Un nombre de solo espacios no cuenta como vacío y crea la cuenta. Dos argumentos → E302. | 21, 505, 621, 622, 810, 812 | confirmado |
 | ALTA-4 | Los nombres pueden repetirse: un `ALTA;Ana` duplicado crea otra cuenta. Dos cuentas con el mismo nombre se tratan como del mismo titular (TRA-7). | 619, 620, 1976, 1977 | confirmado |
+| ALTA-5 | No hay límite de cuentas por nombre: se crearon 6 cuentas `Zoe` seguidas. | 2461, 2462, 2471–2474 | confirmado |
 
 ### CONSULTA;cuenta (1 argumento)
 | ID | Comportamiento | Evidencia | Confianza |
@@ -82,6 +83,7 @@ Los cuerpos se escriben exactos. Todos los textos van en español y con tildes.
 | DEP-2 | El monto debe cumplir `^[1-9][0-9]{0,9}$`: entero > 0, solo dígitos, sin ceros a la izquierda y **como máximo 10 dígitos** (máximo 9999999999). Si no → `400 {"error":"E303","mensaje":"monto inválido"}`, sin efecto sobre el saldo. Falla con: `0`, `-100`, `10.5`, `0100`, `1e3`, `+100`, `abc`, `" 100"`, 11 dígitos o más, incluidos 2^53 y 2^53−1. Pasa con 9 y 10 dígitos. | 476–484, 646, 767–773 | confirmado |
 | DEP-3 | Los depósitos no tienen límite de importe más allá del tope de 10 dígitos: 500000 y 9999999999 se aceptaron, y doce depósitos seguidos de 9999999999 también. | 474, 771, 775–786 | confirmado |
 | DEP-6 | Los saldos son exactos: 11099999999 y 119999999987 = 12·9999999999 − 1. Con el tope de 10 dígitos, llegar a 2^53 exigiría unos 900 000 depósitos, así que un `Number` de JavaScript basta y no hace falta BigInt. | 774, 788 | confirmado |
+| DEP-7 | DEPOSITO no depende del nombre del titular: 100001 se acepta igual con los nombres `Ana`, `ADMIN`, `BANCO`, `SISTEMA`, `HALT` y `0`. | 2451–2457 | confirmado |
 | DEP-4 | Cuenta inexistente con monto válido → `404 E401`. Con monto inválido gana E303. | 626, 515 | confirmado |
 | DEP-5 | El monto con signo `+` → E303: solo se aceptan dígitos. | 646 | probable |
 
@@ -94,7 +96,9 @@ Los cuerpos se escriben exactos. Todos los textos van en español y con tildes.
 | TRA-4 | Origen o destino inexistente → `404 E401` | 488, 489, 490 | confirmado |
 | TRA-5 | Límite por operación de 100000, inclusivo, **solo entre titulares distintos** (ver TRA-7). Más → `422 {"error":"E506","mensaje":"límite excedido"}`. No es acumulado. Entre titulares distintos, E506 gana a E507 con cualquier saldo (0, 1, negativo o casi suficiente). | 10, 11, 485, 486, 1917, 1918, 1921, 1926, 1931, 1983, 1984 | confirmado |
 | TRA-6 | Saldo del origen menor que el monto → `422 {"error":"E507","mensaje":"saldo insuficiente"}`. Transferir exactamente el saldo está permitido (`saldo >= monto`). | 17, 627, 629, 630 | confirmado |
-| TRA-7 | **Si el origen y el destino tienen el mismo nombre de titular** (el nombre dado en ALTA, comparado de forma exacta: distingue mayúsculas y no recorta espacios), **no se aplica el límite E506**. Una transferencia de 150000 o de 9999999999 pasa si hay saldo, y con saldo insuficiente se responde E507. El tope de 10 dígitos (E303) sigue aplicando. | 1602, 1942, 1952, 1978, 1980, 1981, 1988, 1990, 2000, 2418, 2421 | confirmado |
+| TRA-7 | **Si el origen y el destino tienen el mismo nombre de titular** (el nombre dado en ALTA, comparado de forma exacta: distingue mayúsculas y no recorta espacios), **no se aplica el límite E506**. Una transferencia de 150000 o de 9999999999 pasa si hay saldo, y con saldo insuficiente se responde E507. El tope de 10 dígitos (E303) sigue aplicando. | 1602, 1942, 1952, 1978, 1980, 1981, 1988, 1990, 2000, 2418, 2421, 2725, 2828, 2874, 2875, 2942, 2992, 3003, 3236 | confirmado |
+| TRA-7b | Los nombres que solo se diferencian en las tildes (`José` frente a `Jose`) cuentan como titulares distintos: E506. | 2540 | probable |
+| TRA-8 | No hay límite acumulado: tres transferencias de 100000 desde el mismo origen, más una desde otra cuenta del mismo titular, pasan todas (400000 en total). | 2466, 2467, 2468, 2469, 2470 | confirmado |
 
 ### ANULA;operacion (1 argumento)
 | ID | Comportamiento | Evidencia | Confianza |
@@ -103,7 +107,8 @@ Los cuerpos se escriben exactos. Todos los textos van en español y con tildes.
 | ANU-2 | Anular otra vez → `200 {"ok":false,"motivo":"ya anulada"}`. Ojo: status 200. | 15, 638 | confirmado |
 | ANU-3 | Se puede anular un depósito aunque el saldo ya se haya gastado: el saldo queda **negativo**. | 495, 496, 631, 632 | confirmado |
 | ANU-3b | Se puede anular una transferencia aunque el destino ya haya gastado el monto: el destino queda **negativo** y el origen recupera el monto. No se comprueba el saldo al anular. | 635, 636, 637 | confirmado |
-| ANU-4 | Operación inexistente o id mal formado → `404 {"error":"E402","mensaje":"operación inexistente"}`. El id se compara de forma exacta: `op-0001` y `OP-1` → E402. | 497, 498, 639, 640 | confirmado |
+| ANU-3c | ANULA de una transferencia entre cuentas del mismo titular (TRA-7) se comporta igual que ANU-3b: el destino queda negativo si ya gastó el dinero y el origen recupera el monto. | 2482, 2483, 2484, 2485 | confirmado |
+| ANU-4 | Operación inexistente o id mal formado → `404 {"error":"E402","mensaje":"operación inexistente"}`. También un id de cuenta (`ANULA;AC-0001`), exista o no la cuenta, y una operación de una secuencia anterior al reset. El id se compara de forma exacta: `op-0001` y `OP-1` → E402. | 497, 498, 639, 640, 2487, 2488, 2491, 2492 | confirmado |
 
 ### HALT;x (1 argumento, comando oculto)
 | ID | Comportamiento | Evidencia | Confianza |
@@ -170,6 +175,7 @@ Con `m` no string se responde E102, no E101. E101 es el error de tamaño del cue
 | ID | Comportamiento | Evidencia | Confianza |
 |---|---|---|---|
 | CAM-1 | A las ~10:30 (UTC-5), la repetición de los 20 ejemplos de la mañana dio respuestas idénticas. | 2–21 | confirmado |
+| CAM-6 | A las 13:21 (UTC-5), `probe/drift.ts` dio 20 de 20 idénticos. Antes, 80 secuencias de fuzz de negocio v2 (semillas 707 y 808, con colisiones de nombres) dieron 0 diferencias frente al reemplazo con TRA-7. | 2494–3556, 3558–3577 | confirmado |
 | CAM-5 | A las ~13:08 (UTC-5), `probe/drift.ts` dio 20 de 20 idénticos. Entre medias, 80 secuencias de fuzz de negocio (semillas 404 y 505) coincidieron con el reemplazo salvo la regla TRA-7, que no es un cambio de versión: 1920 repite 491 con el mismo resultado. | 1522–2413, 1920, 2423–2442 | confirmado |
 | CAM-4 | A las 12:52 (UTC-5), la cuarta repetición de los 20 ejemplos dio respuestas idénticas. Entre medias, 90 secuencias aleatorias de fuzz (3 semillas) coincidieron por completo con este SPEC implementado. | 816–1500, 1502–1521 | confirmado |
 | CAM-3 | A las 12:26 (UTC-5), la tercera repetición de los 20 ejemplos dio respuestas idénticas. | 744–763 | confirmado |
