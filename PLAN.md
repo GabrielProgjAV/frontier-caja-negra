@@ -48,7 +48,7 @@ Estados: `todo` · `doing` · `done` · `blocked`.
 | 8 | `src/core/state.ts` + `handle.ts` (núcleo puro, orden de validación de HANDOFF.md) | sesión 2 | done (incluye HALT→E520) | 12:25 |
 | 9 | `src/server.ts` (`node:http`, autenticación con `TEAM_TOKEN`, `/health`, `/__reset`, 404) | sesión 2 | done (health/reset exigen token; 0.0.0.0:PORT) | 12:25 |
 | 10 | `probe/diff.ts`: reproducir el log contra el reemplazo local, % por comando | sesión 2 | done: ejemplos 20/20, experimentos 815/815 (100%) | 12:38 |
-| 11 | Desplegar en Render y comprobar `/health` en la URL pública | sesión 2 | todo | |
+| 11 | Desplegar en Render y comprobar `/health` en la URL pública | sesión 2 | doing: desplegado en https://frontier-caja-negra.onrender.com, pero responde 401 con el TEAM_TOKEN de .env (token de Render por confirmar) | 12:54 |
 | 12 | Ejecución 1 del set oculto (~15:30) | sesión 2 | todo | |
 | 13 | `probe/drift.ts`: canaria contra el original (cada ~1 h). Drift manual s12 (12:20) y s17 (12:27): sin cambios; falta el script | sesión 1 | todo | 12:27 |
 | 14 | Arreglos a partir de los resultados de la ejecución 1 y de diff | sesión 2 | todo | |
@@ -76,3 +76,5 @@ Estados: `todo` · `doing` · `done` · `blocked`.
 - E101 cuenta **bytes** (`Buffer.byteLength`), no caracteres; se probó solo con ASCII. Falta un cuerpo > 8192 bytes con caracteres multibyte pero < 8192 caracteres.
 - Sugerencia de E301: primer comando conocido (orden PING, ALTA, CONSULTA, DEPOSITO, TRANSFER, ANULA, HALT) a distancia de Levenshtein <= 2; el orden decide empates.
 - `HALT` con cualquier argumento da E520 incluso con cuenta/argumento inválido.
+| 25 | `probe/remote-diff.ts` (REPLACEMENT_URL + TEAM_TOKEN; % y latencia máxima; `--sample N`). Probado contra servidor local: ejemplos 20/20, latencia máx 160 ms. **Sin correr contra Render (12:54): 401 con el TEAM_TOKEN de .env** | blocked |
+| 26 | `probe/drift.ts`: canaria de los 20 ejemplos contra el original (no ejecutado; lo corre sesión 1: `node --env-file=.env probe/drift.ts`). Probado en sandbox local | done |
