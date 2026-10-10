@@ -5,7 +5,7 @@
 > **Solo UN agente prueba el original a la vez**, porque el token comparte estado y presupuesto. Antes de
 > probar, apúntate en "Sonda activa" y libérala al terminar.
 
-**Sonda activa:** libre (14:35)
+**Sonda activa:** SONDEADOR (sesión 1) desde 15:30: canario cada 30 min hasta 19:45 + supuestos B3, INT-4b, CMD-0b, ENT-14, B9
 
 ## Entregables para las 20:00
 | Entregable | Formato exacto | Fuente |
