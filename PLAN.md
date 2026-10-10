@@ -76,11 +76,11 @@ Estados: `todo` · `doing` · `done` · `blocked`.
 | 32 | Diferencia 1602 (E506 frente a E507) del fuzz de negocio: explicada por TRA-7 (tarea 24), implementada en e4dc5a4; diff 2442/2442 | sesión 2 | done | 13:20 |
 
 ## TAREAS PARA BUILDER
-Cambios exactos en `src/` derivados de sondas. Al terminar cada uno: `node probe/diff.ts` debe dar 100 %, y marcar aquí `hecho (commit)`.
+Cambios exactos en `src/` derivados de sondas (ids T*, distintos de los B* de "Estado del builder"). Al terminar cada uno: `node probe/diff.ts` debe dar 100 %, y marcar aquí `hecho (commit)`.
 
 | # | Hallazgo (SPEC) | Cambio exacto en `src/` | Prueba | Estado |
 |---|---|---|---|---|
-| B1 | CMD-1a2 / CMD-1c: la `sugerencia` de E301 es **el comando más cercano (Levenshtein ≤ 2) y, en empate, el primero en orden alfabético**, no "el primero de la lista a distancia ≤ 2". | En `src/core/handle.ts`, `suggest()`: reemplazar `return SUGERIBLES.find((k) => dist(cmd, k) <= 2);` por `let best: string \| undefined, bd = 3; for (const k of [...SUGERIBLES].sort()) { const d = dist(cmd, k); if (d < bd) { bd = d; best = k; } } return best;` (orden alfabético + comparación estricta `<` = en empate gana el primero alfabético). Actualizar el comentario de la función. | `diff.ts` hoy falla exactamente en 3592–3606 (15 líneas); con el cambio deben pasar las 146 respuestas E301 del log (comprobado con un modelo equivalente). | pendiente |
+| T1 | (resuelve B8 de "Estado del builder") CMD-1a2 / CMD-1c: la `sugerencia` de E301 es **el comando más cercano (Levenshtein ≤ 2) y, en empate, el primero en orden alfabético**, no "el primero de la lista a distancia ≤ 2". | En `src/core/handle.ts`, `suggest()`: reemplazar `return SUGERIBLES.find((k) => dist(cmd, k) <= 2);` por `let best: string \| undefined, bd = 3; for (const k of [...SUGERIBLES].sort()) { const d = dist(cmd, k); if (d < bd) { bd = d; best = k; } } return best;` (orden alfabético + comparación estricta `<` = en empate gana el primero alfabético). Actualizar el comentario de la función. | `diff.ts` hoy falla exactamente en 3592–3606 (15 líneas); con el cambio deben pasar las 146 respuestas E301 del log (comprobado con un modelo equivalente). | pendiente |
 
 ## Presupuesto
 3950 de 8000 requests usadas (14:06). Fuente de verdad: `probe/budget.json`.
