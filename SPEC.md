@@ -1,4 +1,4 @@
-# SPEC · Servicio "caja negra" (borrador)
+# SPEC · Servicio "caja negra"
 
 La evidencia son ids de `experimentos.jsonl`. La confianza es: **confirmado** (probado y con 2 o más ids de evidencia),
 **probable** (visto una vez o inferido) o **supuesto** (no probado; es lo que hace nuestro reemplazo por defecto).
@@ -31,17 +31,72 @@ Los cuerpos se escriben exactos. Todos los textos van en español y con tildes.
 |---|---|---|---|
 | INT-1 | Si `m` no tiene `;`, no hay control → `E103` | 31, 39 | confirmado |
 | INT-2 | Si hay un segmento vacío en cualquier posición, incluido el control → `E104`. Se evalúa antes que el control. | 40, 505, 509, 510, 511 | confirmado |
-| INT-3 | El control debe ser solo dígitos (`[0-9]+`): `5X`, `+14`, `14 ` y `14
-` → `E201`. No se recortan espacios. | 18, 701, 730, 731 | confirmado |
+| INT-3 | El control debe ser solo dígitos (`[0-9]+`): `5X`, `+14`, `14 ` y `14\n` → `E201`. No se recortan espacios. | 18, 701, 730, 731 | confirmado |
 | INT-3b | Un `;` final deja vacío el último segmento → E104. | 698, 699 | confirmado |
-| INT-4 | Algoritmo (ISO 7064 MOD 97‑10): se toma `m` sin su último segmento. Cada dígito cuenta como dígito y cada letra como su posición en el alfabeto, sin distinguir mayúsculas (A=1 … Z=26, en decimal). Todo lo demás (`;`, `-`, espacios, caracteres no ASCII) se ignora. Con la cadena resultante N, `control = 98 − (N·100 mod 97)`, en el rango 1–98. | 55–64, 146, 198, 234, 235, 334, 427, 457 | confirmado |
+| INT-4 | El control es ISO 7064 MOD 97‑10 sobre el mensaje sin su último segmento: dígitos tal cual, letras como su posición en el alfabeto (A=1 … Z=26, sin distinguir mayúsculas), todo lo demás ignorado, y `control = 98 − (N·100 mod 97)`, de 2 a 98. Algoritmo, ejemplo resuelto y vectores de prueba en 2.1. | 55–64, 146, 198, 234, 235, 334, 427, 457 | confirmado |
 | INT-5 | Predicción a ciegas: 10 de 10 mensajes nuevos aceptados. | 461–470 | confirmado |
 | INT-6 | El control se compara como texto: `03` no equivale a `3`. | 43 | probable |
 | INT-7 | Los espacios se ignoran en el control: no cuentan, ni siquiera como 0. Con el control de `ALTA;AnaMaria` vale `ALTA;  Ana  Maria  `. En el comando no se ignoran (ver CMD-0). | 47, 48, 807, 808, 809 | confirmado |
 | INT-8 | Los caracteres no ASCII (`Ñ`, `ú`) se ignoran en el control. | 508 | probable |
-| INT-9 | `PING` no valida el control, ni el valor ni el formato: `PING;0`, `PING;1`, `PING;5X`, `PING;64 ` y `PING;64
-` dan 200. Sí aplican E103 (falta `;`) y E104 (segmento vacío). | 2, 39, 40, 458, 459, 695, 696, 700 | confirmado |
+| INT-9 | `PING` no valida el control, ni el valor ni el formato: `PING;0`, `PING;1`, `PING;5X`, `PING;64 ` y `PING;64\n` dan 200. Sí aplican E103 (falta `;`) y E104 (segmento vacío). | 2, 39, 40, 458, 459, 695, 696, 700 | confirmado |
 | INT-10 | El control se valida antes que el comando y que la aridad. | 41, 42, 50, 51 | confirmado |
+
+### 2.1 Algoritmo del control (ISO 7064 MOD 97‑10), paso a paso
+
+Entrada: el mensaje completo **sin** el último segmento ni el `;` que lo precede (`m = "CONSULTA;AC-0001;14"` → `"CONSULTA;AC-0001"`). Salida: un entero de 2 a 98.
+
+1. **Convertir cada carácter** a texto numérico y concatenar los resultados en una cadena `N`:
+   - dígito `0`–`9` → él mismo;
+   - letra `A`–`Z` o `a`–`z` → su posición en el alfabeto, **sin ceros a la izquierda** (`A`=1, `B`=2, … `J`=10, … `Z`=26), sin distinguir mayúsculas;
+   - cualquier otro carácter (`;`, `-`, espacio, tabulador, `Ñ`, `ú`…) → nada (se ignora).
+2. **Resto módulo 97** de `N` leído como número decimal. `N` puede tener decenas de dígitos: se calcula dígito a dígito (método de Horner), `r = (r·10 + dígito) mod 97`, empezando en `r = 0`.
+3. **Desplazar dos posiciones**: `r' = (r·100) mod 97` (equivale a añadir `00` al final de `N`).
+4. **Control** = `98 − r'`. Como `r'` va de 0 a 96, el control va de 2 a 98 (con esta fórmula nunca sale 1).
+5. **Comparar como texto**: el control recibido, tal cual llegó, debe ser igual a la representación decimal del control calculado, sin ceros a la izquierda. `"03"`, `"+14"`, `" 14"` y `"14\n"` no son iguales a `"3"` ni a `"14"`.
+
+**Ejemplo resuelto: `CONSULTA;AC-0001` → 14** (es el ejemplo 5 del reto; el original lo acepta en los ids 6 y 56):
+
+| Carácter | C | O | N | S | U | L | T | A | `;` | A | C | `-` | 0 | 0 | 0 | 1 |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Aporta a `N` | 3 | 15 | 14 | 19 | 21 | 12 | 20 | 1 | — | 1 | 3 | — | 0 | 0 | 0 | 1 |
+
+Por lo tanto `N = 31514192112201130001`. Resto por Horner (`r ← (r·10 + d) mod 97`, empezando en 0), uno por cada dígito de `N` en orden:
+
+| d | 3 | 1 | 5 | 1 | 4 | 1 | 9 | 2 | 1 | 1 | 2 | 2 | 0 | 1 | 1 | 3 | 0 | 0 | 0 | 1 |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| r | 3 | 31 | 24 | 47 | 86 | 85 | 83 | 56 | 76 | 82 | 46 | 74 | 61 | 29 | 0 | 3 | 30 | 9 | 90 | 28 |
+
+Entonces `r = 28`; `r' = 28·100 mod 97 = 2800 mod 97 = 84`; **control = 98 − 84 = 14**. El mensaje completo es `CONSULTA;AC-0001;14`.
+
+Implementación de referencia (la misma que usa el reemplazo, `src/core/checksum.ts`):
+
+```ts
+function control(payload: string): number {
+  let r = 0;
+  for (const ch of payload) {
+    const d = /[0-9]/.test(ch) ? ch : /[a-z]/i.test(ch) ? String(ch.toUpperCase().charCodeAt(0) - 64) : '';
+    for (const x of d) r = (r * 10 + Number(x)) % 97;
+  }
+  return 98 - ((r * 100) % 97);
+}
+```
+
+**Vectores de prueba** (todos aceptados por el original; sirven para validar otra implementación):
+
+| Mensaje sin control | Control | Evidencia |
+|---|---|---|
+| `PING` | 64 | 2, 52 |
+| `ALTA;Lucia` | 82 | 4 |
+| `ALTA;Mateo` | 3 | 5 |
+| `CONSULTA;AC-0001` | 14 | 6, 56 |
+| `DEPOSITO;AC-0001;250000` | 86 | 7 |
+| `TRANSFER;AC-0001;AC-0002;40000` | 86 | 8 |
+| `SALDOS;AC-0001` | 38 | 13 (comando inexistente: el control se valida igualmente) |
+| `ANULA;OP-0003` | 66 | 14 |
+| `CONSULTA;AC-0009` | 87 | 16 |
+| `ALTA;Zoe` | 3 | 461, 1976 |
+
+Comprobación rápida: subir en 1 el último dígito de `AC-000N` baja el control en 3 (módulo 97), porque el último dígito de `N` se multiplica por 100 y `100 ≡ 3 (mod 97)`; subir el penúltimo lo baja en 30 (ids 55–64 y 146).
 
 ## 3. Comandos
 | ID | Comportamiento | Evidencia | Confianza |
@@ -67,7 +122,7 @@ Los cuerpos se escriben exactos. Todos los textos van en español y con tildes.
 | ALTA-2 | Acepta nombres con espacios internos, al principio o al final, solo espacios, tabuladores, números, 200 caracteres y caracteres no ASCII. El nombre se guarda tal cual, sin recortar: `"Zoe "` y `"Zoe"` son titulares distintos para TRA-7 (1990). Ningún comando devuelve el nombre. | 469, 506, 507, 508, 804–807, 810, 811, 1990 | confirmado |
 | ALTA-3 | Nombre literalmente vacío (`ALTA;;c`) → E104. Un nombre de solo espacios no cuenta como vacío y crea la cuenta. Dos argumentos → E302. | 21, 505, 621, 622, 810, 812 | confirmado |
 | ALTA-4 | Los nombres pueden repetirse: un `ALTA;Ana` duplicado crea otra cuenta. Dos cuentas con el mismo nombre se tratan como del mismo titular (TRA-7). | 619, 620, 1976, 1977 | confirmado |
-| ALTA-5 | No hay límite de cuentas por nombre: se crearon 6 cuentas `Zoe` seguidas. | 2461, 2462, 2471–2474 | confirmado |
+| ALTA-5 | No hay límite de cuentas por nombre: se crearon 6 cuentas `Zoe` en una misma secuencia. | 2461, 2462, 2471–2474 | confirmado |
 
 ### CONSULTA;cuenta (1 argumento)
 | ID | Comportamiento | Evidencia | Confianza |
@@ -129,68 +184,78 @@ Los cuerpos se escriben exactos. Todos los textos van en español y con tildes.
 | MEM-6 | `X-Req` cuenta los `POST /msg` autenticados (incluidos los que dan 400) y no se reinicia con `/__reset`. Viene vacío en `/__reset`, `/health`, 404 y 401. | 21–31, 36, 52, 53 | confirmado |
 
 ## 5. Errores
-Orden de evaluación: el primero que aplica gana.
+Todas las respuestas de error son JSON `{"error":"<código>","mensaje":"<texto>"}`, con el cuerpo exacto de la tabla (con tildes, y con el espacio final de E301). **Orden de evaluación: se recorre la tabla de arriba abajo y gana la primera regla que aplica**; en la columna Comportamiento, `O<n>` es la posición en ese orden. Las reglas que comparten posición no compiten entre sí: pertenecen a comandos distintos o son excluyentes (por ejemplo un control es mal formado o es un número, nunca las dos cosas).
 
-| ID | Orden | Status | Cuerpo exacto | Cuándo | Evidencia | Confianza |
-|---|---|---|---|---|---|---|
-| ERR-1 | 1 | 404 | `{"error":"E404","mensaje":"ruta desconocida"}` | ruta o método desconocido | 24–26, 33, 34 | confirmado |
-| ERR-2 | 2 | 401 | `{"error":"E001","mensaje":"no autorizado"}` | sin token o token inválido | 27, 28, 35 | confirmado |
-| ERR-2b | 3 | 413 | `{"error":"E101","mensaje":"cuerpo demasiado grande"}` | cuerpo > 8192 bytes | 702, 703, 716, 725, 728 | confirmado |
-| ERR-3 | 4 | 400 | `{"error":"E100","mensaje":"json inválido"}` | el cuerpo no es JSON: vacío, sin cuerpo o con BOM | 29, 706, 707, 712 | confirmado |
-| ERR-4 | 5 | 400 | `{"error":"E102","mensaje":"falta m"}` | sin `m`, o `m` no es string | 30, 36, 37, 38 | confirmado |
-| ERR-5 | 6 | 400 | `{"error":"E103","mensaje":"falta control"}` | `m` sin `;` (incluido `""`) | 31, 39 | confirmado |
-| ERR-6 | 7 | 400 | `{"error":"E104","mensaje":"segmento vacío"}` | algún segmento vacío | 40, 505, 509, 510, 511 | confirmado |
-| ERR-7 | 8 | 400 | `{"error":"E201","mensaje":"control mal formado"}` | control no numérico | 18 | probable |
-| ERR-8 | 9 | 400 | `{"error":"E202","mensaje":"control inválido"}` | control incorrecto | 3, 41, 42, 43, 51 | confirmado |
-| ERR-9 | 10 | 400 | `{"error":"E301","mensaje":"comando desconocido "}` (+ `sugerencia` opcional) | comando desconocido | 13, 47, 48, 50 | confirmado |
-| ERR-10 | 11 | 400 | `{"error":"E302","mensaje":"aridad inválida"}` | número de argumentos incorrecto | 21, 499–504, 514 | confirmado |
-| ERR-11 | 12 | 400 | `{"error":"E303","mensaje":"monto inválido"}` | monto no entero positivo canónico | 476–483, 515, 517, 519 | confirmado |
-| ERR-12 | 13 | 400 | `{"error":"E304","mensaje":"origen y destino iguales"}` | TRANSFER a la misma cuenta | 487, 516, 518 | confirmado |
-| ERR-13 | 14 | 404 | `{"error":"E401","mensaje":"cuenta inexistente"}` | cuenta inexistente | 16, 488, 489, 490, 504 | confirmado |
-| ERR-14 | 14 | 404 | `{"error":"E402","mensaje":"operación inexistente"}` | ANULA de una operación inexistente | 497, 498 | confirmado |
-| ERR-14b | — | 409 | `{"error":"E520","mensaje":"operación destructiva: detiene el servicio; reenvía con confirmación"}` | HALT con 1 argumento | 612 | probable (visto una vez; orden frente a E4xx/E5xx sin probar) |
-| ERR-15 | 15 | 422 | `{"error":"E506","mensaje":"límite excedido"}` | TRANSFER > 100000 entre titulares distintos | 10, 486, 491, 1917, 1931, 1983 | confirmado |
-| ERR-16 | 16 | 422 | `{"error":"E507","mensaje":"saldo insuficiente"}` | saldo < monto (entre mismo titular, también por encima de 100000) | 17, 627, 630, 1978, 1942 | confirmado |
-
-Pruebas de orden:
-- E404 > E001: 33, 34, 683.
-- E404 > E101: 729.
-- E001 > E101: 727.
-- E101 > E100: 728.
-- E001 > E100: 35.
-- E104 > E201 y E202: 510, 511.
-- E202 > E301 y E302: 41, 42, 51.
-- E302 > E303: 514.
-- E302 > E401: 504.
-- E303 > E304: 517.
-- E303 > E401: 515, 519.
-- E304 > E401: 516.
-- E304 > E506: 518.
-- E401 > E506: 490.
-- E506 > E507 entre titulares distintos: 491, 1921, 1931. Con el mismo titular E506 no existe: 1978.
-
-Con `m` no string se responde E102, no E101. E101 es el error de tamaño del cuerpo (413).
-
-## 6. Cambios durante el día
 | ID | Comportamiento | Evidencia | Confianza |
 |---|---|---|---|
-| CAM-1 | A las ~10:30 (UTC-5), la repetición de los 20 ejemplos de la mañana dio respuestas idénticas. | 2–21 | confirmado |
-| CAM-6 | A las 13:21 (UTC-5), `probe/drift.ts` dio 20 de 20 idénticos. Antes, 80 secuencias de fuzz de negocio v2 (semillas 707 y 808, con colisiones de nombres) dieron 0 diferencias frente al reemplazo con TRA-7. | 2494–3556, 3558–3577 | confirmado |
-| CAM-5 | A las ~13:08 (UTC-5), `probe/drift.ts` dio 20 de 20 idénticos. Entre medias, 80 secuencias de fuzz de negocio (semillas 404 y 505) coincidieron con el reemplazo salvo la regla TRA-7, que no es un cambio de versión: 1920 repite 491 con el mismo resultado. | 1522–2413, 1920, 2423–2442 | confirmado |
-| CAM-4 | A las 12:52 (UTC-5), la cuarta repetición de los 20 ejemplos dio respuestas idénticas. Entre medias, 90 secuencias aleatorias de fuzz (3 semillas) coincidieron por completo con este SPEC implementado. | 816–1500, 1502–1521 | confirmado |
-| CAM-3 | A las 12:26 (UTC-5), la tercera repetición de los 20 ejemplos dio respuestas idénticas. | 744–763 | confirmado |
-| CAM-2 | A las 12:20 (UTC-5), la segunda repetición de los 20 ejemplos también dio respuestas idénticas: sin cambios de versión hasta esa hora. | 652–671 | confirmado |
+| ERR-1 | **O1 · 404** `{"error":"E404","mensaje":"ruta desconocida"}`: método y ruta no son `POST /msg`, `POST /__reset` ni `GET /health` (comparación exacta de la ruta, la query string se ignora). Se evalúa incluso sin token. | 24–26, 33, 34, 673–682, 684, 685, 688–690 | confirmado |
+| ERR-2 | **O2 · 401** `{"error":"E001","mensaje":"no autorizado"}`: la cabecera no es exactamente `Authorization: Bearer <token>`. | 27, 28, 35, 790–792, 795–800, 802 | confirmado |
+| ERR-3 | **O3 · 413** `{"error":"E101","mensaje":"cuerpo demasiado grande"}`: el cuerpo pasa de 8192 bytes. | 702, 703, 716, 725, 726, 728 | confirmado |
+| ERR-4 | **O4 · 400** `{"error":"E100","mensaje":"json inválido"}`: el cuerpo no se puede parsear como JSON (vacío, ausente, truncado o con BOM). | 29, 706, 707, 712 | confirmado |
+| ERR-5 | **O5 · 400** `{"error":"E102","mensaje":"falta m"}`: el JSON no es un objeto con la clave `m` de tipo string (`{}`, `[]`, `null`, `"texto"`, `m` numérico, nulo o array). | 30, 36–38, 708–710 | confirmado |
+| ERR-6 | **O6 · 400** `{"error":"E103","mensaje":"falta control"}`: `m` no contiene ningún `;`. | 31, 39 | confirmado |
+| ERR-7 | **O7 · 400** `{"error":"E104","mensaje":"segmento vacío"}`: alguno de los segmentos separados por `;` está vacío, incluido el control (`PING;`, `ALTA;;85`, un `;` final). | 40, 505, 509–511, 698, 699 | confirmado |
+| ERR-8 | **O8 · 400** `{"error":"E201","mensaje":"control mal formado"}`: el último segmento no es solo dígitos (`5X`, `+14`, `14 `). No se evalúa para `PING`. | 18, 701, 730, 731 | confirmado |
+| ERR-9 | **O9 · 400** `{"error":"E202","mensaje":"control inválido"}`: el control es numérico pero no coincide con el calculado (2.1). Incluye ceros a la izquierda (`03`). No se evalúa para `PING`. | 3, 41–43, 51, 809 | confirmado |
+| ERR-10 | **O10 · 400** `{"error":"E301","mensaje":"comando desconocido "}` (con el espacio final), más `"sugerencia":"<COMANDO>"` si el nombre está a distancia de Levenshtein ≤ 2 de un comando (CMD-1a). | 13, 47, 48, 50, 539, 540, 589–604 | confirmado |
+| ERR-11 | **O11 · 400** `{"error":"E302","mensaje":"aridad inválida"}`: el número de argumentos (segmentos entre el comando y el control) no es el del comando: PING 0, ALTA 1, CONSULTA 1, DEPOSITO 2, TRANSFER 3, ANULA 1, HALT 1. | 21, 499–504, 514, 613, 617 | confirmado |
+| ERR-12 | **O12 · 409** `{"error":"E520","mensaje":"operación destructiva: detiene el servicio; reenvía con confirmación"}`: `HALT` con un argumento. Como solo HALT lo produce, su posición frente a E303–E507 no se puede observar; el reemplazo lo responde sin mirar el argumento (HAL-4, supuesto). | 612 | probable |
+| ERR-13 | **O13 · 400** `{"error":"E303","mensaje":"monto inválido"}`: en DEPOSITO y TRANSFER, el monto no cumple `^[1-9][0-9]{0,9}$`. | 476–483, 492, 493, 515, 517, 646, 767–773, 814 | confirmado |
+| ERR-14 | **O14 · 400** `{"error":"E304","mensaje":"origen y destino iguales"}`: TRANSFER con la misma cuenta en ambos lados (aunque no exista). | 487, 516, 518 | confirmado |
+| ERR-15 | **O15 · 404** `{"error":"E401","mensaje":"cuenta inexistente"}`: CONSULTA, DEPOSITO o TRANSFER con un id de cuenta que no existe (comparación exacta). Si faltan origen y destino a la vez la respuesta es la misma, así que no importa cuál se evalúe primero. | 16, 488–490, 626, 641–645 | confirmado |
+| ERR-16 | **O15 · 404** `{"error":"E402","mensaje":"operación inexistente"}`: ANULA con un id que no es una operación del estado actual (incluye ids de cuenta y de operaciones borradas por el reset). Comparte posición con E401 porque son comandos distintos. | 497, 498, 639, 640, 2487, 2488, 2491, 2492 | confirmado |
+| ERR-17 | **O16 · 422** `{"error":"E506","mensaje":"límite excedido"}`: TRANSFER de más de 100000 entre cuentas con nombres de titular distintos (TRA-5, TRA-7). | 10, 486, 491, 1917, 1931, 1983 | confirmado |
+| ERR-18 | **O17 · 422** `{"error":"E507","mensaje":"saldo insuficiente"}`: el saldo del origen es menor que el monto. | 17, 627, 630, 1942, 1978 | confirmado |
+
+### Pruebas de orden
+Cada fila dice qué error ganó cuando se provocaron los dos a la vez.
+
+| ID | Comportamiento | Evidencia | Confianza |
+|---|---|---|---|
+| ORD-1 | E404 gana a E001: una ruta desconocida sin token responde 404. | 33, 34, 683 | confirmado |
+| ORD-2 | E001 gana a E101 y a E100: sin token un cuerpo enorme o inválido responde 401. | 35, 727 | confirmado |
+| ORD-3 | E404 gana a E101: la ruta se mira antes que el tamaño. | 729 | probable |
+| ORD-4 | E101 gana a E100: un cuerpo enorme e inválido responde 413. | 728 | probable |
+| ORD-5 | E104 gana a E201 y a E202: con un segmento vacío no se llega a mirar el control. | 510, 511 | confirmado |
+| ORD-6 | E202 gana a E301 y a E302: un comando desconocido o con aridad errónea y control incorrecto responde E202. | 41, 42, 51 | confirmado |
+| ORD-7 | E302 gana a E303 y a E401: con argumentos de más o de menos no se valida su contenido. | 504, 514 | confirmado |
+| ORD-8 | E303 gana a E304 y a E401: el monto se valida antes que las cuentas. | 515, 517, 519 | confirmado |
+| ORD-9 | E304 gana a E401 y a E506: la misma cuenta en ambos lados se detecta antes que su existencia y que el límite. | 516, 518 | confirmado |
+| ORD-10 | E401 gana a E506: las cuentas deben existir antes de mirar el límite. | 490 | probable |
+| ORD-11 | E506 gana a E507 (entre titulares distintos, con cualquier saldo: 0, 1, negativo o casi suficiente). | 491, 1917, 1921, 1926, 1931 | confirmado |
+| ORD-12 | Entre cuentas del mismo titular no existe E506: si el saldo no alcanza responde E507. | 1602, 1942, 1952, 1978 | confirmado |
+
+## 6. Cambios durante el día
+Método: `probe/drift.ts` (y antes la misma secuencia lanzada a mano) repite contra el original los 20 ejemplos grabados por la mañana y compara estado y cuerpo con `pruebas/ejemplos.jsonl`. Además, el fuzzer diferencial compara cientos de secuencias aleatorias del original con nuestro reemplazo. Horas en UTC‑5.
+
+| ID | Comportamiento | Evidencia | Confianza |
+|---|---|---|---|
+| CAM-0 | **No se detectó ningún cambio de versión** entre la mañana y las 13:21: en las seis comprobaciones los 20 ejemplos dieron el mismo status y el mismo cuerpo que a la mañana. | 2–21, 652–671, 744–763, 1502–1521, 2423–2442, 3558–3577 | confirmado |
+| CAM-1 | Antes de las 11:00, primera repetición de los 20 ejemplos: idéntica a la mañana. | 2–21 | confirmado |
+| CAM-2 | 12:20, segunda repetición: idéntica. | 652–671 | confirmado |
+| CAM-3 | 12:26, tercera repetición: idéntica. | 744–763 | confirmado |
+| CAM-4 | 12:52, cuarta repetición: idéntica. Entre medias, 90 secuencias aleatorias de fuzz (semillas 101, 202 y 303) coincidieron por completo con el reemplazo. | 816–1500, 1502–1521 | confirmado |
+| CAM-5 | ~13:08, quinta comprobación con `probe/drift.ts`: idéntica. | 2423–2442 | confirmado |
+| CAM-6 | 13:21, sexta comprobación con `probe/drift.ts`: idéntica. Entre medias, 80 secuencias de fuzz de negocio v2 (semillas 707 y 808) coincidieron con el reemplazo. | 2494–3556, 3558–3577 | confirmado |
+| CAM-7 | Varias reglas se descubrieron tarde (límite E101 de 8192 bytes, tope de 10 dígitos, comando HALT, regla TRA‑7 de homónimos), pero **no son cambios del servicio**: se repitieron pruebas hechas antes de la regla con el mismo resultado. Por ejemplo, el caso de E506 con saldo insuficiente del id 491 (12:06) dio lo mismo en el id 1920 (13:09). | 491, 1920, 1921 | confirmado |
+| CAM-8 | Desde las 13:21 no hay datos. La versión que cuenta es la de las 20:00, así que se sigue comprobando cada ~45 minutos con `probe/drift.ts`. Si el servicio cambiara, este apartado y las reglas afectadas se actualizan con la hora y los ids que lo prueben. | — | supuesto |
 
 ## 7. Riesgos
-| ID | Riesgo | Evidencia | Confianza | Cómo cerrarlo |
-|---|---|---|---|---|
-| RIE-10 | El límite de 100000 por transferencia se esquiva creando una cuenta con el mismo nombre que el origen, porque el nombre no está verificado ni es único. | 1976–1981, 2418 | confirmado | Identificar al titular con un id verificado (KYC) y no por el nombre libre. Aplicar el límite también entre cuentas propias o registrar esas transferencias aparte. |
-| RIE-1 | ANULA de un depósito ya gastado, o de una transferencia cuyo destino ya gastó, deja saldos negativos. | 495, 496, 632, 637 | confirmado | Rechazar la anulación si deja saldo < 0, o solo permitir anular operaciones sin consumo posterior. |
-| RIE-2 | El dígito de control es un checksum público (MOD 97‑10), no una firma: cualquiera puede generar mensajes válidos. | 461–470 | confirmado | Usar HMAC con una clave secreta por cliente. |
-| RIE-3 | `PING` no valida el control. | 458, 459 | confirmado | Validar todos los comandos por igual. |
-| RIE-4 | Los ids de cuenta y de operación son secuenciales y se pueden enumerar. Además, E401/E402 revelan si un id existe. | 4, 5, 16, 497 | confirmado | Usar ids aleatorios (UUID) y una respuesta uniforme. |
-| RIE-5 | Las respuestas no son consistentes: `cuentaId` frente a `cuenta_id`, `"recieved"` mal escrito, espacio al final en E301, y `ok:false` con status 200. | 4, 6, 7, 13, 15 | confirmado | Versionar la API (v2) con un esquema consistente; mantener v1 tal cual para clientes heredados. |
-| RIE-6 | Los depósitos no tienen límite. | 474 | probable | Imponer un límite por operación y un control de origen de fondos. |
-| RIE-8 | Existe un comando oculto, `HALT`, que detiene el servicio y que cualquier cliente con token puede invocar. La `sugerencia` de E301 lo revela. | 540, 612 | confirmado | Quitar HALT de la API pública, o dejarlo solo para un rol de administración con autenticación aparte. No sugerir comandos ocultos. |
-| RIE-9 | La `sugerencia` de E301 enumera los comandos existentes. | 589–604 | confirmado | Quitar `sugerencia` o limitarla a comandos públicos. |
-| RIE-7 | `X-Req` revela el volumen de requests del token y no se reinicia. | 36, 52 | confirmado | Quitar el header o hacerlo opaco. |
+Comportamientos que un cliente nuevo no debería heredar. Cada fila trae **Riesgo**, **Impacto** y **Cómo cerrarlo**; la prioridad (alta, media o baja) va entre paréntesis.
+
+| ID | Comportamiento | Evidencia | Confianza |
+|---|---|---|---|
+| RIE-8 | **HALT, comando oculto que detiene el servicio (alta).** Cualquier cliente con token puede invocarlo, no está documentado y la `sugerencia` de E301 lo revela (`HELP` → `HALT`). Un solo mensaje podría dejar el servicio caído. **Cómo cerrarlo:** quitar el comando de la API de clientes; si debe existir, moverlo a un canal de administración aparte (otra credencial, otra ruta y red interna), exigir una confirmación de dos pasos con un código de un solo uso en lugar de "reenviar con confirmación", y dejar un registro de auditoría. | 540, 612, 613, 617 | confirmado |
+| RIE-1 | **Saldos negativos por ANULA (alta).** ANULA no comprueba el saldo: anular un depósito ya gastado, o una transferencia cuyo destino ya gastó el dinero, deja saldos negativos (−1490, −100000), y se puede anular cualquier operación sin importar su antigüedad. **Cómo cerrarlo:** antes de anular, verificar que ninguna cuenta quedaría por debajo de 0 y rechazar con un error propio (por ejemplo 409 `saldo insuficiente para anular`); o, mejor, no revertir sino registrar un asiento compensatorio sujeto a las mismas reglas que una transferencia; y poner un plazo máximo para anular. | 495, 496, 632, 635–637, 2482–2484 | confirmado |
+| RIE-10 | **Límite esquivable con homónimos (alta).** El límite de 100000 por transferencia no se aplica entre cuentas con el mismo nombre de titular, y el nombre es texto libre, sin verificar ni único: quien quiera mover 9999999999 solo tiene que abrir otra cuenta con el mismo nombre. **Cómo cerrarlo:** identificar al titular con un identificador verificado (alta con KYC) y no con el nombre; aplicar el límite siempre, también entre cuentas propias, o con un tope propio y explícito para ese caso; y comprobar la unicidad o el parecido de nombres al dar de alta. | 1602, 1978, 1980, 1981, 2418, 2874, 2875 | confirmado |
+| RIE-11 | **Sin límite acumulado (alta).** Solo hay límite por operación: cuatro transferencias seguidas de 100000 pasan (400000), y 12 depósitos seguidos de 9999999999 también. **Cómo cerrarlo:** límite por titular y por ventana de tiempo (por ejemplo diario), alertas por patrones de fraccionamiento y un tope de saldo. | 2466–2470, 775–786 | confirmado |
+| RIE-2 | **Control público, no una firma (media).** El dígito de control es un MOD 97‑10 sin clave, que detecta errores de tecleo pero no autentica: cualquiera puede calcular uno válido para el mensaje que quiera (10 de 10 predicciones aceptadas). **Cómo cerrarlo:** autenticar cada mensaje con un HMAC con clave secreta por cliente, y dejar el dígito de control solo como verificación de integridad. | 461–470 | confirmado |
+| RIE-12 | **Sin protección contra repetición (media).** Un mensaje válido se puede reenviar tantas veces como se quiera y cada vez crea una operación nueva (12 depósitos idénticos con el mismo control). **Cómo cerrarlo:** exigir un identificador de idempotencia único por mensaje (nonce o clave de idempotencia) y rechazar repeticiones. | 775–786 | confirmado |
+| RIE-13 | **ANULA basta con conocer el id (media).** El mensaje de ANULA solo lleva el id de la operación y no identifica a quien anula; con el id (secuencial, RIE-4) se puede anular cualquier operación del token, también las más antiguas. **Cómo cerrarlo:** exigir que la operación pertenezca al solicitante autenticado, limitar el plazo de anulación y registrar quién anula y cuándo. | 14, 495, 631, 635 | confirmado |
+| RIE-3 | **PING no valida el control (baja).** Responde 200 con cualquier control, incluso mal formado, mientras que el resto de comandos sí lo exigen. **Cómo cerrarlo:** validar todos los comandos igual; si PING es un chequeo de salud, moverlo a `GET /health`. | 458, 459, 700 | confirmado |
+| RIE-4 | **Ids secuenciales y enumerables (media).** Las cuentas y las operaciones son `AC-0001`, `OP-0001`…, y E401/E402 revelan si un id existe. **Cómo cerrarlo:** ids no predecibles (UUID o aleatorios largos) y una respuesta uniforme para "no existe" y "no es tuyo". | 4, 5, 16, 497 | confirmado |
+| RIE-9 | **La sugerencia de E301 enumera los comandos (media).** Probando nombres parecidos se descubren todos los comandos, incluidos los ocultos. **Cómo cerrarlo:** eliminar el campo `sugerencia`, o limitarlo a los comandos públicos. | 539, 540, 574–576, 589–604 | confirmado |
+| RIE-6 | **Depósitos sin límite ni origen de fondos (media).** Cualquier titular se deposita hasta 9999999999 por operación sin justificar el origen. **Cómo cerrarlo:** límite por operación y acumulado, verificación del origen de fondos y revisión manual por encima de un umbral. | 474, 771, 775–786, 2451–2457 | confirmado |
+| RIE-14 | **Altas ilimitadas (baja).** No hay tope de cuentas por nombre ni por token (6 cuentas `Zoe` en una misma secuencia, nombres de 200 caracteres), lo que facilita el abuso y alimenta RIE-10. **Cómo cerrarlo:** limitar el número de cuentas por titular verificado, la longitud del nombre y el ritmo de altas. | 506, 2461, 2471–2474 | confirmado |
+| RIE-5 | **Respuestas inconsistentes (baja).** `cuentaId` en ALTA frente a `cuenta_id` en CONSULTA, `"recieved"` mal escrito, un espacio sobrante en el mensaje de E301 y `ok:false` con status 200 en una ANULA repetida. **Cómo cerrarlo:** versionar la API (v2) con un esquema coherente y status HTTP que reflejen el error; mantener v1 tal cual para los clientes que dependen de ella. | 4, 6, 7, 13, 15 | confirmado |
+| RIE-7 | **`X-Req` expone el volumen (baja).** Es un contador de los mensajes del token que no se reinicia con `/__reset`. **Cómo cerrarlo:** quitar la cabecera o sustituirla por un identificador opaco de petición. | 36, 52 | confirmado |
