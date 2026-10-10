@@ -21,6 +21,7 @@ export type Step = {
   body?: unknown; // sent as JSON
   raw?: string; // sent verbatim (for malformed bodies)
   conclusion?: string;
+  conclude?: (line: Record<string, unknown>) => string; // conclusion derived from the response
   expect?: { status: number; response: unknown };
 };
 
@@ -69,7 +70,8 @@ export async function send(seq: string, s: Step) {
       request: s.raw ?? s.body ?? null, status: res.status, response,
     };
     if (method !== 'POST' || path !== '/msg' || auth !== 'ok') Object.assign(line, { method, path, auth });
-    if (s.conclusion) line.conclusion = s.conclusion;
+    const conclusion = s.conclusion ?? s.conclude?.(line);
+    if (conclusion) line.conclusion = conclusion;
     appendFileSync(LOG, JSON.stringify(line) + '\n');
     return line;
   }
