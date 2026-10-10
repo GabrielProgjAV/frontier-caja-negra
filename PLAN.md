@@ -5,7 +5,7 @@
 > **Solo UN agente prueba el original a la vez**, porque el token comparte estado y presupuesto. Antes de
 > probar, apúntate en "Sonda activa" y libérala al terminar.
 
-**Sonda activa:** sesión 1 (s7 límites de comandos), desde 12:05
+**Sonda activa:** libre (desde 12:06)
 
 ## Entregables para las 20:00
 | Entregable | Formato exacto | Fuente |
@@ -42,8 +42,8 @@ Estados: `todo` · `doing` · `done` · `blocked`.
 | 2 | Orden de validación, rutas y autenticación (s2–s4) | sesión 1 | done | 11:00 |
 | 3 | Algoritmo del control: `checksum.ts` + tests, 10/10 predicciones (s5–s6) | sesión 1 | done | 11:40 |
 | 4 | `HANDOFF.md` + push | sesión 1 | done | 12:00 |
-| 5 | s7: límites de comandos (montos, límite E506, misma cuenta, ANULA de depósito o de operación inexistente, aridad por comando, nombres) | sesión 1 | doing | 12:05 |
-| 6 | Orden de errores restante (E104 frente a E201/E202, E302 frente a E401, E506 frente a E507, E401 origen frente a destino) | sesión 1 | todo | |
+| 5 | s7: límites de comandos (montos, límite E506, misma cuenta, ANULA de depósito o de operación inexistente, aridad por comando, nombres) | sesión 1 | done | 12:06 |
+| 6 | Orden de errores restante (E104 frente a E201/E202, E302 frente a E401, E506 frente a E507, E401 origen frente a destino). Hecho en s7; faltan E303 frente a E302/E401 y E304 frente a E401 | sesión 1 | doing | 12:06 |
 | 7 | Comandos ocultos (mirar el campo `sugerencia`) | sesión 1 | todo | |
 | 8 | `src/core/state.ts` + `handle.ts` (núcleo puro, orden de validación de HANDOFF.md) | sesión 2 | todo | |
 | 9 | `src/server.ts` (`node:http`, autenticación con `TEAM_TOKEN`, `/health`, `/__reset`, 404) | sesión 2 | todo | |
@@ -59,4 +59,4 @@ Estados: `todo` · `doing` · `done` · `blocked`.
 | 19 | Repo público + push final + entrega en `/evento` antes de las 19:40 | humano | todo | |
 
 ## Presupuesto
-470 de 8000 requests usadas (12:05). Fuente de verdad: `probe/budget.json`.
+511 de 8000 requests usadas (12:06). Fuente de verdad: `probe/budget.json`.
