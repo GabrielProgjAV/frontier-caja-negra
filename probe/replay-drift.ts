@@ -12,20 +12,21 @@ type Line = { id: number; seq: string; request: unknown; status: number; respons
 const log: Line[] = readFileSync('experimentos.jsonl', 'utf8').trim().split('\n').map((l) => JSON.parse(l));
 const bySeq = new Map<string, Line[]>();
 for (const l of log) { if (!bySeq.has(l.seq)) bySeq.set(l.seq, []); bySeq.get(l.seq)!.push(l); }
-const excluded = /^(s1|s12|s17|s21|drift|replay|s37|s38|s39)/;
+const excluded = /^(s1|s12|s17|s21|drift|replay|s37|s38|s39|reg_|canary|s4[3-9])/;
+const only = process.argv.includes('--seqs') ? process.argv[process.argv.indexOf('--seqs') + 1].split(',') : null; // explicit list: whole seqs, in order, no filters
 const eligible = [...bySeq.entries()].filter(([seq, ls]) =>
   !excluded.test(seq) && ls[0].path === '/__reset' && ls.length <= maxLen && ls.length >= 3 &&
   !ls.some((l) => /^\s*halt/i.test((l.request as { m?: string } | null)?.m ?? '')) && !ls.slice(1).some((l) => l.path === '/__reset'));
-const picked: [string, Line[]][] = [];
-while (picked.length < Math.min(N, eligible.length)) { const e = eligible.splice(Math.floor(rnd() * eligible.length), 1)[0]; picked.push(e); }
+const picked: [string, Line[]][] = only ? only.map((q) => [q, bySeq.get(q)!] as [string, Line[]]) : [];
+while (!only && picked.length < Math.min(N, eligible.length)) { const e = eligible.splice(Math.floor(rnd() * eligible.length), 1)[0]; picked.push(e); }
 console.log(`eligible pool picked ${picked.length}: ${picked.map(([q]) => q).join(' ')}`);
 let diffs = 0, steps = 0;
 for (const [orig, ls] of picked) {
   const seq = `replay_${orig}`;
-  await send(seq, { hipotesis: `drift amplio: reset antes de repetir ${orig} (ids ${ls[0].id}-${ls.at(-1)!.id})`, path: '/__reset' });
+  await send(seq, { hipotesis: `v2: drift amplio: reset antes de repetir ${orig} (ids ${ls[0].id}-${ls.at(-1)!.id})`, path: '/__reset' });
   let seqDiff = 0;
   for (const l of ls.slice(1)) {
-    const st: Step = { hipotesis: `drift amplio: repetición exacta del id ${l.id} (${orig})`, method: l.method, path: l.path };
+    const st: Step = { hipotesis: `v2: drift amplio: repetición exacta del id ${l.id} (${orig})`, method: l.method, path: l.path };
     if (l.auth?.startsWith('header:')) st.authHeader = l.auth.slice(7); else if (l.auth) st.auth = l.auth as Auth;
     if (l.content_type !== undefined) st.contentType = l.content_type;
     if (typeof l.request === 'string') st.raw = l.request; else if (l.request !== null) st.body = l.request;

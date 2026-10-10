@@ -24,10 +24,12 @@ export type Step = {
   authHeader?: string; // raw Authorization template, {T} = token; logged as the template, never the token
   body?: unknown; // sent as JSON
   raw?: string; // sent verbatim (for malformed bodies)
+  rawB64?: string; // exact bytes (base64), e.g. invalid UTF-8; logged as request = utf8 decoding (U+FFFD) + raw_b64
   contentType?: string | null; // default application/json when there is a body; null = no header at all
   conclusion?: string;
   conclude?: (line: Record<string, unknown>) => string; // conclusion derived from the response
   expect?: { status: number; response: unknown };
+  headers?: boolean; // log all response headers (field resp_headers)
 };
 
 let nextId = existsSync(LOG) ? readFileSync(LOG, 'utf8').split('\n').filter(Boolean).length + 1 : 1;
@@ -52,11 +54,12 @@ export async function send(seq: string, s: Step) {
   if (auth === 'ok') headers.authorization = `Bearer ${TOKEN}`;
   if (auth === 'wrong') headers.authorization = 'Bearer wrong-token';
   if (s.authHeader !== undefined) headers.authorization = s.authHeader.replace('{T}', TOKEN!);
-  const payload = s.raw ?? (s.body === undefined ? undefined : JSON.stringify(s.body));
+  const bytes = s.rawB64 !== undefined ? Buffer.from(s.rawB64, 'base64') : undefined;
+  const payload = bytes?.toString('utf8') ?? s.raw ?? (s.body === undefined ? undefined : JSON.stringify(s.body));
   const contentType = s.contentType === undefined ? 'application/json' : s.contentType;
   if (payload !== undefined && contentType !== null) headers['content-type'] = contentType;
   // fetch adds text/plain to string bodies; bytes keep the request without Content-Type
-  const fetchBody = payload !== undefined && contentType === null ? Buffer.from(payload) : payload;
+  const fetchBody = bytes ?? (payload !== undefined && contentType === null ? Buffer.from(payload) : payload);
 
   for (let tries = 0; ; tries++) {
     await sleep(Math.max(0, last + gapMs - Date.now()));
@@ -76,8 +79,10 @@ export async function send(seq: string, s: Step) {
     const x_req = xr !== null && xr.trim() !== '' && !Number.isNaN(Number(xr)) ? Number(xr) : xr;
     const line: Record<string, unknown> = {
       id: nextId++, seq, x_req, hipotesis: s.hipotesis,
-      request: s.raw ?? s.body ?? null, status: res.status, response,
+      request: bytes ? payload : (s.raw ?? s.body ?? null), status: res.status, response,
     };
+    if (s.rawB64 !== undefined) line.raw_b64 = s.rawB64;
+    if (s.headers) line.resp_headers = Object.fromEntries(res.headers);
     const authLog = s.authHeader !== undefined ? `header:${s.authHeader}` : auth;
     if (method !== 'POST' || path !== '/msg' || authLog !== 'ok') Object.assign(line, { method, path, auth: authLog });
     if (s.contentType !== undefined) line.content_type = s.contentType;

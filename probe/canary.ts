@@ -2,16 +2,16 @@
 // E301 con y sin sugerencia, E302-E304, E401, E402, E404, E506, E507, E520, E599/halted, TRA-7, límites).
 // Cada request va al ORIGINAL (registrado en experimentos.jsonl) y al reemplazo LOCAL en proceso (src/server.ts,
 // es decir handle()), y se compara status + cuerpo. Cualquier diferencia = el servicio cambió o nuestro modelo falla.
-// CLI: node --env-file=.env probe/canary.ts [--dry]   (--dry: solo local, no gasta presupuesto). Exit 1 si hay diferencias.
-import type { AddressInfo } from 'node:net';
+// CLI: node --env-file=.env probe/canary.ts [--dry] [--lite]   (--dry: solo local, no gasta presupuesto; --lite: 29 pasos en vez de 70).
+// Exit 1 si hay diferencias. Además avisa si X-Req no sube de 1 en 1 desde el último del log (= el proceso se reinició: redespliegue).
 import { isDeepStrictEqual } from 'node:util';
 import { control } from '../src/core/checksum.ts';
-import { server } from '../src/server.ts';
+import { local, closeLocal } from './local.ts';
 import type { Step } from './send.ts';
 
-const DRY = process.argv.includes('--dry');
-const LOCAL_TOKEN = 'canary-local-token';
-process.env.TEAM_TOKEN = LOCAL_TOKEN; // el reemplazo local acepta solo este token (no se usa el del equipo)
+const DRY = process.argv.includes('--dry'), LITE = process.argv.includes('--lite');
+// subconjunto barato: cada comando y los errores principales (sin límites de tamaño, HALT;1 ni desempates finos)
+const LITE_STEPS = new Set(["canario A: reset","GET /msg -> 404 E404","sin token -> 401 E001","JSON inválido -> E100","sin m -> E102","sin ; -> E103","control vacío -> E104","control no numérico -> E201","control incorrecto -> E202","E301 sugerencia HALT (HELP)","E301 sugerencia ANULA, más cercano (AULA)","PING con argumento -> E302","canario B: reset","ALTA Ana -> AC-0001","ALTA Ana repetida -> AC-0002 (mismo titular)","ALTA Bob -> AC-0003","CONSULTA saldo 0","DEPOSITO 0 -> E303","DEPOSITO 10 dígitos -> OP-0001","TRANSFER misma cuenta -> E304","TRANSFER destino inexistente -> E401","TRANSFER 100001 a otro titular -> E506","TRANSFER 150000 mismo titular -> OP-0003 (TRA-7)","TRANSFER sin saldo -> E507","ANULA depósito -> ok","ANULA repetida -> ya anulada","ANULA inexistente -> E402","CONSULTA saldo negativo tras ANULA","HALT;0 -> 409 E520"]);
 
 const c = (p: string) => `${p};${control(p)}`; // mensaje con su control correcto
 const bad = (p: string) => `${p};${control(p) === 50 ? 51 : 50}`; // control numérico incorrecto
@@ -96,30 +96,18 @@ const SEQS: [string, Step[]][] = [
   ]],
 ];
 
-// ---- reemplazo local (en proceso, sin red externa) ----
-await new Promise<void>((r) => server.listen(0, '127.0.0.1', r));
-const LOCAL = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
-async function local(s: Step) {
-  const headers: Record<string, string> = {};
-  const auth = s.auth ?? 'ok';
-  if (auth === 'ok') headers.authorization = `Bearer ${LOCAL_TOKEN}`;
-  if (auth === 'wrong') headers.authorization = 'Bearer wrong-token';
-  if (s.authHeader !== undefined) headers.authorization = s.authHeader.replace('{T}', LOCAL_TOKEN);
-  const payload = s.raw ?? (s.body === undefined ? undefined : JSON.stringify(s.body));
-  if (payload !== undefined) headers['content-type'] = 'application/json';
-  const res = await fetch(LOCAL + (s.path ?? '/msg'), { method: s.method ?? 'POST', headers, body: payload });
-  const text = await res.text();
-  let response: unknown; try { response = JSON.parse(text); } catch { response = text; }
-  return { status: res.status, response };
-}
-
 const send = DRY ? null : (await import('./send.ts')).send;
+const { readFileSync } = await import('node:fs');
+let prevX = readFileSync('experimentos.jsonl', 'utf8').trim().split(String.fromCharCode(10)).map((l) => JSON.parse(l)).filter((l) => typeof l.x_req === 'number').at(-1)?.x_req as number;
+const xjumps: string[] = [];
+const tag = LITE ? 'L' : '';
 const stamp = new Date(Date.now() - 5 * 3600e3).toISOString().slice(11, 16).replace(':', ''); // hora UTC-5
 const diffs: string[] = [];
 let n = 0;
 for (const [name, steps] of SEQS) {
-  const seq = `canary-${stamp}-${name}`;
+  const seq = `canary${tag}-${stamp}-${name}`;
   for (const s of steps) {
+    if (LITE && !LITE_STEPS.has(s.hipotesis)) continue;
     const exp = await local(s);
     const expTxt = `${exp.status} ${JSON.stringify(exp.response)}`;
     n++;
@@ -128,10 +116,12 @@ for (const [name, steps] of SEQS) {
       ...s, hipotesis: `canario: ${s.hipotesis}; handle() espera ${expTxt}`,
       conclude: (l) => (l.status === exp.status && isDeepStrictEqual(l.response, exp.response) ? 'igual que handle()' : `CAMBIO o fallo del modelo: handle() esperaba ${expTxt}`),
     });
+    if (typeof g.x_req === 'number') { if (g.x_req !== prevX + 1) xjumps.push(`id ${g.id}: X-Req ${g.x_req}, esperado ${prevX + 1}`); prevX = g.x_req; }
     if (g.status !== exp.status || !isDeepStrictEqual(g.response, exp.response))
       diffs.push(`  id ${g.id} [${seq}] ${s.hipotesis}\n    handle(): ${expTxt}\n    original: ${g.status} ${JSON.stringify(g.response)}`);
   }
 }
-server.close();
+closeLocal();
 console.log(DRY ? `dry: ${n} pasos` : diffs.length ? `CANARIO: ${diffs.length}/${n} diferencias\n${diffs.join('\n')}` : `canario ${stamp}: ${n}/${n} iguales a handle()`);
-process.exitCode = diffs.length ? 1 : 0;
+if (xjumps.length) console.log(`ALERTA X-Req no continuo (posible redespliegue): ${xjumps.join('; ')}`);
+process.exitCode = diffs.length ? 1 : xjumps.length ? 3 : 0;
