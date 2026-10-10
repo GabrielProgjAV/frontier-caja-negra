@@ -71,6 +71,7 @@ Estados: `todo` · `doing` · `done` · `blocked`.
 | 30 | `probe/drift.ts`: canaria de los 20 ejemplos contra el original (no ejecutado; lo corre sesión 1: `node --env-file=.env probe/drift.ts`). Probado en sandbox local | sesión 2 | done | 13:20 |
 | 31 | README.md del reto movido a RETO.md (referencias actualizadas) y README.md nuevo del proyecto, solo con cifras medidas | sesión 2 | done | 13:20 |
 | 32 | Diferencia 1602 (E506 frente a E507) del fuzz de negocio: explicada por TRA-7 (tarea 24), implementada en e4dc5a4; diff 2442/2442 | sesión 2 | done | 13:20 |
+| 34 | Reimplementación ciega desde SPEC.md en rama `spec-reimpl` (`reimpl/`, sin leer `src/`): diff 3597/3597, informe en `reimpl/REPORT.md` | sesión 1 | done | 13:33 |
 
 ## Presupuesto
 3577 de 8000 requests usadas (13:24). Fuente de verdad: `probe/budget.json`.
