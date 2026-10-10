@@ -1,6 +1,7 @@
 // Differential fuzzer: random sequences are sent to the ORIGINAL (logged in experimentos.jsonl) and compared with our
 // local handle() in the same process. Stops at the first difference and prints the whole sequence to reproduce it.
-// Only session 1 runs this (it holds the probe turn). CLI: node --env-file=.env probe/fuzz.ts [--seqs N] [--seed S]
+// Only session 1 runs this (it holds the probe turn).
+// CLI: node --env-file=.env probe/fuzz.ts [--seqs N] [--seed S] [--business] [--keep-going]
 import { isDeepStrictEqual } from 'node:util';
 import { send } from './send.ts'; // rate limit (5 req/s), probe/budget.json and the experiment log live there
 import { control } from '../src/core/checksum.ts';
@@ -13,6 +14,8 @@ const arg = (name: string, def: number) => {
 };
 const seqs = arg('seqs', 30);
 const seed = arg('seed', Date.now() % 1e9);
+const business = process.argv.includes('--business'); // existing accounts, edge amounts, many ANULA, 6-12 steps
+const keepGoing = process.argv.includes('--keep-going'); // on a difference, report it and continue with the next seq
 
 let s = seed; // mulberry32: same seed -> same sequences
 const rnd = () => {
@@ -75,16 +78,50 @@ function step(st: State): string {
   return `${payload};${validControl ? c : c === 98 ? 1 : c + 1}`;
 }
 
-console.log(`fuzz: seed=${seed} seqs=${seqs}`);
-const run = `${seed.toString(36)}`;
+// --business: 80 % existing accounts, amounts at the balance / limit edges, ANULA of every kind. No mutations.
+function businessStep(st: State): string {
+  const ids = Object.keys(st.cuentas);
+  const ops = Object.keys(st.ops);
+  const acct = () => (ids.length && rnd() < 0.8 ? pick(ids) : pad('AC-', ids.length + 1 + int(3)));
+  const amt = (from?: string) => {
+    const r = rnd();
+    if (from && from in st.cuentas && r < 0.35) return String(Math.max(1, st.cuentas[from] + pick([-1, 0, 1]))); // saldo-1, saldo, saldo+1
+    if (r < 0.65) return pick(['99999', '100000', '100001']); // transfer limit
+    return String(1 + int(50000));
+  };
+  const anulaTarget = () => {
+    if (!ops.length || rnd() < 0.08) return pad('OP-', ops.length + 1 + int(3)); // missing
+    const tr = ops.filter((o) => st.ops[o].from), dep = ops.filter((o) => !st.ops[o].from), done = ops.filter((o) => st.ops[o].anulada);
+    const opts = [ops[ops.length - 1], ops[0], pick(ops)]; // last, oldest, any
+    if (tr.length) opts.push(pick(tr));
+    if (dep.length) opts.push(pick(dep));
+    if (done.length) opts.push(pick(done)); // double ANULA
+    return pick(opts);
+  };
+  const r = ids.length < 2 ? 0 : rnd();
+  let parts: string[];
+  if (r < 0.1) parts = ['ALTA', pick(NAMES)];
+  else if (r < 0.3) parts = ['DEPOSITO', acct(), rnd() < 0.5 ? pick(['99999', '100000', '100001', '250000']) : amt()];
+  else if (r < 0.6) { const a = acct(); parts = ['TRANSFER', a, rnd() < 0.05 ? a : acct(), amt(a)]; }
+  else if (r < 0.85) parts = ['ANULA', anulaTarget()];
+  else parts = ['CONSULTA', acct()];
+  const payload = parts.join(';');
+  if (/^halt$/i.test(parts[0].trim())) throw new Error('refusing to send HALT to the original');
+  return `${payload};${control(payload)}`;
+}
+
+console.log(`fuzz: seed=${seed} seqs=${seqs}${business ? ' business' : ''}${keepGoing ? ' keep-going' : ''}`);
+const run = `${business ? 'b' : ''}${seed.toString(36)}`;
+let diffs = 0;
 for (let n = 1; n <= seqs; n++) {
   const seq = `fuzz${run}_${n}`;
-  const hipotesis = `fuzz diferencial seq ${n}`;
+  const hipotesis = `fuzz ${business ? 'negocio' : 'diferencial'} seq ${n}`;
   await send(seq, { hipotesis: `${hipotesis}: reset`, path: '/__reset' });
   let st = initialState();
   const sent: string[] = [];
-  for (let i = 0, len = 1 + int(12); i < len; i++) {
-    const m = step(st);
+  let failed = false;
+  for (let i = 0, len = business ? 6 + int(7) : 1 + int(12); i < len && !failed; i++) {
+    const m = business ? businessStep(st) : step(st);
     sent.push(m);
     const got = await send(seq, { hipotesis: `${hipotesis}, paso ${i + 1}`, body: { m } });
     const want = handle(st, JSON.stringify({ m }));
@@ -95,9 +132,12 @@ for (let n = 1; n <= seqs; n++) {
       console.log(`  original: ${got.status} ${JSON.stringify(got.response)}`);
       console.log(`  ours:     ${want.status} ${JSON.stringify(wantBody)}`);
       console.log(`  reproduce (after POST /__reset): ${JSON.stringify(sent)}`);
-      process.exit(1);
+      if (!keepGoing) process.exit(1);
+      diffs++;
+      failed = true; // local state no longer mirrors the original: move on to the next sequence
     }
   }
-  console.log(`${seq}: ${sent.length} steps ok`);
+  if (!failed) console.log(`${seq}: ${sent.length} steps ok`);
 }
-console.log(`\n${seqs} sequences without differences`);
+console.log(diffs ? `\n${diffs} of ${seqs} sequences with a difference` : `\n${seqs} sequences without differences`);
+if (diffs) process.exit(1);
