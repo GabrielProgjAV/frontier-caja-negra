@@ -43,7 +43,7 @@ Estados: `todo` · `doing` · `done` · `blocked`.
 | 3 | Algoritmo del control: `checksum.ts` + tests, 10/10 predicciones (s5–s6) | sesión 1 | done | 11:40 |
 | 4 | `HANDOFF.md` + push | sesión 1 | done | 12:00 |
 | 5 | s7: límites de comandos (montos, límite E506, misma cuenta, ANULA de depósito o de operación inexistente, aridad por comando, nombres) | sesión 1 | done | 12:06 |
-| 6 | Orden de errores restante (E104 frente a E201/E202, E302 frente a E401, E506 frente a E507, E401 origen frente a destino). Hecho en s7; faltan E303 frente a E302/E401 y E304 frente a E401 | sesión 1 | doing | 12:06 |
+| 6 | Orden de errores restante. Completo: s7 + s8 (orden en SPEC §5) | sesión 1 | done | 12:16 |
 | 7 | Comandos ocultos (mirar el campo `sugerencia`) | sesión 1 | doing | 12:14 |
 | 8 | `src/core/state.ts` + `handle.ts` (núcleo puro, orden de validación de HANDOFF.md) | sesión 2 | todo | |
 | 9 | `src/server.ts` (`node:http`, autenticación con `TEAM_TOKEN`, `/health`, `/__reset`, 404) | sesión 2 | todo | |
@@ -53,10 +53,10 @@ Estados: `todo` · `doing` · `done` · `blocked`.
 | 13 | `probe/drift.ts`: canaria contra el original (cada ~1 h) | sesión 1 | todo | |
 | 14 | Arreglos a partir de los resultados de la ejecución 1 y de diff | sesión 2 | todo | |
 | 15 | Ejecución 2 del set oculto (~18:00) | sesión 2 | todo | |
-| 16 | `SPEC.md`, las 7 secciones con evidencia | sesión 1 | todo | |
+| 16 | `SPEC.md`, las 7 secciones con evidencia (borrador creado; se actualiza tras cada bloque) | sesión 1 | doing | 12:16 |
 | 17 | Video de 2 min | humano | todo | |
 | 18 | Ejecución 3 del set oculto (~19:30) | sesión 2 | todo | |
 | 19 | Repo público + push final + entrega en `/evento` antes de las 19:40 | humano | todo | |
 
 ## Presupuesto
-511 de 8000 requests usadas (12:06). Fuente de verdad: `probe/budget.json`.
+519 de 8000 requests usadas (12:16). Fuente de verdad: `probe/budget.json`.
