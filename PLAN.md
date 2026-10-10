@@ -5,7 +5,7 @@
 > **Solo UN agente prueba el original a la vez**, porque el token comparte estado y presupuesto. Antes de
 > probar, apúntate en "Sonda activa" y libérala al terminar.
 
-**Sonda activa:** sesión 1 (s18 montos grandes, s19 Authorization, s20 nombres ALTA), desde 12:34
+**Sonda activa:** libre (desde 12:36)
 
 ## Entregables para las 20:00
 | Entregable | Formato exacto | Fuente |
@@ -58,6 +58,8 @@ Estados: `todo` · `doing` · `done` · `blocked`.
 | 18 | Ejecución 3 del set oculto (~19:30) | sesión 2 | todo | |
 | 19 | Repo público + push final + entrega en `/evento` antes de las 19:40 | humano | todo | |
 | 20 | s13-s17: rutas exactas, cuerpo (E101 413 si > 8192 bytes, Content-Type ignorado), contadores tras el reset, drift. Para la sesión 2: E101, /health sin token -> 401, HALT -> E520/E302 | sesión 1 | done | 12:27 |
+| 21 | s18-s20: monto máximo de 10 dígitos (sin BigInt), Authorization exacta "Bearer <token>", nombres con espacios. Para la sesión 2: DEP/TRA monto ^[1-9][0-9]{0,9}$; auth exacta | sesión 1 | done | 12:36 |
+| 22 | Correr probe/fuzz.ts --seqs 30 cuando la sesión 2 lo suba; reportar cada diferencia | sesión 1 | blocked (fuzz.ts no existe aún) | 12:36 |
 
 ## Presupuesto
-763 de 8000 requests usadas (12:27). Fuente de verdad: `probe/budget.json`.
+815 de 8000 requests usadas (12:36). Fuente de verdad: `probe/budget.json`.

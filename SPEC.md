@@ -1,6 +1,6 @@
 # SPEC · Servicio "caja negra" (borrador)
 
-La evidencia son ids de `experimentos.jsonl`. La confianza es: **confirmado** (probado y repetido),
+La evidencia son ids de `experimentos.jsonl`. La confianza es: **confirmado** (probado y con 2 o más ids de evidencia),
 **probable** (visto una vez o inferido) o **supuesto** (no probado; es lo que hace nuestro reemplazo por defecto).
 Los cuerpos se escriben exactos. Todos los textos van en español y con tildes.
 
@@ -15,7 +15,8 @@ Los cuerpos se escriben exactos. Todos los textos van en español y con tildes.
 | ENT-4b | La ruta se compara de forma exacta: distingue mayúsculas (`/MSG`, `/HEALTH`) y no acepta barra final (`/msg/`, `/health/`) ni `//msg` → 404. | 684, 685, 688, 689, 690 | confirmado |
 | ENT-4c | La query string se ignora: `/msg?x=1` y `/health?x=1` funcionan normalmente. | 686, 687 | confirmado |
 | ENT-4d | `HEAD /health` → 404 con cuerpo vacío: HEAD no se trata como GET. | 691 | probable |
-| ENT-5 | Autenticación con `Authorization: Bearer <token>`. Sin token o con un token desconocido → `401 {"error":"E001","mensaje":"no autorizado"}` | 27, 28 | confirmado |
+| ENT-5 | Autenticación: la cabecera debe ser exactamente `Authorization: Bearer <token>`, con `Bearer` tal cual (distingue mayúsculas), un solo espacio y el token exacto. Cualquier otra forma → `401 {"error":"E001","mensaje":"no autorizado"}`: sin cabecera, token desconocido, `bearer`/`BEARER`, doble espacio, `Basic`, token sin esquema, `Bearer` sin token, token con un carácter extra o dos credenciales. Aplica igual en `/health`. | 27, 28, 790, 791, 792, 795–800, 802 | confirmado |
+| ENT-5b | Con espacios al principio o al final del valor de la cabecera se obtuvo 200. Probablemente los quitó el cliente HTTP antes de enviar, como manda el estándar de cabeceras, y node:http hace lo mismo al recibir, así que no se distingue de la forma exacta. | 793, 794 | probable |
 | ENT-6 | La ruta se evalúa antes que la autenticación: una ruta desconocida sin token da 404, no 401. | 33, 34 | confirmado |
 | ENT-7 | La autenticación se evalúa antes que el tamaño y que el parseo del JSON. | 35, 727 | confirmado |
 | ENT-10 | Tamaño máximo del cuerpo: 8192 bytes. Con 8193 o más → `413 {"error":"E101","mensaje":"cuerpo demasiado grande"}`. Se evalúa después de la ruta (404) y de la autenticación (401), y antes del parseo del JSON (E100). Se probó solo con ASCII; que cuente bytes y no caracteres es una suposición. | 702, 703, 714–729 | confirmado |
@@ -36,7 +37,7 @@ Los cuerpos se escriben exactos. Todos los textos van en español y con tildes.
 | INT-4 | Algoritmo (ISO 7064 MOD 97‑10): se toma `m` sin su último segmento. Cada dígito cuenta como dígito y cada letra como su posición en el alfabeto, sin distinguir mayúsculas (A=1 … Z=26, en decimal). Todo lo demás (`;`, `-`, espacios, caracteres no ASCII) se ignora. Con la cadena resultante N, `control = 98 − (N·100 mod 97)`, en el rango 1–98. | 55–64, 146, 198, 234, 235, 334, 427, 457 | confirmado |
 | INT-5 | Predicción a ciegas: 10 de 10 mensajes nuevos aceptados. | 461–470 | confirmado |
 | INT-6 | El control se compara como texto: `03` no equivale a `3`. | 43 | probable |
-| INT-7 | Los espacios se ignoran en el control (pero no en el comando, ver CMD-0). | 47, 48 | probable |
+| INT-7 | Los espacios se ignoran en el control: no cuentan, ni siquiera como 0. Con el control de `ALTA;AnaMaria` vale `ALTA;  Ana  Maria  `. En el comando no se ignoran (ver CMD-0). | 47, 48, 807, 808, 809 | confirmado |
 | INT-8 | Los caracteres no ASCII (`Ñ`, `ú`) se ignoran en el control. | 508 | probable |
 | INT-9 | `PING` no valida el control, ni el valor ni el formato: `PING;0`, `PING;1`, `PING;5X`, `PING;64 ` y `PING;64
 ` dan 200. Sí aplican E103 (falta `;`) y E104 (segmento vacío). | 2, 39, 40, 458, 459, 695, 696, 700 | confirmado |
@@ -63,8 +64,8 @@ Los cuerpos se escriben exactos. Todos los textos van en español y con tildes.
 | ID | Comportamiento | Evidencia | Confianza |
 |---|---|---|---|
 | ALTA-1 | Crea una cuenta con saldo 0 → `201 {"cuentaId":"AC-NNNN"}`: secuencial, empieza en 0001 tras el reset, 4 dígitos con ceros a la izquierda. | 4, 5, 6, 44, 461, 462, 472, 473 | confirmado |
-| ALTA-2 | Acepta nombres con espacios, numéricos, de 200 caracteres y no ASCII. | 469, 506, 507, 508 | confirmado |
-| ALTA-3 | Nombre vacío (`ALTA;;c`) → E104. Dos argumentos → E302. | 505, 21, 621, 622 | confirmado |
+| ALTA-2 | Acepta nombres con espacios internos, al principio o al final, solo espacios, tabuladores, números, 200 caracteres y caracteres no ASCII. Si el nombre se recorta no es observable: ningún comando devuelve el nombre. | 469, 506, 507, 508, 804–807, 810, 811 | confirmado |
+| ALTA-3 | Nombre literalmente vacío (`ALTA;;c`) → E104. Un nombre de solo espacios no cuenta como vacío y crea la cuenta. Dos argumentos → E302. | 21, 505, 621, 622, 810, 812 | confirmado |
 | ALTA-4 | Los nombres pueden repetirse: un `ALTA;Ana` duplicado crea otra cuenta. | 619, 620 | confirmado |
 
 ### CONSULTA;cuenta (1 argumento)
@@ -78,8 +79,9 @@ Los cuerpos se escriben exactos. Todos los textos van en español y con tildes.
 | ID | Comportamiento | Evidencia | Confianza |
 |---|---|---|---|
 | DEP-1 | Suma el monto al saldo → `200 {"status":"recieved","operacionId":"OP-NNNN"}`, con `recieved` mal escrito tal cual. | 7, 19, 20, 463, 474, 475 | confirmado |
-| DEP-2 | El monto debe ser un entero > 0, solo dígitos y sin ceros a la izquierda. Si no → `400 {"error":"E303","mensaje":"monto inválido"}`, sin efecto sobre el saldo. Falla con: `0`, `-100`, `10.5`, `0100`, `1e3`, 20 dígitos, `abc`, `" 100"`. | 476–484 | confirmado |
-| DEP-3 | Los depósitos no tienen límite: 500000 se aceptó. | 474 | probable |
+| DEP-2 | El monto debe cumplir `^[1-9][0-9]{0,9}$`: entero > 0, solo dígitos, sin ceros a la izquierda y **como máximo 10 dígitos** (máximo 9999999999). Si no → `400 {"error":"E303","mensaje":"monto inválido"}`, sin efecto sobre el saldo. Falla con: `0`, `-100`, `10.5`, `0100`, `1e3`, `+100`, `abc`, `" 100"`, 11 dígitos o más, incluidos 2^53 y 2^53−1. Pasa con 9 y 10 dígitos. | 476–484, 646, 767–773 | confirmado |
+| DEP-3 | Los depósitos no tienen límite de importe más allá del tope de 10 dígitos: 500000 y 9999999999 se aceptaron, y doce depósitos seguidos de 9999999999 también. | 474, 771, 775–786 | confirmado |
+| DEP-6 | Los saldos son exactos: 11099999999 y 119999999987 = 12·9999999999 − 1. Con el tope de 10 dígitos, llegar a 2^53 exigiría unos 900 000 depósitos, así que un `Number` de JavaScript basta y no hace falta BigInt. | 774, 788 | confirmado |
 | DEP-4 | Cuenta inexistente con monto válido → `404 E401`. Con monto inválido gana E303. | 626, 515 | confirmado |
 | DEP-5 | El monto con signo `+` → E303: solo se aceptan dígitos. | 646 | probable |
 
@@ -87,7 +89,7 @@ Los cuerpos se escriben exactos. Todos los textos van en español y con tildes.
 | ID | Comportamiento | Evidencia | Confianza |
 |---|---|---|---|
 | TRA-1 | Mueve el monto de origen a destino → `200 {"status":"recieved","operacionId":"OP-NNNN"}` | 8, 9, 11, 464, 485, 494 | confirmado |
-| TRA-2 | Monto inválido → E303, con las mismas reglas que DEP-2. | 492, 493, 517, 519 | confirmado |
+| TRA-2 | Monto inválido → E303, con las mismas reglas que DEP-2, incluido el tope de 10 dígitos. Ese tope va antes que el límite: 11 dígitos dan E303 y 10 dígitos dan E506. | 492, 493, 517, 519, 814, 815 | confirmado |
 | TRA-3 | Origen igual a destino → `400 {"error":"E304","mensaje":"origen y destino iguales"}` | 487, 516, 518 | confirmado |
 | TRA-4 | Origen o destino inexistente → `404 E401` | 488, 489, 490 | confirmado |
 | TRA-5 | Límite por operación de 100000, inclusivo. Más → `422 {"error":"E506","mensaje":"límite excedido"}`. No es acumulado. | 10, 11, 485, 486 | confirmado |
@@ -105,9 +107,9 @@ Los cuerpos se escriben exactos. Todos los textos van en español y con tildes.
 ### HALT;x (1 argumento, comando oculto)
 | ID | Comportamiento | Evidencia | Confianza |
 |---|---|---|---|
-| HAL-1 | Se descubrió por la `sugerencia` de `HELP`. | 540 | confirmado |
+| HAL-1 | HALT existe. Se descubrió por la `sugerencia` de `HELP`, y responde E302/E520 en lugar de E301. | 540, 612, 613, 617 | confirmado |
 | HAL-2 | Sin argumentos → E302, así que su aridad es 1. No distingue mayúsculas. | 613, 617 | confirmado |
-| HAL-3 | Con un argumento cualquiera → `409 {"error":"E520","mensaje":"operación destructiva: detiene el servicio; reenvía con confirmación"}`. No cambia el estado y el servicio sigue respondiendo. | 612, 614, 615, 616 | confirmado |
+| HAL-3 | Con un argumento cualquiera → `409 {"error":"E520","mensaje":"operación destructiva: detiene el servicio; reenvía con confirmación"}`. No cambia el estado y el servicio sigue respondiendo. | 612, 614, 615, 616 | probable (E520 visto una sola vez) |
 | HAL-4 | No se probó el formato de la confirmación, a propósito, por ser destructivo. El reemplazo responde E520 a cualquier argumento. | — | supuesto |
 
 ## 4. Memoria entre requests
@@ -140,7 +142,7 @@ Orden de evaluación: el primero que aplica gana.
 | ERR-12 | 13 | 400 | `{"error":"E304","mensaje":"origen y destino iguales"}` | TRANSFER a la misma cuenta | 487, 516, 518 | confirmado |
 | ERR-13 | 14 | 404 | `{"error":"E401","mensaje":"cuenta inexistente"}` | cuenta inexistente | 16, 488, 489, 490, 504 | confirmado |
 | ERR-14 | 14 | 404 | `{"error":"E402","mensaje":"operación inexistente"}` | ANULA de una operación inexistente | 497, 498 | confirmado |
-| ERR-14b | — | 409 | `{"error":"E520","mensaje":"operación destructiva: detiene el servicio; reenvía con confirmación"}` | HALT con 1 argumento | 612 | confirmado (orden frente a E4xx/E5xx sin probar) |
+| ERR-14b | — | 409 | `{"error":"E520","mensaje":"operación destructiva: detiene el servicio; reenvía con confirmación"}` | HALT con 1 argumento | 612 | probable (visto una vez; orden frente a E4xx/E5xx sin probar) |
 | ERR-15 | 15 | 422 | `{"error":"E506","mensaje":"límite excedido"}` | TRANSFER > 100000 | 10, 486, 491 | confirmado |
 | ERR-16 | 16 | 422 | `{"error":"E507","mensaje":"saldo insuficiente"}` | saldo < monto | 17 | probable |
 

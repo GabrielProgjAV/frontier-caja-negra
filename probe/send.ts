@@ -18,6 +18,7 @@ export type Step = {
   method?: string;
   path?: string;
   auth?: Auth;
+  authHeader?: string; // raw Authorization template, {T} = token; logged as the template, never the token
   body?: unknown; // sent as JSON
   raw?: string; // sent verbatim (for malformed bodies)
   contentType?: string | null; // default application/json when there is a body; null = no header at all
@@ -47,6 +48,7 @@ export async function send(seq: string, s: Step) {
   const headers: Record<string, string> = {};
   if (auth === 'ok') headers.authorization = `Bearer ${TOKEN}`;
   if (auth === 'wrong') headers.authorization = 'Bearer wrong-token';
+  if (s.authHeader !== undefined) headers.authorization = s.authHeader.replace('{T}', TOKEN!);
   const payload = s.raw ?? (s.body === undefined ? undefined : JSON.stringify(s.body));
   const contentType = s.contentType === undefined ? 'application/json' : s.contentType;
   if (payload !== undefined && contentType !== null) headers['content-type'] = contentType;
@@ -73,7 +75,8 @@ export async function send(seq: string, s: Step) {
       id: nextId++, seq, x_req, hipotesis: s.hipotesis,
       request: s.raw ?? s.body ?? null, status: res.status, response,
     };
-    if (method !== 'POST' || path !== '/msg' || auth !== 'ok') Object.assign(line, { method, path, auth });
+    const authLog = s.authHeader !== undefined ? `header:${s.authHeader}` : auth;
+    if (method !== 'POST' || path !== '/msg' || authLog !== 'ok') Object.assign(line, { method, path, auth: authLog });
     if (s.contentType !== undefined) line.content_type = s.contentType;
     const conclusion = s.conclusion ?? s.conclude?.(line);
     if (conclusion) line.conclusion = conclusion;
