@@ -7,7 +7,7 @@
 > **Solo UN agente prueba el original a la vez**, porque el token comparte estado y presupuesto. Antes de
 > probar, apúntate en "Sonda activa" y libérala al terminar.
 
-**Sonda activa:** SONDEADOR: incidente v2 (desde 16:17): regression.ts + caracterización. canary-loop detenido por ALERTA a las 16:16.
+**Sonda activa:** SONDEADOR (16:50): esperando T5+T6 del builder para rearrancar canary-loop (el canario compara con handle(); sin T5/T6 daría ALERTA en falso).
 
 **FRONTERA v1/v2 = id 5554** (16:16, primer request de canary-loop). Último id v1 = 5553 (15:41). El proceso se reinició entre 15:41 y 16:16:
 X-Req volvió a 1 en el id 5560 (era 4800 en el 5553). Canario completo 16:16: 7/70 diferencias (ids 5554–5623). Todo id ≥ 5554 es v2.

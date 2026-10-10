@@ -47,7 +47,7 @@ function op(st: State) {
 function amount(st: State, from?: string) {
   const r = rnd();
   if (from && from in st.cuentas && r < 0.2) return String(st.cuentas[from]); // exact balance
-  if (r < 0.5) return pick(['99999', '100000', '100001']); // around the transfer limit
+  if (r < 0.5) return pick(['49999', '50000', '50001', '99999', '100000', '100001']); // around the transfer limit
   return pick(AMOUNTS);
 }
 
@@ -99,7 +99,7 @@ function businessStep(st: State): string {
     const saldo = st.cuentas[from] ?? 0, r = rnd();
     if (saldo > 0 && r < 0.4) return String(1 + int(Math.min(saldo, 9999999999))); // fits the balance
     if (r < 0.65) return String(Math.max(1, saldo + pick([-1, 0, 1]))); // balance edges
-    if (r < 0.85) return pick(['99999', '100000', '100001']); // transfer limit
+    if (r < 0.85) return pick(['49999', '50000', '50001', '99999', '100000', '100001']); // transfer limit
     return String(1 + int(50000));
   };
   const anulaTarget = () => {
@@ -127,7 +127,7 @@ const run = `${business ? 'b' : ''}${seed.toString(36)}`;
 let diffs = 0;
 for (let n = 1; n <= seqs; n++) {
   const seq = `fuzz${run}_${n}`;
-  const hipotesis = `fuzz ${business ? 'negocio' : 'diferencial'} seq ${n}`;
+  const hipotesis = `v2: fuzz contra el modelo local (v1 + cambios conocidos) ${business ? 'negocio' : 'diferencial'} seq ${n}`;
   if (!dry) await send(seq, { hipotesis: `${hipotesis}: reset`, path: '/__reset' });
   let st = initialState();
   const sent: string[] = [];

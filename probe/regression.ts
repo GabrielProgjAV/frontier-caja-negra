@@ -37,7 +37,8 @@ for (const row of readFileSync('SPEC.md', 'utf8').split('\n')) {
   const cells = row.split('|').map((x) => x.trim());
   if (cells.length < 6 || !/^[A-Z]+-[0-9A-Za-z]+$/.test(cells[1])) continue;
   const ids: number[] = [];
-  for (const part of cells[3].split(/,\s*/)) {
+  for (const part0 of cells[3].split(/,\s*/)) {
+    const part = part0.replace(/^v[12]:\s*/, ''); // "v1: 6" / "v2: 5587" prefixes
     const rg = part.match(/^(\d+)\s*[–-]\s*(\d+)$/), one = part.match(/^(\d+)$/);
     if (rg) for (let i = +rg[1]; i <= +rg[2]; i++) ids.push(i); else if (one) ids.push(+one[1]);
   }
