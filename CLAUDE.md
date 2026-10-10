@@ -1,7 +1,8 @@
 # Black Box Replacement — Frontier challenge 2
 
 ## Read first
-README.md (challenge rules and REQUIRED formats) and pruebas/ejemplos.jsonl.
+PLAN.md (owners, probe lock; update status + time after each task, commit, push), README.md (challenge rules
+and REQUIRED formats) and pruebas/ejemplos.jsonl.
 
 ## Hard rules
 - The replacement (src/) must NEVER call the original. Probing code lives only in probe/.
@@ -39,3 +40,9 @@ SPEC.md must follow the 7 sections and table format required by README.md.
 ## Style
 Small steps. Show commands and outputs as evidence. Propose before coding new areas; wait for my OK.
 Log key decisions with reasons in DECISIONS.md.
+
+
+
+
+----
+- Always read PLAN.md and HANDOFF.md first. Update PLAN.md after each task.
