@@ -98,7 +98,8 @@ Cambios exactos en `src/` derivados de sondas (ids T*, distintos de los B* de "E
 - Sugerencia de E301: primer comando conocido (orden PING, ALTA, CONSULTA, DEPOSITO, TRANSFER, ANULA, HALT) a distancia de Levenshtein <= 2; el orden decide empates.
 - `HALT` con cualquier argumento da E520 incluso con cuenta/argumento inválido.
 
-## Estado del builder (15:07)
+## Estado del builder (15:37)
+**diff.ts por versiones:** `probe/v2.json` = `frontera` (4623) + `superseded` (ids v1 de experimentos.jsonl que cambiaron en v2, números o rangos "a-b"; añadir también líneas v1 posteriores de la misma seq que dependan de ellas) + `superseded_ejemplos`. `node probe/diff.ts` reporta aparte v2 (id ≥ frontera), v1 vigentes y v1 superseded (informativo); sale con 0 solo si v2 y v1 vigentes están al 100 %. **El sondeador mantiene `probe/v2.json` al crear las tareas v2.**
 T1, B1 (d682941), T2 (074a0c0) y T3 (a94810b) hechos y en master. `node probe/diff.ts`: ejemplos 20/20,
 experimentos 4552/4552 (100 %); `npm test` 5/5; `tsc --noEmit` limpio. Sin tareas pendientes.
 

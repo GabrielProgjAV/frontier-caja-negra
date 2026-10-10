@@ -1,0 +1,6 @@
+{
+  "nota": "Versiones del original para probe/diff.ts. frontera = primer id de experimentos.jsonl grabado contra v2 (PLAN.md, ticket 15:30). superseded = ids v1 de experimentos.jsonl cuyo comportamiento cambió en v2 (números o rangos \"a-b\"); incluir también líneas v1 posteriores de la misma seq que dependan del estado que cambió. superseded_ejemplos = ids de pruebas/ejemplos.jsonl que cambiaron en v2.",
+  "frontera": 4623,
+  "superseded": [],
+  "superseded_ejemplos": []
+}
