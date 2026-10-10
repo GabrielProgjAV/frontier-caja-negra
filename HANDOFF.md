@@ -4,15 +4,15 @@
 Construir antes de las **20:00** un reemplazo del servicio original que devuelva el mismo status y el mismo cuerpo,
 errores incluidos. Hay tres entregables:
 1. El reemplazo desplegado.
-2. `SPEC.md`, con las 7 secciones del README y cada comportamiento con su evidencia.
+2. `SPEC.md`, con las 7 secciones de RETO.md y cada comportamiento con su evidencia.
 3. `experimentos.jsonl`.
 
-Las reglas están en `README.md` y `CLAUDE.md`. Los secretos solo van en `.env`, que nunca se versiona.
+Las reglas están en `RETO.md` y `CLAUDE.md`. Los secretos solo van en `.env`, que nunca se versiona.
 
 ## Decisiones
 El detalle de cada una está en `DECISIONS.md`.
 - **Dependencias:** ninguna en ejecución. Node 24 ejecuta `.ts` directamente, `--env-file` sustituye a dotenv y los tests usan `node:test`. En desarrollo solo `typescript` y `@types/node`.
-- **Formato del log:** se respetan los campos del README. Para las sondas que no son un `POST /msg` autenticado se añaden `method`, `path` y `auth`.
+- **Formato del log:** se respetan los campos de RETO.md. Para las sondas que no son un `POST /msg` autenticado se añaden `method`, `path` y `auth`.
 - **`x_req`:** número si el header es numérico; si no, el texto.
 - **Velocidad y presupuesto:** 5 req/s y 8000 al día. Las respuestas con `X-Frontier-Infra: rate-limit` se reintentan y no se registran.
 - **Oráculo:** prueba primero los candidatos predichos y luego 0..99 en orden.

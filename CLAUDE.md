@@ -1,7 +1,7 @@
 # Black Box Replacement — Frontier challenge 2
 
 ## Read first
-PLAN.md (owners, probe lock; update status + time after each task, commit, push), README.md (challenge rules
+PLAN.md (owners, probe lock; update status + time after each task, commit, push), RETO.md (challenge rules
 and REQUIRED formats) and pruebas/ejemplos.jsonl.
 
 ## Hard rules
@@ -35,7 +35,7 @@ One line per request sent to the original:
 
 ## Method
 Hypothesis -> experiment -> log -> SPEC.md (with evidence ids and confidence) -> implement -> diff -> commit.
-SPEC.md must follow the 7 sections and table format required by README.md.
+SPEC.md must follow the 7 sections and table format required by RETO.md.
 
 ## Style
 Small steps. Show commands and outputs as evidence. Propose before coding new areas; wait for my OK.

@@ -1,4 +1,4 @@
-// Validates experimentos.jsonl against the README format. Read-only: it reports, never edits the log.
+// Validates experimentos.jsonl against the RETO.md format. Read-only: it reports, never edits the log.
 // CLI: node probe/validate-log.ts [file]   (exit 1 if any problem)
 import { readFileSync } from 'node:fs';
 

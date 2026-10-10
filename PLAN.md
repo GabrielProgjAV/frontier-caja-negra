@@ -10,13 +10,13 @@
 ## Entregables para las 20:00
 | Entregable | Formato exacto | Fuente |
 |---|---|---|
-| Entrypoint desplegado | URL pública con `Authorization: Bearer <token del equipo>` en todas las llamadas; con otro token o sin token responde como el original. `GET /health` → 200 cuando está listo. `POST /__reset` vuelve al estado inicial. Cualquier otra ruta responde igual que el original. Un solo proceso. 5 s por paso. Se valida en `/evento`. | README |
-| `SPEC.md` | 7 secciones: 1 Entrada, 2 Integridad, 3 Comandos (un bloque por comando), 4 Memoria entre requests, 5 Errores (status, cuerpo exacto y orden), 6 Cambios durante el día, 7 Riesgos. Cada una con una tabla `ID \| Comportamiento \| Evidencia \| Confianza`; la confianza es confirmado, probable o supuesto, y la evidencia son ids del log. Una afirmación falsa resta. | README |
-| `experimentos.jsonl` | Una línea por cada request al original: `{"id","seq","x_req","hipotesis","request","status","response","conclusion"}`, más `method`, `path` y `auth` en las sondas que no son `/msg`. Cada `seq` empieza tras un `/__reset`. | README + DECISIONS.md |
-| Repo público | GitHub `GabrielProgjAV/frontier-caja-negra` en modo **público**, sin `.env`. | indicación del equipo, no está en README |
-| Video de 2 min | Demo y explicación del método. | indicación del equipo, no está en README |
+| Entrypoint desplegado | URL pública con `Authorization: Bearer <token del equipo>` en todas las llamadas; con otro token o sin token responde como el original. `GET /health` → 200 cuando está listo. `POST /__reset` vuelve al estado inicial. Cualquier otra ruta responde igual que el original. Un solo proceso. 5 s por paso. Se valida en `/evento`. | RETO.md |
+| `SPEC.md` | 7 secciones: 1 Entrada, 2 Integridad, 3 Comandos (un bloque por comando), 4 Memoria entre requests, 5 Errores (status, cuerpo exacto y orden), 6 Cambios durante el día, 7 Riesgos. Cada una con una tabla `ID \| Comportamiento \| Evidencia \| Confianza`; la confianza es confirmado, probable o supuesto, y la evidencia son ids del log. Una afirmación falsa resta. | RETO.md |
+| `experimentos.jsonl` | Una línea por cada request al original: `{"id","seq","x_req","hipotesis","request","status","response","conclusion"}`, más `method`, `path` y `auth` en las sondas que no son `/msg`. Cada `seq` empieza tras un `/__reset`. | RETO.md + DECISIONS.md |
+| Repo público | GitHub `GabrielProgjAV/frontier-caja-negra` en modo **público**, sin `.env`. | indicación del equipo, no está en RETO.md |
+| Video de 2 min | Demo y explicación del método. | indicación del equipo, no está en RETO.md |
 
-**Ejecuciones del set oculto (100 tests):** según el equipo, solo hay **3**. El README dice que corre cada vez que
+**Ejecuciones del set oculto (100 tests):** según el equipo, solo hay **3**. RETO.md dice que corre cada vez que
 se valida el entrypoint, así que hay que confirmarlo en `/evento`. Planificamos con 3: no se gasta ninguna sin `diff.ts` en verde.
 
 ## Fases
@@ -78,3 +78,4 @@ Estados: `todo` · `doing` · `done` · `blocked`.
 - `HALT` con cualquier argumento da E520 incluso con cuenta/argumento inválido.
 | 25 | `probe/remote-diff.ts` (REPLACEMENT_URL + TEAM_TOKEN; % y latencia máxima; `--sample N`). Probado contra servidor local: ejemplos 20/20, latencia máx 160 ms. **Sin correr contra Render (12:54): 401 con el TEAM_TOKEN de .env** | blocked |
 | 26 | `probe/drift.ts`: canaria de los 20 ejemplos contra el original (no ejecutado; lo corre sesión 1: `node --env-file=.env probe/drift.ts`). Probado en sandbox local | done |
+| 27 | README.md del reto movido a RETO.md (referencias actualizadas) y README.md nuevo del proyecto, solo con cifras medidas (13:04). Falta: remote-diff contra Render cuando el token quede bien | done |

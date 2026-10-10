@@ -1,138 +1,88 @@
-# Reto 2 · La caja negra
+# Caja negra · reemplazo de un servicio sin documentación
 
-Un servicio lleva 10 años en producción y nadie sabe qué hace. Recibe mensajes por HTTP y responde.
-Tu equipo tiene que entenderlo y construir un reemplazo que responda exactamente igual, errores
-incluidos.
+Reto 2 de Frontier Bogotá 2026 (enunciado en [RETO.md](RETO.md)). Un servicio HTTP lleva años en producción sin código ni
+documentación. Recibe mensajes `COMANDO;argumentos;control` por `POST /msg`, guarda cuentas, saldos y operaciones, y responde
+JSON. Este repo contiene un reemplazo que devuelve el mismo status y el mismo cuerpo, errores incluidos, y la evidencia de cómo
+se descubrió cada comportamiento.
 
-No uses herramientas que hagan el trabajo por ti.
+## Cómo funciona
 
-## Lo que recibes
+**1. Descubrimiento con el original como oráculo.** Cada hipótesis se probó con una request real al servicio original
+mediante `probe/send.ts`, que limita a 5 req/s, lleva el presupuesto diario en `probe/budget.json` y registra cada request en
+[experimentos.jsonl](experimentos.jsonl) (hipótesis, request, respuesta y conclusión). La especificación se escribió después,
+citando los ids de ese log: [SPEC.md](SPEC.md).
 
-- **La URL del servicio**: `https://caja-negra-production-c64f.up.railway.app`.
-- **Un token por persona**, en `/evento`, en la tarjeta de tu reto. Cada request lleva
-  `Authorization: Bearer <tu token>`. Cada token tiene su propio estado: lo que hagas con el tuyo no
-  lo ve tu compañero.
-- **`pruebas/ejemplos.jsonl`**: 20 requests con su respuesta, en el orden en que se mandaron después
-  de empezar de cero. Se grabaron con la versión del servicio de la mañana.
+**2. Núcleo puro.** `src/core/handle.ts` es una función sin I/O: `handle(estado, cuerpoCrudo) → { estado, status, cuerpo }`.
+Aplica las validaciones en el orden observado (E101, E100, E102, E103, E104, E201, E202, E301, E302, E303, E304, E401, E402,
+E506, E507) y ejecuta `PING`, `ALTA`, `CONSULTA`, `DEPOSITO`, `TRANSFER`, `ANULA` y el comando oculto `HALT`, que responde
+`409 E520` (pide confirmación). `src/server.ts` es solo un adaptador `node:http` (rutas, token y reset); sin dependencias en
+ejecución.
 
-Los mensajes van por `POST /msg`, con un cuerpo JSON como `{"m": "PING;64"}`. El servicio también
-tiene `POST /__reset`, que vuelve tu token al estado inicial, y `GET /health`. Tu reemplazo también
-las necesita (ver el contrato abajo).
+**3. Dígito de control.** Es ISO 7064 MOD 97-10 (como el IBAN) sobre el mensaje sin su último segmento: los dígitos cuentan
+tal cual, cada letra vale su posición en el alfabeto, el resto se ignora, y `control = 98 − (N·100 mod 97)`. `PING` no lo valida.
+`src/core/checksum.ts` tiene un test contra todos los pares conocidos del log.
 
-## Las pruebas
+**4. Testing diferencial.** `probe/diff.ts` reproduce cada secuencia grabada contra el reemplazo local y compara status y cuerpo.
+`probe/remote-diff.ts` hace lo mismo contra el reemplazo desplegado y mide la latencia por paso. Ninguno de los dos llama al original.
 
-Cada línea de `pruebas/ejemplos.jsonl` es un JSON con estos campos:
+**5. Fuzzing.** `probe/fuzz.ts` genera secuencias aleatorias (controles válidos y mutaciones), las manda al original y compara
+cada respuesta con `handle()` local; se detiene en la primera diferencia y la imprime.
 
-| Campo      | Qué es                                   |
-| ---------- | ---------------------------------------- |
-| `n`        | Posición en la secuencia                 |
-| `id`       | Igual a `n`                              |
-| `seq`      | La secuencia a la que pertenece          |
-| `request`  | El cuerpo que se mandó a `POST /msg`     |
-| `status`   | El status HTTP que respondió el original |
-| `response` | El cuerpo que respondió el original      |
+**6. Detección de cambios.** El servicio puede cambiar durante el día. `probe/drift.ts` repite los 20 ejemplos de la mañana contra
+el original y avisa de cualquier diferencia.
 
-Los 20 ejemplos son una sola secuencia. Para reproducirlos, llama a `POST /__reset` y manda cada
-`request` en orden.
+## Resultados (al momento de escribir esto)
 
-## Qué entregas a las 20:00
+| Medida | Resultado |
+|---|---|
+| `pruebas/ejemplos.jsonl` contra el reemplazo local | 20/20 |
+| `experimentos.jsonl` contra el reemplazo local | 1521/1521 |
+| Fuzz contra el original (semillas 101, 202, 303) | 90 secuencias, 595 mensajes, 0 diferencias |
+| Drift de los 20 ejemplos contra el original (12:52) | sin cambios |
+| Tests (`npm test`) | 3 de 3 |
 
-1. **El reemplazo**, desplegado y accesible por internet, con este contrato:
-   - `Authorization: Bearer <token>` en todas las llamadas. Es el token del equipo que ves en
-     `/evento`, en la tarjeta de tu reto. Con otro token o sin token, responde como el original.
-   - `GET /health` responde 200 cuando está listo.
-   - `POST /__reset` vuelve el reemplazo a su estado inicial. Lo llamamos antes de cada test.
-   - Cualquier otra ruta responde exactamente lo mismo que el original, incluidas las rutas que no
-     existen.
-2. **La especificación**: un documento que permita a otro ingeniero reimplementar el servicio sin
-   tocar el original. Estructura abajo.
-3. **El log de experimentos** (`experimentos.jsonl`): una línea por cada request que le mandaste al
-   original, con la hipótesis que estabas probando. Formato abajo.
+Límites de esos números:
+- El 1521/1521 reproduce el mismo log con el que se construyó el reemplazo, así que mide que no hay regresiones y no cobertura nueva.
+  La medida independiente es el fuzz.
+- El fuzz cubrió poco los errores de límite excedido (E506, 1 caso) y saldo insuficiente (E507, 2 casos), y no incluye
+  errores de forma (E100 a E103, E201), que cubre el diff. Excluye `HALT` a propósito.
+- El reemplazo está desplegado en Render, pero su comprobación remota con `remote-diff.ts` está pendiente. No hay todavía un
+  resultado medido sobre el set de evaluación.
+- [SPEC.md](SPEC.md) es un borrador. Cada comportamiento indica su confianza (confirmado, probable o supuesto); los supuestos son lo
+  que hace el reemplazo donde no se probó nada, por ejemplo que el límite de 8192 bytes cuenta bytes y no caracteres.
 
-### El log de experimentos
+## Cómo correrlo
 
-Una línea JSON por request al original:
+Requiere Node 24 o superior. El reemplazo no tiene dependencias en ejecución.
 
-```json
-{
-  "id": 1,
-  "seq": "s1",
-  "x_req": 1,
-  "hipotesis": "PING responde sin estado",
-  "request": { "m": "PING;XX" },
-  "status": 200,
-  "response": { "pong": true },
-  "conclusion": "responde pong aunque el último campo no sea un número"
-}
+```bash
+npm install                                        # solo typescript y @types/node, para desarrollo
+TEAM_TOKEN=secreto PORT=3000 npm start             # escucha en 0.0.0.0:3000
+npm test                                           # control + ejemplos 20/20
+node probe/diff.ts                                 # % de coincidencia por comando, en local
+npx tsc --noEmit                                   # tipos
 ```
 
-| Campo        | Qué es                                                            |
-| ------------ | ----------------------------------------------------------------- |
-| `id`         | Número de línea, único. La especificación cita estos números      |
-| `seq`        | La secuencia. Todas las líneas de una secuencia van tras un reset |
-| `x_req`      | El valor del header `X-Req` de la respuesta                       |
-| `hipotesis`  | Qué estabas probando con este request                             |
-| `request`    | El cuerpo que mandaste                                            |
-| `status`     | El status que respondió el original                               |
-| `response`   | El cuerpo que respondió el original                               |
-| `conclusion` | Qué aprendiste. Opcional                                          |
+Las sondas al original y al despliegue leen `.env` (`ORIGINAL_URL`, `ORIGINAL_TOKEN`, `TEAM_TOKEN`, `REPLACEMENT_URL`), que nunca
+se versiona:
 
-### La especificación
+```bash
+node --env-file=.env probe/remote-diff.ts pruebas/ejemplos.jsonl      # contra el despliegue
+node --env-file=.env probe/fuzz.ts --seqs 30 --seed 101              # contra el original
+node --env-file=.env probe/drift.ts                                   # contra el original
+node probe/validate-log.ts                                           # formato de experimentos.jsonl
+```
 
-Cada comportamiento lleva un ID, su descripción, la evidencia (los `id` del log que lo prueban) y tu
-confianza:
+Los pasos de despliegue en Render están en [DEPLOY.md](DEPLOY.md).
 
-- **confirmado**: lo probaste y se repite.
-- **probable**: lo viste una vez o lo infieres.
-- **supuesto**: no lo probaste y es lo que hace tu reemplazo por defecto.
+## Mapa del repo
 
-Organízala en estas secciones, con una tabla `ID | Comportamiento | Evidencia | Confianza` en cada
-una:
-
-1. **Entrada**: rutas, métodos, autenticación, forma del cuerpo y límites.
-2. **Integridad**: cómo valida el servicio que un mensaje está bien formado.
-3. **Comandos**: un bloque por comando, con sus argumentos, su efecto y su respuesta.
-4. **Memoria entre requests**: qué recuerda el servicio y qué cambia una respuesta según los
-   requests anteriores.
-5. **Errores**: cada error con su status, su cuerpo exacto y en qué orden se evalúa frente a los
-   otros errores.
-6. **Cambios durante el día**: qué cambió, desde cuándo y cómo lo detectaste.
-7. **Riesgos**: comportamientos que un cliente nuevo no debería heredar y cómo los cerrarías.
-
-## Cómo se evalúa
-
-**Set de evaluación.** Son 100 tests. Corren contra tu reemplazo cada vez que validas el entrypoint
-en `/evento`, y en `/evento/resultados` ves cuántos pasan. Después de las 20:00 los corremos una vez
-más sobre el último entrypoint que entregaste a tiempo, y ese resultado es el que cuenta. Cada test
-empieza con `POST /__reset`. Hay 40 de un request, 45 secuencias de 2
-a 5 requests y 15 secuencias de 6 a 12. Ningún test repite la secuencia de `pruebas/ejemplos.jsonl`.
-
-Un test pasa si cada respuesta que comparamos tiene:
-
-- el mismo status HTTP, y
-- el mismo cuerpo. Si los dos cuerpos son JSON, las claves de un objeto pueden venir en cualquier
-  orden, los arrays van en el mismo orden y los strings y números tienen que ser idénticos. Si alguno
-  de los dos no es JSON, se compara el texto exacto, carácter por carácter.
-
-Los headers no se comparan. Cada paso tiene 5 segundos para responder.
-
-**Especificación.** Un juez la lee contra la lista completa de comportamientos del servicio.
-Cada comportamiento cuenta si está bien descrito y cita una línea de tu log que lo prueba. Una
-afirmación falsa resta.
-
-## Reglas
-
-- El reemplazo no puede llamar al original ni a otro reemplazo. Si lo hace, el set vale 0.
-- Puedes usar un LLM dentro del reemplazo, siempre que responda en 5 segundos por paso.
-- Scripts y fuzzers propios están permitidos.
-- Nada de lo que hagas con tu token es irreversible: `POST /__reset` lo repara.
-- Los tokens de tu equipo exploran en paralelo con estados separados. Es una estrategia válida.
-- Cada token admite 10 requests por segundo y 8.000 por día. Si te pasas, la respuesta trae el
-  header `X-Frontier-Infra: rate-limit`. Esa respuesta es de la infraestructura y no del servicio.
-- El servicio puede cambiar durante el día. Tu reemplazo se evalúa contra la versión vigente a las
-  20:00.
-- A las 20:00 los tokens de participante dejan de funcionar contra el original.
-- El set le habla a un solo proceso. Si tu plataforma levanta varias instancias del reemplazo, cada
-  una tendrá su propio estado.
-- Si tu reemplazo no sabe qué responder ante algo, decide qué hace por defecto y anótalo en la
-  especificación como **supuesto**.
+| Ruta | Qué es |
+|---|---|
+| [SPEC.md](SPEC.md) | Especificación con las 7 secciones del reto y evidencia por comportamiento |
+| [experimentos.jsonl](experimentos.jsonl) | Log de cada request enviada al original |
+| [DESIGN.md](DESIGN.md) | Documento de diseño inicial |
+| [DECISIONS.md](DECISIONS.md) | Decisiones y sus motivos |
+| [PLAN.md](PLAN.md), [HANDOFF.md](HANDOFF.md) | Tareas, estado y traspaso entre sesiones |
+| `src/` | Reemplazo: `core/handle.ts`, `core/checksum.ts`, `core/state.ts`, `server.ts` |
+| `probe/` | Sondas y herramientas: `send`, `oracle`, `diff`, `remote-diff`, `fuzz`, `drift`, `validate-log` |
