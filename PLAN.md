@@ -5,7 +5,7 @@
 > **Solo UN agente prueba el original a la vez**, porque el token comparte estado y presupuesto. Antes de
 > probar, apúntate en "Sonda activa" y libérala al terminar.
 
-**Sonda activa:** libre (desde 13:10)
+**Sonda activa:** sesión 1 (s33-s36 hipótesis trampa, fuzz --business v2, drift), desde 13:15
 
 ## Entregables para las 20:00
 | Entregable | Formato exacto | Fuente |
