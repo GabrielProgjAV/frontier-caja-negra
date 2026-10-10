@@ -35,7 +35,11 @@ Los cuerpos se escriben exactos. Todos los textos van en español y con tildes.
 | ID | Comportamiento | Evidencia | Confianza |
 |---|---|---|---|
 | CMD-0 | El nombre del comando no distingue mayúsculas (`ping`, `Ping`, `CONSULTa`). No se recortan espacios: `PING ` o ` PING` dan E301. | 12, 45, 46, 47, 48 | confirmado |
-| CMD-1 | Comando desconocido → `400 {"error":"E301","mensaje":"comando desconocido "}`, con espacio al final. Si el comando se parece a uno conocido, se añade `"sugerencia":"<COMANDO>"`. | 13, 47, 48, 50 | confirmado |
+| CMD-1 | Comando desconocido → `400 {"error":"E301","mensaje":"comando desconocido "}`, con espacio al final. | 13, 50, 525–604 | confirmado |
+| CMD-1a | Se añade `"sugerencia":"<COMANDO>"` si la distancia de Levenshtein clásica, sin distinguir mayúsculas y sobre el segmento tal cual (incluidos los espacios), hasta algún comando conocido es ≤ 2. Se sugiere el más cercano, siempre en mayúsculas. El umbral es absoluto, no depende de la longitud. | 47, 48, 539, 540, 574–576, 589–604, 609, 610 | confirmado |
+| CMD-1b | Con distancia ≥ 3 a todos los comandos no hay `sugerencia`: se probaron 60 nombres. Un intercambio de letras cuenta 2, no 1 (no es Damerau): `PNIGX` no sugiere nada. | 525–588, 604, 608 | confirmado |
+| CMD-1c | En un empate entre ALTA y HALT gana ALTA. No se distingue si es por orden de la lista o alfabético; el reemplazo usa la lista PING, ALTA, CONSULTA, DEPOSITO, TRANSFER, ANULA, HALT. | 606, 607 | probable |
+| CMD-1d | Comandos que existen: PING, ALTA, CONSULTA, DEPOSITO, TRANSFER, ANULA y el oculto **HALT**. No existen ninguno de los 60 nombres probados, por ejemplo BAJA, RETIRO, SALDO, HISTORIAL, AYUDA, HELP, VERSION o RESET. | 525–588 | confirmado |
 | CMD-2 | Si el número de argumentos no es el del comando → `400 {"error":"E302","mensaje":"aridad inválida"}` | 21, 499–504 | confirmado |
 
 ### PING (0 argumentos)
@@ -83,6 +87,14 @@ Los cuerpos se escriben exactos. Todos los textos van en español y con tildes.
 | ANU-3 | Se puede anular un depósito aunque el saldo ya se haya gastado: el saldo queda **negativo**. | 495, 496 | confirmado |
 | ANU-4 | Operación inexistente o id mal formado → `404 {"error":"E402","mensaje":"operación inexistente"}` | 497, 498 | confirmado |
 
+### HALT;x (1 argumento, comando oculto)
+| ID | Comportamiento | Evidencia | Confianza |
+|---|---|---|---|
+| HAL-1 | Se descubrió por la `sugerencia` de `HELP`. | 540 | confirmado |
+| HAL-2 | Sin argumentos → E302, así que su aridad es 1. No distingue mayúsculas. | 613, 617 | confirmado |
+| HAL-3 | Con un argumento cualquiera → `409 {"error":"E520","mensaje":"operación destructiva: detiene el servicio; reenvía con confirmación"}`. No cambia el estado y el servicio sigue respondiendo. | 612, 614, 615, 616 | confirmado |
+| HAL-4 | No se probó el formato de la confirmación, a propósito, por ser destructivo. El reemplazo responde E520 a cualquier argumento. | — | supuesto |
+
 ## 4. Memoria entre requests
 | ID | Comportamiento | Evidencia | Confianza |
 |---|---|---|---|
@@ -112,6 +124,7 @@ Orden de evaluación: el primero que aplica gana.
 | ERR-12 | 12 | 400 | `{"error":"E304","mensaje":"origen y destino iguales"}` | TRANSFER a la misma cuenta | 487, 516, 518 | confirmado |
 | ERR-13 | 13 | 404 | `{"error":"E401","mensaje":"cuenta inexistente"}` | cuenta inexistente | 16, 488, 489, 490, 504 | confirmado |
 | ERR-14 | 13 | 404 | `{"error":"E402","mensaje":"operación inexistente"}` | ANULA de una operación inexistente | 497, 498 | confirmado |
+| ERR-14b | — | 409 | `{"error":"E520","mensaje":"operación destructiva: detiene el servicio; reenvía con confirmación"}` | HALT con 1 argumento | 612 | confirmado (orden frente a E4xx/E5xx sin probar) |
 | ERR-15 | 14 | 422 | `{"error":"E506","mensaje":"límite excedido"}` | TRANSFER > 100000 | 10, 486, 491 | confirmado |
 | ERR-16 | 15 | 422 | `{"error":"E507","mensaje":"saldo insuficiente"}` | saldo < monto | 17 | probable |
 
@@ -145,4 +158,6 @@ E101 no se ha observado: `m` no string da E102.
 | RIE-4 | Los ids de cuenta y de operación son secuenciales y se pueden enumerar. Además, E401/E402 revelan si un id existe. | 4, 5, 16, 497 | confirmado | Usar ids aleatorios (UUID) y una respuesta uniforme. |
 | RIE-5 | Las respuestas no son consistentes: `cuentaId` frente a `cuenta_id`, `"recieved"` mal escrito, espacio al final en E301, y `ok:false` con status 200. | 4, 6, 7, 13, 15 | confirmado | Versionar la API (v2) con un esquema consistente; mantener v1 tal cual para clientes heredados. |
 | RIE-6 | Los depósitos no tienen límite. | 474 | probable | Imponer un límite por operación y un control de origen de fondos. |
+| RIE-8 | Existe un comando oculto, `HALT`, que detiene el servicio y que cualquier cliente con token puede invocar. La `sugerencia` de E301 lo revela. | 540, 612 | confirmado | Quitar HALT de la API pública, o dejarlo solo para un rol de administración con autenticación aparte. No sugerir comandos ocultos. |
+| RIE-9 | La `sugerencia` de E301 enumera los comandos existentes. | 589–604 | confirmado | Quitar `sugerencia` o limitarla a comandos públicos. |
 | RIE-7 | `X-Req` revela el volumen de requests del token y no se reinicia. | 36, 52 | confirmado | Quitar el header o hacerlo opaco. |

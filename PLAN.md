@@ -44,7 +44,7 @@ Estados: `todo` · `doing` · `done` · `blocked`.
 | 4 | `HANDOFF.md` + push | sesión 1 | done | 12:00 |
 | 5 | s7: límites de comandos (montos, límite E506, misma cuenta, ANULA de depósito o de operación inexistente, aridad por comando, nombres) | sesión 1 | done | 12:06 |
 | 6 | Orden de errores restante. Completo: s7 + s8 (orden en SPEC §5) | sesión 1 | done | 12:16 |
-| 7 | Comandos ocultos (mirar el campo `sugerencia`) | sesión 1 | doing | 12:14 |
+| 7 | Comandos ocultos: HALT encontrado (E520 409, confirmación sin probar), regla de sugerencia = Levenshtein <= 2 (s9, s10) | sesión 1 | done | 12:18 |
 | 8 | `src/core/state.ts` + `handle.ts` (núcleo puro, orden de validación de HANDOFF.md) | sesión 2 | done (falta HALT: solo sugerencia) | 12:18 |
 | 9 | `src/server.ts` (`node:http`, autenticación con `TEAM_TOKEN`, `/health`, `/__reset`, 404) | sesión 2 | done (/health sin auth = supuesto) | 12:18 |
 | 10 | `probe/diff.ts`: reproducir el log contra el reemplazo local, % por comando | sesión 2 | done: ejemplos 20/20, experimentos 610/610 (100%) hasta id 604 | 12:18 |
@@ -59,4 +59,4 @@ Estados: `todo` · `doing` · `done` · `blocked`.
 | 19 | Repo público + push final + entrega en `/evento` antes de las 19:40 | humano | todo | |
 
 ## Presupuesto
-519 de 8000 requests usadas (12:16). Fuente de verdad: `probe/budget.json`.
+617 de 8000 requests usadas (12:18). Fuente de verdad: `probe/budget.json`.
