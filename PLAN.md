@@ -5,7 +5,7 @@
 > **Solo UN agente prueba el original a la vez**, porque el token comparte estado y presupuesto. Antes de
 > probar, apúntate en "Sonda activa" y libérala al terminar.
 
-**Sonda activa:** SONDEADOR (sesión 1) desde 15:30: canario cada 30 min hasta 19:45 + supuestos B3, INT-4b, CMD-0b, ENT-14, B9
+**Sonda activa:** SONDEADOR en espera (15:52, sin sondear hasta el aviso). Al aviso "V2 ACTIVA": 1) frontera aquí + `probe/v2.json`; 2) `node --env-file=.env probe/canary.ts` + `node --env-file=.env probe/regression.ts` (313 req); 3) caracterizar los 3 cambios (hipótesis "v2: ..."); 4) SPEC §6 + reglas; 5) tareas T* para el builder. Bucle: `node --env-file=.env probe/canary-loop.ts` (único sondeador mientras corre)
 
 **FRONTERA v1/v2: PENDIENTE.** Aclaración del organizador (~15:45): la v2 AÚN NO está activa; avisará. Todo el log hasta el id 5553 es **v1**
 (incluidas las sondas con hipótesis "v2: ..." de 15:36–15:41: regresión 338 + replay 254 + 134, drift 20/20, canario 70/70, 0 diferencias = línea base v1).
