@@ -10,7 +10,10 @@ if (!BASE || !TOKEN) throw new Error('ORIGINAL_URL / ORIGINAL_TOKEN missing (run
 const LOG = 'experimentos.jsonl';
 const BUDGET = 'probe/budget.json';
 const DAILY_LIMIT = 8000;
-const GAP_MS = 200; // 5 req/s
+const GAP_MS = 200; // 5 req/s (CLAUDE.md)
+let gapMs = GAP_MS;
+// Only for an explicitly requested burst test (README allows 10 req/s per token). Never below 100 ms.
+export const setGap = (ms: number) => { gapMs = Math.max(100, ms); };
 
 export type Auth = 'ok' | 'none' | 'wrong';
 export type Step = {
@@ -56,7 +59,7 @@ export async function send(seq: string, s: Step) {
   const fetchBody = payload !== undefined && contentType === null ? Buffer.from(payload) : payload;
 
   for (let tries = 0; ; tries++) {
-    await sleep(Math.max(0, last + GAP_MS - Date.now()));
+    await sleep(Math.max(0, last + gapMs - Date.now()));
     last = Date.now();
     spend();
     const res = await fetch(BASE + path, { method, headers, body: fetchBody });

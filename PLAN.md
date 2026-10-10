@@ -5,7 +5,7 @@
 > **Solo UN agente prueba el original a la vez**, porque el token comparte estado y presupuesto. Antes de
 > probar, apúntate en "Sonda activa" y libérala al terminar.
 
-**Sonda activa:** sesión 1 (A tildes, B sugerencias, C drift amplio, D ráfaga), desde 13:59
+**Sonda activa:** libre (desde 14:06)
 
 ## Entregables para las 20:00
 | Entregable | Formato exacto | Fuente |
@@ -65,6 +65,7 @@ Estados: `todo` · `doing` · `done` · `blocked`.
 | 33 | Trampas: H1 DEPOSITO por nombre/monto, H2 ANULA mismo titular, H3 límite acumulado, H4 ANULA de AC-/op previa: todas negativas (s33-s36). Fuzz --business v2 (setup con fondos, colisiones de nombres, --dry): semillas 707 y 808 x 40 = 80 seqs, 983 mensajes, 0 diferencias. drift.ts 13:21 sin cambios. diff 3577/3577 | sesión 1 | done | 13:24 |
 | 34 | Revisión de SPEC.md sin sondear: 7 secciones exactas de RETO.md en tablas ID|Comportamiento|Evidencia|Confianza (131 filas, 115 confirmadas con 2+ ids, 0 ids fuera del log); §2.1 algoritmo MOD 97-10 con ejemplo resuelto, código y 10 vectores; §5 orden completo O1-O17 + 12 pruebas de orden; §6 CAM-0..8; §7 14 riesgos con cierre. Log verificado tras el incidente de autostash: ids 1-3577 consecutivos, 0 problemas | sesión 1 | done | 13:33 |
 | 35 | Correcciones de SPEC.md tras AUDIT.md y reimpl/REPORT.md (sin sondear): E401 cita 16, 488, 489, 490; CAM-1 sin hora inventada; 10 filas DÉBIL bajadas o divididas (CMD-1d, DEP-6, RIE-8, ALTA-5, TRA-2, ENT-2, PING-1, HAL-3...); INT-4b rango 2-98; INT-6 `3` sí `03` no (5, 43, 44); CMD-1a2 la regla de sugerencia (primero de la lista o más cercano) no la distingue el log; supuestos ENT-14, CMD-0b, ALTA-6; secciones 5 y 7 con las 4 columnas exactas primero y extras después. PENDIENTE para el líder: probar AULA y ANLA (1 request cada una) para cerrar CMD-1a2 | sesión 1 | done | 13:51 |
+| 36 | Tras la corrida 1 (83/100), sondas A-D: A tildes/ñ en el control: se ignoran, 12/12 al primer intento (s37); B sugerencia: más cercano + empate alfabético, 18/18 (s38, s39), el reemplazo falla 15 líneas -> tarea B1; C drift amplio 30 secuencias, 267 pasos, 0 cambios (replay-drift.ts); D ráfaga 8,2 req/s frente a 2 req/s: idénticas, sin detección de duplicados (s40, s41); drift.ts 14:04 sin cambios. 373 requests | sesión 1 | done | 14:06 |
 | 25 | E101 (413 si el cuerpo pasa de 8192 bytes, tras auth y antes del JSON); tope de monto de 10 dígitos (9999999999 pasa, 11 dígitos E303); diff soporta `auth: header:...` | sesión 2 | done | 13:20 |
 | 26 | `probe/validate-log.ts`: 815 líneas, 0 problemas (el taskkill no rompió nada) | sesión 2 | done | 13:20 |
 | 27 | `probe/fuzz.ts` (no ejecutado contra el original; probado en sandbox contra el servidor local: 40 secuencias, 0 diferencias). Lo ejecuta sesión 1 con `node --env-file=.env probe/fuzz.ts --seqs N [--seed S]` | sesión 2 | done | 13:20 |
@@ -74,8 +75,15 @@ Estados: `todo` · `doing` · `done` · `blocked`.
 | 31 | README.md del reto movido a RETO.md (referencias actualizadas) y README.md nuevo del proyecto, solo con cifras medidas | sesión 2 | done | 13:20 |
 | 32 | Diferencia 1602 (E506 frente a E507) del fuzz de negocio: explicada por TRA-7 (tarea 24), implementada en e4dc5a4; diff 2442/2442 | sesión 2 | done | 13:20 |
 
+## TAREAS PARA BUILDER
+Cambios exactos en `src/` derivados de sondas. Al terminar cada uno: `node probe/diff.ts` debe dar 100 %, y marcar aquí `hecho (commit)`.
+
+| # | Hallazgo (SPEC) | Cambio exacto en `src/` | Prueba | Estado |
+|---|---|---|---|---|
+| B1 | CMD-1a2 / CMD-1c: la `sugerencia` de E301 es **el comando más cercano (Levenshtein ≤ 2) y, en empate, el primero en orden alfabético**, no "el primero de la lista a distancia ≤ 2". | En `src/core/handle.ts`, `suggest()`: reemplazar `return SUGERIBLES.find((k) => dist(cmd, k) <= 2);` por `let best: string \| undefined, bd = 3; for (const k of [...SUGERIBLES].sort()) { const d = dist(cmd, k); if (d < bd) { bd = d; best = k; } } return best;` (orden alfabético + comparación estricta `<` = en empate gana el primero alfabético). Actualizar el comentario de la función. | `diff.ts` hoy falla exactamente en 3592–3606 (15 líneas); con el cambio deben pasar las 146 respuestas E301 del log (comprobado con un modelo equivalente). | pendiente |
+
 ## Presupuesto
-3577 de 8000 requests usadas (13:24). Fuente de verdad: `probe/budget.json`.
+3950 de 8000 requests usadas (14:06). Fuente de verdad: `probe/budget.json`.
 
 **Supuestos para que sesión 1 los confirme:**
 - E101 cuenta **bytes** (`Buffer.byteLength`), no caracteres; se probó solo con ASCII. Falta un cuerpo > 8192 bytes con caracteres multibyte pero < 8192 caracteres.
