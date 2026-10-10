@@ -249,7 +249,7 @@ Método: `probe/drift.ts` (y antes la misma secuencia lanzada a mano) repite con
 
 | ID | Comportamiento | Evidencia | Confianza |
 |---|---|---|---|
-| CAM-0 | **No se detectó ningún cambio de versión** en las ocho comprobaciones hechas: los 20 ejemplos dieron siempre el mismo status y cuerpo que a la mañana, y 30 secuencias antiguas repetidas exactamente dieron lo mismo que cuando se grabaron. **"Sin cambios" se garantiza solo hasta la última comprobación: 14:04 (UTC‑5), ids 3931–3950.** Lo que pase después no está cubierto hasta que haya otra comprobación. | 2–21, 652–671, 744–763, 1502–1521, 2423–2442, 3558–3577, 3611–3907, 3931–3950 | confirmado |
+| CAM-0 | **No se detectó ningún cambio de versión** en las nueve comprobaciones hechas (la última con el canario, que además toca cada comando y cada error): los 20 ejemplos dieron siempre el mismo status y cuerpo que a la mañana, y 30 secuencias antiguas repetidas exactamente dieron lo mismo que cuando se grabaron. **"Sin cambios" se garantiza solo hasta la última comprobación: 15:29 (UTC‑5), canario ids 4553–4622.** Lo que pase después no está cubierto hasta que haya otra comprobación. | 2–21, 652–671, 744–763, 1502–1521, 2423–2442, 3558–3577, 3611–3907, 3931–3950, 4553–4622 | confirmado |
 | CAM-1 | Primera repetición de los 20 ejemplos: los ids 2–21 coinciden con `pruebas/ejemplos.jsonl` (mismo status y cuerpo). El log no guarda la hora de esa repetición. | 2–21 | confirmado |
 | CAM-2 | 12:20, segunda repetición: idéntica. | 652–671 | confirmado |
 | CAM-3 | 12:26, tercera repetición: idéntica. | 744–763 | confirmado |
@@ -259,7 +259,8 @@ Método: `probe/drift.ts` (y antes la misma secuencia lanzada a mano) repite con
 | CAM-7 | Varias reglas se descubrieron tarde (límite E101 de 8192 bytes, tope de 10 dígitos, comando HALT, regla TRA‑7 de homónimos), pero **no son cambios del servicio**: se repitieron pruebas hechas antes de la regla con el mismo resultado. Por ejemplo, el caso de E506 con saldo insuficiente del id 491 (12:06) dio lo mismo en el id 1920 (13:09). | 491, 1920, 1921 | confirmado |
 | CAM-9 | 14:02–14:03, comprobación amplia (`probe/replay-drift.ts`, semilla 2026): 30 secuencias antiguas elegidas al azar (fuzz, fuzz de negocio, s2, s35), 267 pasos repetidos exactamente: 0 diferencias de status o cuerpo frente a lo grabado. | 3611–3907 | confirmado |
 | CAM-10 | 14:04, séptima comprobación con `probe/drift.ts`: los 20 ejemplos, idénticos. | 3931–3950 | confirmado |
-| CAM-8 | Desde las 14:04 no hay datos. La versión que cuenta es la de las 20:00, así que se sigue comprobando cada ~45 minutos con `probe/drift.ts`. Si el servicio cambiara, este apartado y las reglas afectadas se actualizan con la hora y los ids que lo prueben. | — | supuesto |
+| CAM-11 | 15:29, canario `probe/canary.ts` (70 pasos en 2 secuencias que tocan cada comando y cada error: E001, E100–E104, E201, E202, E301 con y sin sugerencia y desempates, E302–E304, E401, E402, E404, E506, E507, E520, HALT;1/E599 y halted, TRA-7, límites 8192 bytes, 10 dígitos y 100000), comparado con nuestro `handle()`: 70/70 idénticos. | 4553–4622 | confirmado |
+| CAM-8 | Después de la última comprobación (15:29) no hay datos. La versión que cuenta es la de las 20:00, así que se sigue comprobando cada 30 minutos con `probe/canary.ts` hasta las 19:45. Si el servicio cambiara, este apartado y las reglas afectadas se actualizan con la hora y los ids que lo prueben. | — | supuesto |
 
 ## 7. Riesgos
 Comportamientos que un cliente nuevo no debería heredar. Las cuatro primeras columnas son las del formato del reto; después van la prioridad (alta, media o baja) y cómo cerrar el riesgo.
